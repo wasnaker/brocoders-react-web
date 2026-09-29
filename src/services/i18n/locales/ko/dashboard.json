@@ -32,5 +32,12 @@
   "widget_move_up": "위로 이동",
   "widget_move_down": "아래로 이동",
   "widget_moved": "{{name}}{{moved}} — {{area}}의 {{total}}개 중 {{position}}번째로 이동했습니다.",
-  "widget_moved_area": " 및 영역을"
+  "widget_moved_area": " 및 영역을",
+  "widget_stat_total_users": "총 사용자",
+  "widget_stat_new_users": "신규 사용자 (7일)",
+  "widget_stat_total_roles": "총 역할",
+  "stat_total_users_hint": "등록된 모든 사용자",
+  "stat_new_users_hint": "최근 7일 이내 등록",
+  "stat_total_roles_hint": "모든 역할",
+  "stat_error": "사용할 수 없음"
 }

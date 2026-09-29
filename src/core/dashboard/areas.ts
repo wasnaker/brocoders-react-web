@@ -21,11 +21,26 @@ export const AREA_SPAN_CLASS: Record<DashboardSpan, string> = {
   12: "lg:col-span-12",
 };
 
+/**
+ * Cara widget ditata di dalam satu area.
+ * - "stack" (default): widget menumpuk vertikal — untuk daftar/kartu besar.
+ * - "row": widget ditata horizontal dalam sub-grid responsif — untuk KPI
+ *   kecil yang hanya menampilkan angka.
+ *
+ * PENTING: nilai ini HARUS ikut dipakai untuk memilih strategi sorting
+ * `@dnd-kit` (verticalListSortingStrategy vs horizontalListSortingStrategy).
+ * Kalau strategi tidak ikut berubah, drag tile ke samping akan menghitung
+ * posisi salah — dan gejalanya hanya muncul saat user benar-benar drag.
+ */
+export type DashboardAreaLayout = "stack" | "row";
+
 export interface DashboardAreaDef {
   id: string;
   label: I18nLabel;
   span: DashboardSpan;
   position: number;
+  /** Default "stack" — area lama tidak perlu diubah. */
+  layout?: DashboardAreaLayout;
 }
 
 export interface DashboardWidgetDef {
@@ -46,7 +61,15 @@ export interface DashboardWidgetDef {
  * `resolveAreas()` akan menaruh di belakang daftar ini.
  */
 export const DASHBOARD_AREAS: readonly DashboardAreaDef[] = [
-  { id: "summary", label: "dashboard:area_summary", span: 12, position: 10 },
+  // `summary` = baris KPI. Sepanjang area ini kosong tidak ada widget yang
+  // memakainya, jadi slot span-12 yang paling lebar justru terbuang.
+  {
+    id: "summary",
+    label: "dashboard:area_summary",
+    span: 12,
+    position: 10,
+    layout: "row",
+  },
   { id: "main", label: "dashboard:area_main", span: 8, position: 20 },
   { id: "side", label: "dashboard:area_side", span: 4, position: 30 },
 ];

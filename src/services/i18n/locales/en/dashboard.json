@@ -32,5 +32,12 @@
   "widget_move_up": "Move up",
   "widget_move_down": "Move down",
   "widget_moved": "{{name}} moved{{moved}} to position {{position}} of {{total}} in {{area}}.",
-  "widget_moved_area": " and area"
+  "widget_moved_area": " and area",
+  "widget_stat_total_users": "Total Users",
+  "widget_stat_new_users": "New Users (7 days)",
+  "widget_stat_total_roles": "Total Roles",
+  "stat_total_users_hint": "All registered users",
+  "stat_new_users_hint": "Registered in the last 7 days",
+  "stat_total_roles_hint": "All roles",
+  "stat_error": "Unavailable"
 }

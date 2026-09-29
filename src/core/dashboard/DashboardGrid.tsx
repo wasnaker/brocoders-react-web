@@ -301,8 +301,16 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
         <div className="dashboard-grid mt-4">
           {areas.map((areaId) => {
             const def = DASHBOARD_AREAS.find((a) => a.id === areaId) ??
-              // Area dari katalog modul / layout lama: label = id, span penuh.
-              { id: areaId, label: areaId, span: 12 as const, position: 999 };
+              // Area dari katalog modul / layout lama: label = id, span penuh,
+              // tata letak stack (konservatif — modul yang mau "row" harus
+              // mendeklarasikan sendiri lewat DASHBOARD_AREAS).
+              {
+                id: areaId,
+                label: areaId,
+                span: 12 as const,
+                position: 999,
+                layout: "stack" as const,
+              };
             const items = resolved[areaId] ?? [];
 
             // Area kosong disembunyikan saat mode normal supaya tidak ada
@@ -326,6 +334,7 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
                   isEmpty={items.length === 0}
                   emptyText={t("area_empty")}
                   widgetIds={items.map((w) => w.id)}
+                  layout={def.layout ?? "stack"}
                 >
                   {items.map((widget, index) => (
                     <WidgetCard

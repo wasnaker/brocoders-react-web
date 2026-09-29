@@ -32,5 +32,12 @@
   "widget_move_up": "上へ移動",
   "widget_move_down": "下へ移動",
   "widget_moved": "{{name}} を移動しました{{moved}} — {{area}} の {{total}} 件中 {{position}} 番目に移動しました。",
-  "widget_moved_area": " および "
+  "widget_moved_area": " および ",
+  "widget_stat_total_users": "総ユーザー数",
+  "widget_stat_new_users": "新規ユーザー（7日間）",
+  "widget_stat_total_roles": "総ロール数",
+  "stat_total_users_hint": "登録済みユーザー全員",
+  "stat_new_users_hint": "過去7日間に登録",
+  "stat_total_roles_hint": "すべてのロール",
+  "stat_error": "利用できません"
 }

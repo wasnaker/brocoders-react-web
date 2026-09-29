@@ -32,5 +32,12 @@
   "widget_move_up": "Pindahkan ke atas",
   "widget_move_down": "Pindahkan ke bawah",
   "widget_moved": "{{name}} dipindahkan{{moved}} ke posisi {{position}} dari {{total}} di {{area}}.",
-  "widget_moved_area": " dan area"
+  "widget_moved_area": " dan area",
+  "widget_stat_total_users": "Total Pengguna",
+  "widget_stat_new_users": "Pengguna Baru (7 hari)",
+  "widget_stat_total_roles": "Total Peran",
+  "stat_total_users_hint": "Semua pengguna terdaftar",
+  "stat_new_users_hint": "Terdaftar dalam 7 hari terakhir",
+  "stat_total_roles_hint": "Semua peran",
+  "stat_error": "Tidak tersedia"
 }
