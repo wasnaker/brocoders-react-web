@@ -36,38 +36,41 @@ export function SettingsShell({ user }: { user: User | null | undefined }) {
 
   if (tabs.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
-        No settings available.
+      <div className="page-content--narrow">
+        <div className="empty-state">No settings available.</div>
       </div>
     );
   }
 
   return (
-    <Tabs
-      orientation="vertical"
-      value={active}
-      onValueChange={setActive}
-      className="flex w-full gap-6"
-    >
-      <TabsList
-        variant="line"
-        className="h-fit w-full max-w-48 flex-col justify-start rounded-none border-r border-border bg-transparent p-0"
+    <div className="page-content--narrow">
+      <Tabs
+        orientation="vertical"
+        value={active}
+        onValueChange={setActive}
+        className="tabs-shell"
       >
+        <TabsList variant="line" className="tabs-shell__list">
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.slug}
+              value={tab.slug}
+              className="tabs-shell__trigger"
+            >
+              {resolveLabel(tab.label, t)}
+            </TabsTrigger>
+          ))}
+        </TabsList>
         {tabs.map((tab) => (
-          <TabsTrigger
+          <TabsContent
             key={tab.slug}
             value={tab.slug}
-            className="w-full justify-start rounded-none border-r-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground"
+            className="tabs-shell__content"
           >
-            {resolveLabel(tab.label, t)}
-          </TabsTrigger>
+            <TabRenderer tab={tab} />
+          </TabsContent>
         ))}
-      </TabsList>
-      {tabs.map((tab) => (
-        <TabsContent key={tab.slug} value={tab.slug} className="min-w-0 flex-1">
-          <TabRenderer tab={tab} />
-        </TabsContent>
-      ))}
-    </Tabs>
+      </Tabs>
+    </div>
   );
 }

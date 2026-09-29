@@ -223,7 +223,7 @@ function SettingsFieldsTabInner({
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="empty-state__skeleton">
         <Skeleton className="h-4 w-40" />
         <Skeleton className="h-9 w-full" />
         <Skeleton className="h-9 w-full" />
@@ -234,20 +234,14 @@ function SettingsFieldsTabInner({
 
   if (error) {
     return (
-      <p className="text-sm text-destructive">
-        {error.message || t("settings:error")}
-      </p>
+      <p className="form__error">{error.message || t("settings:error")}</p>
     );
   }
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={onSubmit}
-        className="flex flex-col gap-5"
-        autoComplete="settings"
-      >
-        <div className="flex flex-col gap-4">
+      <form onSubmit={onSubmit} className="form" autoComplete="settings">
+        <div className="form__fields">
           {fields.map((field) => {
             const label = resolveLabel(field.label, t);
             const key = field.key;
@@ -298,10 +292,10 @@ function SettingsFieldsTabInner({
             }
 
             return (
-              <div key={key} className="flex flex-col gap-1.5">
+              <div key={key} className="form-field">
                 {fieldElement}
                 {field.help ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="form-field__help">
                     {resolveLabel(field.help, t)}
                   </p>
                 ) : null}
@@ -310,7 +304,7 @@ function SettingsFieldsTabInner({
           })}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="form__actions">
           <Button type="submit" disabled={isSubmitting}>
             {t("settings:submit")}
           </Button>
@@ -330,7 +324,7 @@ export function SettingsFieldsTab({
   return (
     <Suspense
       fallback={
-        <div className="flex flex-col gap-4">
+        <div className="empty-state__skeleton">
           <Skeleton className="h-4 w-40" />
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />

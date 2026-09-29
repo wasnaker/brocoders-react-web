@@ -15,6 +15,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -82,6 +84,8 @@ function NavUser() {
   const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
+  const isAdmin =
+    !!user?.role && [RoleEnum.ADMIN].includes(Number(user.role.id));
 
   return (
     <SidebarMenu>
@@ -109,17 +113,33 @@ function NavUser() {
               <ChevronsUpDown className="ms-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            side="top"
-            align="start"
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
-          >
+          <DropdownMenuContent side="top" align="end" className="w-56">
+            <DropdownMenuLabel className="user-menu">
+              <Avatar className="size-8 shrink-0 rounded-lg">
+                <AvatarImage src={user.photo?.path} alt={fullName} />
+                <AvatarFallback className="rounded-lg">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="user-menu__identity">
+                <span className="user-menu__name">{fullName}</span>
+                <span className="user-menu__email">{user.email}</span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="mb-1" />
             <DropdownMenuItem asChild data-testid="user-profile">
               <Link href="/profile">{t("common:navigation.profile")}</Link>
             </DropdownMenuItem>
+            {isAdmin && (
+              <DropdownMenuItem asChild data-testid="settings-menu-item">
+                <Link href="/settings">{t("common:navigation.settings")}</Link>
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               data-testid="logout-menu-item"
               onClick={() => logOut()}
+              className="user-menu__item-destructive"
             >
               {t("common:navigation.logout")}
             </DropdownMenuItem>

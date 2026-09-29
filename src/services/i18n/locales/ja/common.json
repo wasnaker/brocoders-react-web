@@ -9,6 +9,7 @@
     "profile": "プロフィール",
     "users": "ユーザー",
     "permissions": "権限",
+    "settings": "設定",
     "logout": "サインアウト"
   },
   "formInputs": {

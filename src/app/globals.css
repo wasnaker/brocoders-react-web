@@ -200,6 +200,97 @@
   }
 }
 
+@layer components {
+  /* Page container */
+  .page-content {
+    @apply flex w-full flex-col;
+  }
+  .page-content--narrow {
+    @apply mx-auto w-full max-w-3xl px-4 xl:max-w-5xl 2xl:max-w-screen-xl;
+  }
+
+  /* Page header */
+  .page-header {
+    @apply flex flex-col;
+  }
+  .page-title {
+    @apply text-3xl font-semibold;
+  }
+  .page-subtitle {
+    @apply text-xl text-muted-foreground;
+  }
+
+  /* Empty / loading state */
+  .empty-state {
+    @apply py-8 text-center text-muted-foreground;
+  }
+  .empty-state__skeleton {
+    @apply flex flex-col gap-4;
+  }
+
+  /* Identity block — profile header */
+  .identity-block {
+    @apply flex gap-6 pt-6 pb-4;
+  }
+  .identity-block__media {
+    @apply shrink-0;
+  }
+  .identity-block__details {
+    @apply min-w-0 flex-grow;
+  }
+
+  /* Vertical tabs shell — profile, settings */
+  .tabs-shell {
+    @apply flex w-full gap-6;
+  }
+  .tabs-shell__list {
+    @apply h-fit w-full max-w-48 flex-col justify-start rounded-none border-r border-border bg-transparent p-0;
+  }
+  .tabs-shell__trigger {
+    @apply w-full justify-start rounded-none border-r-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground;
+  }
+  .tabs-shell__content {
+    @apply min-w-0 flex-1;
+  }
+
+  /* User dropdown menu — sidebar footer */
+  .user-menu {
+    @apply flex items-center gap-3 py-2;
+  }
+  .user-menu__identity {
+    @apply grid min-w-0 flex-1 text-start leading-tight;
+  }
+  .user-menu__name {
+    @apply truncate font-medium;
+  }
+  .user-menu__email {
+    @apply truncate text-xs font-normal text-muted-foreground;
+  }
+  .user-menu__item-destructive {
+    @apply text-destructive focus:bg-destructive/10 focus:text-destructive;
+  }
+
+  /* Form */
+  .form {
+    @apply flex w-full max-w-2xl flex-col gap-5;
+  }
+  .form__fields {
+    @apply flex flex-col gap-4;
+  }
+  .form__actions {
+    @apply flex items-center gap-2;
+  }
+  .form__error {
+    @apply text-sm text-destructive;
+  }
+  .form-field {
+    @apply flex flex-col gap-1.5;
+  }
+  .form-field__help {
+    @apply text-sm text-muted-foreground;
+  }
+}
+
 @theme {
   --animate-progress-bar: progress-bar 1.5s ease-in-out infinite;
 

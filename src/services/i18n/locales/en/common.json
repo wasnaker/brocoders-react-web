@@ -9,6 +9,7 @@
     "profile": "Profile",
     "users": "Users",
     "permissions": "Permissions",
+    "settings": "Settings",
     "logout": "Logout"
   },
   "formInputs": {

@@ -9,6 +9,7 @@
     "profile": "프로필",
     "users": "사용자",
     "permissions": "권한",
+    "settings": "설정",
     "logout": "로그아웃"
   },
   "formInputs": {
