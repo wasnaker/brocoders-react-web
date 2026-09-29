@@ -53,13 +53,16 @@ Aturan:
 
 ## Dashboard Widgets
 
-Pola dashboard (Phase 0 — fondasi, belum ada UI yang dirender):
+Pola dashboard (grid area + drag-and-drop reorder):
 
 - `src/core/dashboard/resolve-layout.ts` — **fungsi murni** (tanpa React, tanpa fetch, tanpa import project) yang merge layout tersimpan dengan katalog widget → urutan render per area. Enam kasus wajib tertangani: layout null, reorder, pindah area, fallback widget tak ditempatkan, skip ghost id, dan layout rusak → default. Self-check 38 assertion di dalam file yang sama, dijalankan `npm run test:merge` (tsc → node, tanpa unit test runner).
 - `src/core/dashboard/areas.ts` — `DASHBOARD_AREAS` (id + i18n label + `span` + position) dan peta `AREA_SPAN_CLASS`. Span adalah union type + peta class eksplisit — JANGAN `col-span-${span}` karena Tailwind JIT tidak membaca string dinamis.
-- `src/core/modules/resolve-widgets.ts` — `resolveDashboardWidgets()` memfilter widget per permission (reuse `can()`) dan mengurutkan `position → moduleAlias → id`.
 - `src/core/dashboard/use-dashboard-state.ts` — state dashboard per user. **Fase 0: localStorage** (tabel `setting` di API tidak punya `userId` dan endpoint-nya admin-only). Query key WAJIB memuat userId — `AuthProvider` memang `queryClient.clear()` saat logout, tapi key per-user adalah pengaman kedua terhadap layout user lain mewarisi di akun yang sama.
 - Widget didaftarkan di `src/modules/*/module.manifest.ts` via `dashboardWidgets[]`. Manifest baru harus ditambah satu baris di `src/modules/core/manifests/index.ts` supaya ikut ter-registry.
+- **Drag-and-drop** (`@dnd-kit/core` v6): `DashboardGrid` bungkus `DndContext`, tiap area punya `DashboardAreaColumn` yang `useDroppable` (id berawalan `column::`), tiap widget punya `WidgetCard` yang `useSortable`. `useSortable` **tidak** menerima `group`/`index` di v6 — itu datang dari `<SortableContext id={area} items={ids}>` induk.
+- **Collision detection custom** (`dashboardCollision` di DashboardGrid). `closestCorners` bawaan **tidak bisa dipakai** untuk grid: ia membandingkan sudut kartu dengan sudut droppable, sehingga area kosong yang lebar selalu kalah dari widget yang lebih dekat sudutnya — drop ke kolom kosong jadi tidak pernah terjadi. Pakai `pointerWithin` → prioritaskan target widget, fallback ke kolom.
+- Drag hanya boleh mulai dari grip (`setActivatorNodeRef`), bukan dari kartu penuh, supaya tombol/link di dalam widget tetap bisa diklik.
+- **Aksesibilitas**: setiap widget punya menu "Pindah ke atas/bawah" (`canMoveUp`/`canMoveDown` meng-disable item di batas) untuk pengguna keyboard, dan setiap perpindahan diumumkan lewat `aria-live="polite"` di `dashboard-announcer`. `PointerSensor` tidak memberi umpan balik ke keyboard — tanpa pengumuman eksplisit, pengguna screen reader kehilangan widget tanpa diberi tahu.
 - Label widget = `I18nLabel` → butuh key di `dashboard.json` **lima locale** (en/id/ko/ja/zh). Jangan hardcode string Indonesia di dalam `.tsx`.
 - Komponen `Link` sudah menambah prefiks locale sendiri — path widget **tidak boleh** diawali `/en`.
 

@@ -27,5 +27,10 @@
   "widget_not_implemented": "위젯 \"{{module}}\"이(가) 등록되었지만 아직 컴포넌트가 없습니다 — 레지스트리에 추가하세요.",
   "widget_drag": "{{name}} 드래그",
   "widget_hide": "{{name}} 숨기기",
-  "widget_show": "{{name}} 표시"
+  "widget_show": "{{name}} 표시",
+  "widget_actions": "{{name}} 작업",
+  "widget_move_up": "위로 이동",
+  "widget_move_down": "아래로 이동",
+  "widget_moved": "{{name}}{{moved}} — {{area}}의 {{total}}개 중 {{position}}번째로 이동했습니다.",
+  "widget_moved_area": " 및 영역을"
 }

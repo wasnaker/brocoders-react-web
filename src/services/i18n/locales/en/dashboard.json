@@ -27,5 +27,10 @@
   "widget_not_implemented": "Widget \"{{module}}\" is registered but has no component yet — add one to the widget registry.",
   "widget_drag": "Drag {{name}}",
   "widget_hide": "Hide {{name}}",
-  "widget_show": "Show {{name}}"
+  "widget_show": "Show {{name}}",
+  "widget_actions": "Actions for {{name}}",
+  "widget_move_up": "Move up",
+  "widget_move_down": "Move down",
+  "widget_moved": "{{name}} moved{{moved}} to position {{position}} of {{total}} in {{area}}.",
+  "widget_moved_area": " and area"
 }

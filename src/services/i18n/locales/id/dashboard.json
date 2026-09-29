@@ -27,5 +27,10 @@
   "widget_not_implemented": "Widget \"{{module}}\" terdaftar tapi belum punya komponen — tambahkan ke registry widget.",
   "widget_drag": "Seret {{name}}",
   "widget_hide": "Sembunyikan {{name}}",
-  "widget_show": "Tampilkan {{name}}"
+  "widget_show": "Tampilkan {{name}}",
+  "widget_actions": "Aksi untuk {{name}}",
+  "widget_move_up": "Pindahkan ke atas",
+  "widget_move_down": "Pindahkan ke bawah",
+  "widget_moved": "{{name}} dipindahkan{{moved}} ke posisi {{position}} dari {{total}} di {{area}}.",
+  "widget_moved_area": " dan area"
 }

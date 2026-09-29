@@ -27,5 +27,10 @@
   "widget_not_implemented": "部件“{{module}}”已注册但还没有组件 — 请添加到部件注册表。",
   "widget_drag": "拖动{{name}}",
   "widget_hide": "隐藏{{name}}",
-  "widget_show": "显示{{name}}"
+  "widget_show": "显示{{name}}",
+  "widget_actions": "{{name}} 的操作",
+  "widget_move_up": "上移",
+  "widget_move_down": "下移",
+  "widget_moved": "{{name}}{{moved}}到 {{area}} 的第 {{position}} 个位置，共 {{total}} 个。",
+  "widget_moved_area": " 和区域 "
 }
