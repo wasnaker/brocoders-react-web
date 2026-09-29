@@ -142,6 +142,16 @@
   --sidebar-accent-foreground: var(--neutral-900);
   --sidebar-border: var(--neutral-200);
   --sidebar-ring: oklch(0.46 0.2 275);
+
+  /* Elevation scale. The app had exactly one shadow value everywhere, which
+     made every surface read as the same flat plane. These three steps give
+     a static / floating / overlay hierarchy instead. Shadows are neutral
+     with no hue so they never tint the surface they sit on. */
+  --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --elevation-2:
+    0 1px 2px 0 rgb(0 0 0 / 0.05), 0 4px 8px -2px rgb(0 0 0 / 0.06);
+  --elevation-3:
+    0 2px 4px -1px rgb(0 0 0 / 0.05), 0 12px 20px -4px rgb(0 0 0 / 0.1);
 }
 
 .dark {
@@ -188,6 +198,16 @@
   --sidebar-accent-foreground: var(--neutral-50);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.72 0.16 275);
+
+  /* Elevation scale. The app had exactly one shadow value everywhere, which
+     made every surface read as the same flat plane. These three steps give
+     a static / floating / overlay hierarchy instead. Shadows are neutral
+     with no hue so they never tint the surface they sit on. */
+  --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --elevation-2:
+    0 1px 2px 0 rgb(0 0 0 / 0.05), 0 4px 8px -2px rgb(0 0 0 / 0.06);
+  --elevation-3:
+    0 2px 4px -1px rgb(0 0 0 / 0.05), 0 12px 20px -4px rgb(0 0 0 / 0.1);
 }
 
 @layer base {
@@ -207,6 +227,28 @@
   }
   .page-content--narrow {
     @apply mx-auto w-full max-w-3xl px-4 xl:max-w-5xl 2xl:max-w-screen-xl;
+  }
+
+  /* App bar */
+  .app-bar {
+    @apply flex h-[var(--header-height,4rem)] items-center gap-2 px-4;
+  }
+
+  .app-bar__brand {
+    @apply me-auto min-w-0 truncate font-mono text-lg font-bold;
+    /* Tracking stepping down on narrow screens. At 0.3em the wordmark
+       measured 172px and pushed the row 22px past the 390px viewport. */
+    @apply tracking-[0.15em] sm:tracking-[0.3em];
+  }
+
+  .app-bar__actions {
+    @apply flex shrink-0 items-center gap-2;
+  }
+
+  /* Language selector trigger. Was a hardcoded min-w-[120px] on the
+     SelectTrigger, which held the app bar row open past the viewport. */
+  .language-switcher {
+    @apply min-w-0 sm:min-w-[7.5rem];
   }
 
   /* Page header */

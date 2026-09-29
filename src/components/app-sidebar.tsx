@@ -4,6 +4,12 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
+import House from "lucide-react/dist/esm/icons/house";
+import Users from "lucide-react/dist/esm/icons/users";
+import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
+import Settings from "lucide-react/dist/esm/icons/settings";
+import CircleUser from "lucide-react/dist/esm/icons/circle-user";
+import LogOut from "lucide-react/dist/esm/icons/log-out";
 import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
@@ -128,11 +134,17 @@ function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="mb-1" />
             <DropdownMenuItem asChild data-testid="user-profile">
-              <Link href="/profile">{t("common:navigation.profile")}</Link>
+              <Link href="/profile">
+                <CircleUser />
+                {t("common:navigation.profile")}
+              </Link>
             </DropdownMenuItem>
             {isAdmin && (
               <DropdownMenuItem asChild data-testid="settings-menu-item">
-                <Link href="/settings">{t("common:navigation.settings")}</Link>
+                <Link href="/settings">
+                  <Settings />
+                  {t("common:navigation.settings")}
+                </Link>
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -141,6 +153,7 @@ function NavUser() {
               onClick={() => logOut()}
               className="user-menu__item-destructive"
             >
+              <LogOut />
               {t("common:navigation.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -171,7 +184,10 @@ function AppSidebar() {
                     asChild
                     isActive={pathname.split("/").filter(Boolean).length <= 1}
                   >
-                    <Link href="/">{t("common:navigation.home")}</Link>
+                    <Link href="/">
+                      <House />
+                      {t("common:navigation.home")}
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
 
@@ -183,6 +199,7 @@ function AppSidebar() {
                         isActive={pathname.includes("/admin-panel/users")}
                       >
                         <Link href="/admin-panel/users">
+                          <Users />
                           {t("common:navigation.users")}
                         </Link>
                       </SidebarMenuButton>
@@ -193,6 +210,7 @@ function AppSidebar() {
                         isActive={pathname.includes("/admin-panel/permissions")}
                       >
                         <Link href="/admin-panel/permissions">
+                          <ShieldCheck />
                           {t("common:navigation.permissions")}
                         </Link>
                       </SidebarMenuButton>

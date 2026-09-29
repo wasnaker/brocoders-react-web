@@ -1,3 +1,7 @@
+import Languages from "lucide-react/dist/esm/icons/languages";
+import Palette from "lucide-react/dist/esm/icons/palette";
+import SlidersHorizontal from "lucide-react/dist/esm/icons/sliders-horizontal";
+import UsersRound from "lucide-react/dist/esm/icons/users-round";
 import { defineModuleManifest } from "@/core/modules/types";
 import { RolesTab } from "./tabs/RolesTab";
 
@@ -8,6 +12,7 @@ export default defineModuleManifest({
       slug: "general",
       label: { namespace: "settings", key: "tabs.general" },
       position: 10,
+      icon: SlidersHorizontal,
       content: {
         kind: "fields",
         fields: [
@@ -40,6 +45,7 @@ export default defineModuleManifest({
       slug: "appearance",
       label: { namespace: "settings", key: "tabs.appearance" },
       position: 20,
+      icon: Palette,
       content: {
         kind: "fields",
         fields: [
@@ -61,6 +67,7 @@ export default defineModuleManifest({
       slug: "language",
       label: { namespace: "settings", key: "tabs.language" },
       position: 30,
+      icon: Languages,
       content: {
         kind: "fields",
         fields: [
@@ -87,6 +94,7 @@ export default defineModuleManifest({
       slug: "roles",
       label: { namespace: "settings", key: "tabs.roles" },
       position: 90,
+      icon: UsersRound,
       content: { kind: "component", component: RolesTab },
     },
   ],

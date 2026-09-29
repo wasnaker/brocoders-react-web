@@ -10,21 +10,18 @@ function ResponsiveAppBar() {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background text-foreground">
-      <div className="flex h-[var(--header-height,4rem)] items-center gap-2 px-4">
+      <div className="app-bar">
         {/* Sidebar trigger — visible on mobile and desktop. On desktop this is
             the only pointer-accessible way to expand a collapsed sidebar;
             without it, collapsing is a one-way trap. */}
         <SidebarTrigger aria-label="toggle navigation menu" />
 
         {/* Brand */}
-        <Link
-          href="/"
-          className="me-auto font-mono text-lg font-bold tracking-[.3rem]"
-        >
+        <Link href="/" className="app-bar__brand">
           {t("common:app-name")}
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="app-bar__actions">
           <ThemeSwitchButton />
           <LanguageSwitcher />
         </div>

@@ -51,15 +51,19 @@ export function SettingsShell({ user }: { user: User | null | undefined }) {
         className="tabs-shell"
       >
         <TabsList variant="line" className="tabs-shell__list">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.slug}
-              value={tab.slug}
-              className="tabs-shell__trigger"
-            >
-              {resolveLabel(tab.label, t)}
-            </TabsTrigger>
-          ))}
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <TabsTrigger
+                key={tab.slug}
+                value={tab.slug}
+                className="tabs-shell__trigger"
+              >
+                {Icon ? <Icon /> : null}
+                {resolveLabel(tab.label, t)}
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
         {tabs.map((tab) => (
           <TabsContent

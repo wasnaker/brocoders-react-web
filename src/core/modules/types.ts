@@ -32,7 +32,9 @@ export interface TabDef {
   slug: string;
   label: I18nLabel;
   position: number;
-  icon?: string;
+  /** Lucide icon component for the tab trigger. Omit for tabs that
+      should render text-only. */
+  icon?: ComponentType<{ className?: string }>;
   permission?: string;
   content: TabContent;
 }
