@@ -11,11 +11,10 @@ function ResponsiveAppBar() {
   return (
     <header className="sticky top-0 z-20 border-b bg-background text-foreground">
       <div className="flex h-[var(--header-height,4rem)] items-center gap-2 px-4">
-        {/* Mobile sidebar trigger */}
-        <SidebarTrigger
-          aria-label="open navigation menu"
-          className="md:hidden"
-        />
+        {/* Sidebar trigger — visible on mobile and desktop. On desktop this is
+            the only pointer-accessible way to expand a collapsed sidebar;
+            without it, collapsing is a one-way trap. */}
+        <SidebarTrigger aria-label="toggle navigation menu" />
 
         {/* Brand */}
         <Link

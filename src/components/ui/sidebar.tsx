@@ -105,6 +105,18 @@ function SidebarProvider({
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
+  // Restore the persisted state after mount. Reading the cookie during render
+  // would break SSR, so this runs post-hydration and briefly shows the
+  // default state first.
+  useEffect(() => {
+    if (setOpenProp) return;
+
+    const stored = Cookies.get(SIDEBAR_COOKIE_NAME);
+    if (stored !== undefined) {
+      _setOpen(stored === "true");
+    }
+  }, [setOpenProp]);
+
   // Adds a keyboard shortcut to toggle the sidebar.
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

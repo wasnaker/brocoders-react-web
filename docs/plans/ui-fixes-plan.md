@@ -1,6 +1,6 @@
 # Plan: Perbaikan UI — Dropdown Profil, Menu Settings, dan Styling
 
-Status     : SEMUA SELESAI · §1, §2, §4, §5(C) selesai · SUDAH DEPLOY · terverifikasi 20/20 check
+Status     : SEMUA SELESAI · terverifikasi 36/36 check · sudah di-deploy
 Dibuat     : 2026-09-29
 Diubah     : 2026-09-29 (implementasi §1/§2/§4/§5 + deploy + koreksi §6 + revisi lebar container)
 Repo       : /www/wwwroot/brocoders/brocoders-react-web
@@ -267,11 +267,14 @@ bersih, `npm run build` exit 0, `npx @tailwindcss/cli` bisa mengompilasi
 - [x] cek role admin (item Settings muncul, klik -> /en/settings)
 - [x] cek role non-admin (item Settings tidak muncul, guard akses langsung
       menolak dan redirect ke /en)
+- [x] bug cookie `sidebar_state` diperbaiki
+- [x] tombol collapse/expand sidebar di desktop diperbaiki
 
 ### Hasil verifikasi visual (Playwright, 2026-09-29)
 
 Dijalankan terhadap app yang sudah ter-deploy via `http://brocoders-react-web.lan`.
-10/10 pass untuk akun admin, 10/10 pass untuk akun non-admin.
+13/13 pass untuk akun admin, 13/13 pass untuk akun non-admin, plus 10/10
+check khusus bug sidebar (lihat bagian "Bug sidebar" di bawah).
 
 | Skenario | Trigger width | Dropdown width | Header | Item |
 |---|---|---|---|---|
@@ -289,22 +292,55 @@ Peran:
 | `admin@example.com` (role 1) | muncul | terbuka |
 | `john.doe@example.com` (role 2) | tidak muncul | ditolak, redirect ke `/en` |
 
-### Temuan di luar scope (BUG LAMA, belum diperbaiki)
+### Bug sidebar — ditemukan, diperbaiki, terverifikasi
+
+Kedua bug di bawah ditemukan saat verifikasi visual. Keduanya **sudah
+diperbaiki** pada 2026-09-29 (setelah commit `d2c9838`).
 
 1. **Cookie `sidebar_state` ditulis tapi tidak pernah dibaca.**
-   `src/components/ui/sidebar.tsx:84` — `useState(defaultOpen)` tanpa
+   `src/components/ui/sidebar.tsx` — `useState(defaultOpen)` tanpa
    inisialisasi dari `Cookies.get(SIDEBAR_COOKIE_NAME)`. State sidebar
    selalu balik ke expanded setelah reload, berapa pun cookie-nya.
-2. **Sidebar tidak bisa di-collapse di desktop.** `SidebarTrigger` di
-   `src/components/app-bar.tsx:15` diberi `md:hidden`, dan `SidebarRail`
-   tidak dirender di versi sidebar ini. Artinya tidak ada UI untuk
-   collapse sidebar di desktop. Konsekuensi: verifikasi "dua state
-   sidebar" di desktop mustahil dilakukan — yang diuji di atas adalah
-   kondisi mobile (sidebar di dalam Sheet), satu-satunya collapsed state
-   yang bisa dicapai user.
-3. Karena butir 1–2, item settings `isActive` tidak mungkin aktif pada
-   pathname `/settings` (menu `/settings` hanya ada di dropdown, bukan
-   di sidebar utama) — ini bukan masalah.
+   *Perbaikan:* `useEffect` yang membaca cookie setelah mount. Tidak
+   dilakukan di server (`cookies()` dari `next/headers`) karena itu akan
+   mengubah seluruh route menjadi dynamic. Trade-off: sidebar yang
+   collapsed akan tampak expanded sesaat sebelum hydration selesai.
+
+2. **Tidak ada tombol mouse untuk collapse/expand sidebar di desktop.**
+   `SidebarTrigger` di `app-bar.tsx` diberi `md:hidden` dan `SidebarRail`
+   tidak dirender di versi sidebar ini.
+   *Perbaikan:* hapus `md:hidden` sehingga tombol selalu terlihat, dengan
+   `aria-label="toggle navigation menu"`.
+
+   **Koreksi atas klaim sebelumnya:** dokumen ini sempat menyatakan
+   "tidak ada cara collapse sidebar di desktop sama sekali". Itu **salah** —
+   shortcut `Ctrl/Cmd+B` sudah ada dan berfungsi. Yang benar: tidak ada
+   kontrol *pointer* yang terlihat. Klaim lama juga sempat dipakai sebagai
+   alasan bahwa verifikasi dua state sidebar mustahil; setelah cookie
+   diperbaiki, verifikasi desktop jadi mungkin dan hasilnya di bawah.
+
+   **Dampaknya lebih serius dari yang sempat saya kira.** Diperiksa dengan
+   Playwright: saat sidebar collapsed, trigger profil berada di `x=-248px`
+   (di luar viewport 1440px) dan `click()` pada trigger **timeout** dengan
+   pesan "element is outside of the viewport". Artinya user yang
+   menjalankan `Ctrl+B` sekali akan kehilangan akses mouse ke profil,
+   logout, dan settings — hanya bisa kembali dengan `Ctrl+B` lagi atau
+   tombol yang sekarang sudah ditampilkan. Itu sebabnya butir 2
+   diperbaiki, bukan dibiarkan.
+
+Hasil verifikasi setelah perbaikan (10/10 check, `verify-sidebar.mjs`):
+
+| Skenario | Hasil |
+|---|---|
+| Tombol toggle terlihat di desktop | ya, `aria-label="toggle navigation menu"` |
+| Klik tombol -> collapsed | `state=collapsed`, `w=0`, cookie `false` |
+| Reload setelah collapsed | tetap collapsed (cookie akhirnya dibaca) |
+| Klik tombol lagi -> expanded | `state=expanded`, `w=256` |
+| Dropdown profil setelah expand | 224px, di dalam viewport |
+| `Ctrl+B` -> reload -> tombol | collapsed bertahan, lalu expand via mouse |
+
+Regresi dicek ulang: `verify-ui.mjs` 13/13 pass untuk admin **dan**
+non-admin setelah kedua fix diterapkan.
 
 ### Lebar container `page-content--narrow` (revisi 2026-09-29)
 
