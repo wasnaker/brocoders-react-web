@@ -436,6 +436,57 @@
   .dashboard-toolbar__action--active {
     @apply border-primary/40 bg-primary/10 text-primary;
   }
+
+  /* System banner — melebar penuh, sibling app bar di dalam SidebarProvider */
+  .system-banner {
+    @apply w-full shrink-0;
+  }
+  .system-banner__stack {
+    @apply flex w-full flex-col;
+  }
+  .system-banner__item {
+    @apply flex items-center justify-between gap-3 border-b px-4 py-2 text-sm;
+  }
+  .system-banner__content {
+    @apply flex min-w-0 flex-1 items-center gap-2;
+  }
+  .system-banner__title {
+    @apply font-medium;
+  }
+  .system-banner__text {
+    @apply min-w-0 truncate;
+  }
+  .system-banner__detail {
+    @apply font-mono text-xs opacity-70;
+  }
+  .system-banner__actions {
+    @apply flex shrink-0 items-center gap-2;
+  }
+  .system-banner__icon {
+    @apply size-4 shrink-0;
+  }
+  .system-banner__close {
+    @apply rounded p-0.5 text-current opacity-60 transition-opacity hover:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50;
+  }
+  .system-banner__action {
+    @apply rounded-md border border-current/20 px-2 py-0.5 text-xs font-medium transition-colors hover:bg-current/10 focus-visible:ring-[3px] focus-visible:ring-ring/50;
+  }
+  .system-banner__item--info {
+    @apply bg-info/10 text-foreground;
+  }
+  .system-banner__item--success {
+    @apply bg-success/10 text-foreground;
+  }
+  .system-banner__item--warning {
+    @apply bg-warning/15 text-foreground;
+  }
+  .system-banner__item--error {
+    @apply bg-destructive/10 text-foreground;
+  }
+  /* Banner build dipakai admin/developer — aksen netral, bukan severity. */
+  .system-banner__item--build {
+    @apply bg-accent text-accent-foreground;
+  }
 }
 
 @theme {

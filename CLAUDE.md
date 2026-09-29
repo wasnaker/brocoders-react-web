@@ -80,3 +80,46 @@ Added in `src/app/globals.css` (identik di `:root` dan `.dark`):
 | `--elevation-3` | `0 2px 4px -1px rgb(0 0 0 / 0.05), 0 12px 20px -4px rgb(0 0 0 / 0.1)` | Overlay (dialog, alert-dialog, sheet) |
 
 Shadow **tidak** dinaikkan di dark mode — nilai identik. Bayangan netral, tanpa hue, agar tidak menimbulkan warna pada permukaan.
+
+## System Banner
+
+Banner pesan global (build baru, broadcast admin, status koneksi). Docs lengkap:
+`docs/plans/system-banner-plan.md`.
+
+- **Lokasi render: sibling `<ResponsiveAppBar />`, DI DALAM `SidebarProvider`**
+  (`src/app/[language]/layout.tsx`). Provider TIDAK boleh membungkus
+  `SidebarProvider` — kalau begitu banner dirender setelah seluruh app shell
+  dan jatuh di paling bawah layar. Lebar **penuh selebar viewport** (opsi A),
+  termasuk di atas sidebar.
+- **Jangan taruh di dalam `page-content--narrow`.** Class itu hanya dipakai 3
+  halaman (`dashboard`, `ProfileShell`, `SettingsShell`) — banner tidak akan
+  muncul di `sign-in`, `privacy-policy`, atau `admin-panel/users`. Selain itu,
+  container itu `max-w-3xl` sehingga banner jadi strip sempit ter-center.
+- `src/services/system-banner/banner-types.ts` memisahkan `kind` (sumber) dari
+  `severity` (tingkat). Warna & ikon dari `severity`; perilaku dari `kind`.
+  crm-web memakai satu `type` untuk dua hal sehingga `admin_broadcast` perlu
+  warna sendiri.
+- **ID banner WAJIB deterministik** (`banner-ids.ts`): `build:<buildId>`,
+  `broadcast:<version>`, `connection:up|down`, `action:<a>:<entity>:<id>`.
+  ID acak membuat dismissal tidak pernah bekerja — dismiss -> id disimpan ->
+  reload -> `add()` lagi dengan id BARU -> banner muncul lagi.
+- `banner-events.ts` meniru `auth-events.ts` (`Set<listener>` +
+  `BroadcastChannel`). **Dismissal juga harus disiarkan** lewat
+  `emitBannerDismissed()`, kalau tidak tab B tetap menampilkan banner yang
+  sudah ditutup di tab A meski localStorage-nya shared.
+- Dismissal (`banner-dismissal.ts`) = `Record<id, epochMs>` dengan TTL 30 hari
+  + prune saat baca DAN tulis, dibungkus `try/catch` (mode privat Safari,
+  kuota penuh).
+- **Konten broadcast = `raw: true`.** Judul/pesan broadcast adalah teks admin
+  apa adanya, bukan key i18n. Tanpa penanda itu, teks admin yang kebetulan
+  sama dengan nama key (mis. `actions.dismiss`) akan diganti terjemahan.
+- `action.onClick` disimpan di `Map` ref provider, bukan di state — supaya
+  tidak memicu re-render dan tidak ikut ter-serialize.
+- Dismissal **dibaca setelah mount**, bukan saat render, supaya server tidak
+  merender banner yang sudah di-dismiss lalu hydration melompat.
+- `NEXT_PUBLIC_BUILD_VERSION` harus di-set sebelum `npm run build`. Kalau
+  kosong, `useBuildVersion` sengaja diam — lebih baik tidak menampilkan
+  apa-apa daripada banner yang salah/tidak bisa hilang.
+- `pushEntityEvent()` / `buildBannerIdForEntity()` ada sebagai API publik
+  tetapi **TIDAK di-wire** ke halaman atau template hygen mana pun. Sonner
+  masih memegang pesan CRUD.

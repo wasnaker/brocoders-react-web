@@ -1,5 +1,6 @@
 import ResponsiveAppBar from "@/components/app-bar";
 import AppSidebar from "@/components/app-sidebar";
+import { SystemBannerProvider } from "@/components/system-banner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AuthProvider from "@/services/auth/auth-provider";
 import "../globals.css";
@@ -74,6 +75,15 @@ export default async function RootLayout(props: {
                         <LeavePageProvider>
                           <SidebarProvider className="flex-col [--header-height:4rem]">
                             <ResponsiveAppBar />
+                            {/* System banner — sibling app bar, DI DALAM
+                                SidebarProvider (flex-col) supaya turun satu
+                                baris di bawah app bar dan melebar penuh.
+                                Provider TIDAK membungkus SidebarProvider:
+                                kalau begitu banner dirender setelah seluruh
+                                app shell dan jatuh di paling bawah layar. */}
+                            <div className="system-banner">
+                              <SystemBannerProvider />
+                            </div>
                             <div className="flex flex-1">
                               <AppSidebar />
                               <SidebarInset>{children}</SidebarInset>

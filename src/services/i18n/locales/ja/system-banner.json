@@ -1,0 +1,16 @@
+{
+  "build": {
+    "available": "新しいバージョンがあります。",
+    "reload": "再読み込み"
+  },
+  "connection": {
+    "lost": "接続が切断されました。自動的に再試行します。",
+    "restored": "接続が復旧しました。"
+  },
+  "broadcast": {
+    "label": "お知らせ"
+  },
+  "actions": {
+    "dismiss": "閉じる"
+  }
+}

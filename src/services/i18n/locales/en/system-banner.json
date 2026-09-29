@@ -1,0 +1,16 @@
+{
+  "build": {
+    "available": "A new version is available.",
+    "reload": "Reload"
+  },
+  "connection": {
+    "lost": "Connection lost. Retrying automatically.",
+    "restored": "Connection restored."
+  },
+  "broadcast": {
+    "label": "Announcement"
+  },
+  "actions": {
+    "dismiss": "Dismiss"
+  }
+}

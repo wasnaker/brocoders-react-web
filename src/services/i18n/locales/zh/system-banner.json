@@ -1,0 +1,16 @@
+{
+  "build": {
+    "available": "有新版本可用。",
+    "reload": "重新加载"
+  },
+  "connection": {
+    "lost": "连接已断开，正在自动重试。",
+    "restored": "连接已恢复。"
+  },
+  "broadcast": {
+    "label": "公告"
+  },
+  "actions": {
+    "dismiss": "关闭"
+  }
+}

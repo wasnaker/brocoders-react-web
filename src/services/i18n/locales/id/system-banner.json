@@ -1,0 +1,16 @@
+{
+  "build": {
+    "available": "Versi baru tersedia.",
+    "reload": "Muat Ulang"
+  },
+  "connection": {
+    "lost": "Koneksi terputus. Mencoba menyambung ulang secara otomatis.",
+    "restored": "Koneksi kembali."
+  },
+  "broadcast": {
+    "label": "Pengumuman"
+  },
+  "actions": {
+    "dismiss": "Tutup"
+  }
+}
