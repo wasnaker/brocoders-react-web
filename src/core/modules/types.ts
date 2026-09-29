@@ -39,10 +39,13 @@ export interface TabDef {
   content: TabContent;
 }
 
+import type { DashboardWidgetDef } from "@/core/dashboard/areas";
+
 export interface ModuleManifest {
   alias: string;
   profileTabs?: TabDef[];
   settingsTabs?: TabDef[];
+  dashboardWidgets?: DashboardWidgetDef[];
 }
 
 export function defineModuleManifest(m: ModuleManifest): ModuleManifest {

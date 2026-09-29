@@ -1,0 +1,18 @@
+{
+  "title": "Dasbor",
+  "description": "Ringkasan aktivitas dan akses cepat.",
+  "area_summary": "Ringkasan",
+  "area_main": "Aktivitas",
+  "area_side": "Detail",
+  "widget_recent_users": "Pengguna terbaru",
+  "widget_permissions": "Izin terbaru",
+  "widget_quick_links": "Akses cepat",
+  "widget_quick_links_users": "Kelola pengguna",
+  "widget_quick_links_users_desc": "Daftar dan ubah pengguna",
+  "widget_quick_links_permissions": "Kelola izin",
+  "widget_quick_links_permissions_desc": "Daftar dan ubah izin",
+  "widget_quick_links_profile": "Profil saya",
+  "widget_quick_links_profile_desc": "Lihat profil",
+  "widget_quick_links_settings": "Pengaturan",
+  "widget_quick_links_settings_desc": "Konfigurasi aplikasi"
+}

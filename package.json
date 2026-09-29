@@ -19,6 +19,7 @@
     "lint:fix": "eslint . --fix",
     "generate:field": "hygen generate field",
     "postgenerate:field": "npm run lint -- --fix",
+    "test:merge": "bash scripts/test-dashboard-merge.sh",
     "test:generators:static": "bash playwright-tests/generators/run-static.sh",
     "test:e2e:generators:crud": "bash playwright-tests/generators/run-crud.sh",
     "sb": "storybook dev -p 6006",

@@ -1,0 +1,18 @@
+{
+  "title": "Dashboard",
+  "description": "Ringkasan aktivitas dan akses cepat.",
+  "area_summary": "Ringkasan",
+  "area_main": "Aktivitas",
+  "area_side": "Detail",
+  "widget_recent_users": "User terbaru",
+  "widget_permissions": "Permission terbaru",
+  "widget_quick_links": "Akses cepat",
+  "widget_quick_links_users": "Kelola user",
+  "widget_quick_links_users_desc": "Daftar dan edit user",
+  "widget_quick_links_permissions": "Kelola permission",
+  "widget_quick_links_permissions_desc": "Daftar dan edit permission",
+  "widget_quick_links_profile": "Profil saya",
+  "widget_quick_links_profile_desc": "Lihat profil",
+  "widget_quick_links_settings": "Pengaturan",
+  "widget_quick_links_settings_desc": "Konfigurasi aplikasi"
+}

@@ -51,6 +51,18 @@ Aturan:
 3. Kalau class semantic yang dibutuhkan belum ada, TAMBAHKAN di `@layer components` — jangan hardcode utility di komponen.
 4. Primitif shadcn di `src/components/ui/` **tidak** dimigrasikan. Itu design system, bukan layout aplikasi.
 
+## Dashboard Widgets
+
+Pola dashboard (Phase 0 — fondasi, belum ada UI yang dirender):
+
+- `src/core/dashboard/resolve-layout.ts` — **fungsi murni** (tanpa React, tanpa fetch, tanpa import project) yang merge layout tersimpan dengan katalog widget → urutan render per area. Enam kasus wajib tertangani: layout null, reorder, pindah area, fallback widget tak ditempatkan, skip ghost id, dan layout rusak → default. Self-check 38 assertion di dalam file yang sama, dijalankan `npm run test:merge` (tsc → node, tanpa unit test runner).
+- `src/core/dashboard/areas.ts` — `DASHBOARD_AREAS` (id + i18n label + `span` + position) dan peta `AREA_SPAN_CLASS`. Span adalah union type + peta class eksplisit — JANGAN `col-span-${span}` karena Tailwind JIT tidak membaca string dinamis.
+- `src/core/modules/resolve-widgets.ts` — `resolveDashboardWidgets()` memfilter widget per permission (reuse `can()`) dan mengurutkan `position → moduleAlias → id`.
+- `src/core/dashboard/use-dashboard-state.ts` — state dashboard per user. **Fase 0: localStorage** (tabel `setting` di API tidak punya `userId` dan endpoint-nya admin-only). Query key WAJIB memuat userId — `AuthProvider` memang `queryClient.clear()` saat logout, tapi key per-user adalah pengaman kedua terhadap layout user lain mewarisi di akun yang sama.
+- Widget didaftarkan di `src/modules/*/module.manifest.ts` via `dashboardWidgets[]`. Manifest baru harus ditambah satu baris di `src/modules/core/manifests/index.ts` supaya ikut ter-registry.
+- Label widget = `I18nLabel` → butuh key di `dashboard.json` **lima locale** (en/id/ko/ja/zh). Jangan hardcode string Indonesia di dalam `.tsx`.
+- Komponen `Link` sudah menambah prefiks locale sendiri — path widget **tidak boleh** diawali `/en`.
+
 ## Elevation Tokens
 
 Added in `src/app/globals.css` (identik di `:root` dan `.dark`):

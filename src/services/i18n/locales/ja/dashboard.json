@@ -1,0 +1,18 @@
+{
+  "title": "ダッシュボード",
+  "description": "アクティビティのサマリーとクイックリンク。",
+  "area_summary": "サマリー",
+  "area_main": "アクティビティ",
+  "area_side": "詳細",
+  "widget_recent_users": "最近のユーザー",
+  "widget_permissions": "最近の権限",
+  "widget_quick_links": "クイックリンク",
+  "widget_quick_links_users": "ユーザー管理",
+  "widget_quick_links_users_desc": "ユーザーの一覧と編集",
+  "widget_quick_links_permissions": "権限管理",
+  "widget_quick_links_permissions_desc": "権限の一覧と編集",
+  "widget_quick_links_profile": "プロフィール",
+  "widget_quick_links_profile_desc": "プロフィールを表示",
+  "widget_quick_links_settings": "設定",
+  "widget_quick_links_settings_desc": "アプリケーション設定"
+}

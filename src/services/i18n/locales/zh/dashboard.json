@@ -1,0 +1,18 @@
+{
+  "title": "仪表盘",
+  "description": "活动摘要和快捷链接。",
+  "area_summary": "摘要",
+  "area_main": "活动",
+  "area_side": "详情",
+  "widget_recent_users": "最近的用户",
+  "widget_permissions": "最近的权限",
+  "widget_quick_links": "快捷链接",
+  "widget_quick_links_users": "管理用户",
+  "widget_quick_links_users_desc": "查看和编辑用户",
+  "widget_quick_links_permissions": "管理权限",
+  "widget_quick_links_permissions_desc": "查看和编辑权限",
+  "widget_quick_links_profile": "我的资料",
+  "widget_quick_links_profile_desc": "查看资料",
+  "widget_quick_links_settings": "设置",
+  "widget_quick_links_settings_desc": "应用配置"
+}

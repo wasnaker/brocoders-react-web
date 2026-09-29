@@ -1,0 +1,18 @@
+{
+  "title": "대시보드",
+  "description": "활동 요약 및 빠른 링크.",
+  "area_summary": "요약",
+  "area_main": "활동",
+  "area_side": "상세",
+  "widget_recent_users": "최근 사용자",
+  "widget_permissions": "최근 권한",
+  "widget_quick_links": "빠른 링크",
+  "widget_quick_links_users": "사용자 관리",
+  "widget_quick_links_users_desc": "사용자 목록 및 편집",
+  "widget_quick_links_permissions": "권한 관리",
+  "widget_quick_links_permissions_desc": "권한 목록 및 편집",
+  "widget_quick_links_profile": "내 프로필",
+  "widget_quick_links_profile_desc": "프로필 보기",
+  "widget_quick_links_settings": "설정",
+  "widget_quick_links_settings_desc": "애플리케이션 설정"
+}
