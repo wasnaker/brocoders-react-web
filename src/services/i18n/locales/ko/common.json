@@ -1,0 +1,42 @@
+{
+  "app-name": "Boilerplate",
+  "loading": "불러오는 중 ...",
+  "close": "닫기",
+  "navigation": {
+    "home": "홈",
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "profile": "프로필",
+    "users": "사용자",
+    "permissions": "권한",
+    "logout": "로그아웃"
+  },
+  "formInputs": {
+    "avatarInput": {
+      "dropzoneText": "이미지를 여기에 놓으세요 ...",
+      "dragAndDrop": "또는 이미지를 여기로 끌어다 놓으세요",
+      "selectFile": "파일 선택"
+    },
+    "multipleImageInput": {
+      "dropzoneText": "이미지를 여기에 놓으세요 ...",
+      "dragAndDrop": "또는 이미지를 여기로 끌어다 놓으세요",
+      "selectFile": "파일 선택"
+    },
+    "singleImageInput": {
+      "dropzoneText": "이미지를 여기에 놓으세요 ...",
+      "dragAndDrop": "또는 이미지를 여기로 끌어다 놓으세요",
+      "selectFile": "파일 선택"
+    }
+  },
+  "leavePage": {
+    "title": "이 페이지를 나가시겠습니까?",
+    "message": "변경 사항이 저장되지 않을 수 있습니다",
+    "stay": "페이지에 머무르기",
+    "leave": "페이지 나가기"
+  },
+  "auth": {
+    "facebook": {
+      "action": "Facebook으로 로그인"
+    }
+  }
+}

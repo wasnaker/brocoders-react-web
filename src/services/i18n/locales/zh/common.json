@@ -8,29 +8,30 @@
     "signUp": "注册",
     "profile": "个人资料",
     "users": "用户",
+    "permissions": "权限",
     "logout": "退出登录"
   },
   "formInputs": {
     "avatarInput": {
-      "dropzoneText": "将图片拖放到此处 ...",
-      "dragAndDrop": "或将图片拖拽到此处",
-      "selectFile": "选择图片"
+      "dropzoneText": "将图片拖放到这里 ...",
+      "dragAndDrop": "或将图片拖放到这里",
+      "selectFile": "选择文件"
     },
     "multipleImageInput": {
-      "dropzoneText": "将图片拖放到此处 ...",
-      "dragAndDrop": "或将图片拖拽到此处",
-      "selectFile": "选择图片"
+      "dropzoneText": "将图片拖放到这里 ...",
+      "dragAndDrop": "或将图片拖放到这里",
+      "selectFile": "选择文件"
     },
     "singleImageInput": {
-      "dropzoneText": "将图片拖放到此处 ...",
-      "dragAndDrop": "或将图片拖拽到此处",
-      "selectFile": "选择图片"
+      "dropzoneText": "将图片拖放到这里 ...",
+      "dragAndDrop": "或将图片拖放到这里",
+      "selectFile": "选择文件"
     }
   },
   "leavePage": {
     "title": "要离开此页面吗？",
-    "message": "您所做的更改可能不会被保存",
-    "stay": "留在本页",
+    "message": "您所做的更改可能不会保存",
+    "stay": "留在此页",
     "leave": "离开页面"
   },
   "auth": {

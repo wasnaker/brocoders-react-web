@@ -1,0 +1,26 @@
+{
+  "title": "Create Permission",
+  "inputs": {
+    "name": {
+      "label": "Name",
+      "validation": {
+        "required": "Name is required",
+        "server": {
+          "permissionNameAlreadyExists": "This permission name already exists"
+        }
+      }
+    },
+    "description": {
+      "label": "Description"
+    }
+  },
+  "actions": {
+    "submit": "Create Permission",
+    "cancel": "Cancel"
+  },
+  "alerts": {
+    "permission": {
+      "success": "Permission created successfully"
+    }
+  }
+}

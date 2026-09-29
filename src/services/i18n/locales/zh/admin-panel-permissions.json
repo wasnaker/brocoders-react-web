@@ -1,0 +1,28 @@
+{
+  "title": "权限",
+  "table": {
+    "column1": "ID",
+    "column2": "名称",
+    "column3": "描述"
+  },
+  "actions": {
+    "add": "添加权限",
+    "edit": "编辑",
+    "delete": "删除",
+    "create": "创建权限"
+  },
+  "confirm": {
+    "delete": {
+      "title": "删除权限",
+      "message": "您确定要删除此权限吗？"
+    }
+  },
+  "form": {
+    "createTitle": "创建权限",
+    "editTitle": "编辑权限",
+    "name": "名称",
+    "namePlaceholder": "例如: create:post",
+    "description": "描述",
+    "descriptionPlaceholder": "此权限允许的操作"
+  }
+}

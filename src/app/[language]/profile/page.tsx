@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Profile from "./page-content";
 import { getServerTranslation } from "@/services/i18n";
+import ProfilePage from "./page-content";
 
 type Props = {
   params: Promise<{ language: string }>;
@@ -11,10 +11,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const { t } = await getServerTranslation(params.language, "profile");
 
   return {
-    title: t("title"),
+    title: t("profile:title"),
   };
 }
 
 export default function Page() {
-  return <Profile />;
+  return <ProfilePage />;
 }

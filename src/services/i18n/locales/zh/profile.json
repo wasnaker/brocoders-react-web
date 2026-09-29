@@ -3,6 +3,10 @@
   "title1": "编辑个人资料",
   "title2": "修改邮箱",
   "title3": "修改密码",
+  "tabs": {
+    "account": "账户",
+    "security": "安全"
+  },
   "actions": {
     "edit": "编辑",
     "submit": "保存",

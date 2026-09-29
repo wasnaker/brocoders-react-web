@@ -1,0 +1,26 @@
+{
+  "title": "Ubah Izin",
+  "inputs": {
+    "name": {
+      "label": "Nama",
+      "validation": {
+        "required": "Nama wajib diisi",
+        "server": {
+          "permissionNameAlreadyExists": "Nama izin ini sudah digunakan"
+        }
+      }
+    },
+    "description": {
+      "label": "Deskripsi"
+    }
+  },
+  "actions": {
+    "submit": "Simpan Perubahan",
+    "cancel": "Batal"
+  },
+  "alerts": {
+    "permission": {
+      "success": "Izin berhasil diperbarui"
+    }
+  }
+}

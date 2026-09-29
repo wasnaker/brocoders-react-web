@@ -1,0 +1,28 @@
+{
+  "title": "Permissions",
+  "table": {
+    "column1": "ID",
+    "column2": "Name",
+    "column3": "Description"
+  },
+  "actions": {
+    "add": "Add Permission",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create Permission"
+  },
+  "confirm": {
+    "delete": {
+      "title": "Delete Permission",
+      "message": "Are you sure you want to delete this permission?"
+    }
+  },
+  "form": {
+    "createTitle": "Create Permission",
+    "editTitle": "Edit Permission",
+    "name": "Name",
+    "namePlaceholder": "e.g. create:post",
+    "description": "Description",
+    "descriptionPlaceholder": "What this permission allows"
+  }
+}

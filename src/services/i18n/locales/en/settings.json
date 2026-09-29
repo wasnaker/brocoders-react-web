@@ -1,0 +1,17 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "general": "General",
+    "appearance": "Appearance",
+    "language": "Language",
+    "roles": "Roles"
+  },
+  "fields": {
+    "appName": { "label": "Application Name" },
+    "defaultLanguage": { "label": "Default Language" },
+    "theme": { "label": "Theme" }
+  },
+  "submit": "Save changes",
+  "saved": "Settings saved",
+  "error": "Could not load settings. Please try again."
+}

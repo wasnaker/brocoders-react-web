@@ -167,6 +167,16 @@ function AppSidebar() {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.includes("/admin-panel/permissions")}
+                      >
+                        <Link href="/admin-panel/permissions">
+                          {t("common:navigation.permissions")}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                     {/* sidebar-menu-items */}
                   </>
                 )}

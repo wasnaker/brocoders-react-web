@@ -8,23 +8,24 @@
     "signUp": "Sign Up",
     "profile": "Profile",
     "users": "Users",
+    "permissions": "Permissions",
     "logout": "Logout"
   },
   "formInputs": {
     "avatarInput": {
       "dropzoneText": "Drop the image here ...",
       "dragAndDrop": "Or drag 'n' drop some image here",
-      "selectFile": "Select an image"
+      "selectFile": "Select a file"
     },
     "multipleImageInput": {
       "dropzoneText": "Drop the image here ...",
       "dragAndDrop": "Or drag 'n' drop some images here",
-      "selectFile": "Select an image"
+      "selectFile": "Select a file"
     },
     "singleImageInput": {
       "dropzoneText": "Drop the image here ...",
-      "dragAndDrop": "Or drag 'n' drop some images here",
-      "selectFile": "Select an image"
+      "dragAndDrop": "Or drag 'n' drop some image here",
+      "selectFile": "Select a file"
     }
   },
   "leavePage": {

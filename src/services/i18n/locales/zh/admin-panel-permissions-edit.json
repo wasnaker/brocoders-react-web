@@ -1,0 +1,26 @@
+{
+  "title": "编辑权限",
+  "inputs": {
+    "name": {
+      "label": "名称",
+      "validation": {
+        "required": "名称为必填项",
+        "server": {
+          "permissionNameAlreadyExists": "该权限名称已存在"
+        }
+      }
+    },
+    "description": {
+      "label": "描述"
+    }
+  },
+  "actions": {
+    "submit": "保存更改",
+    "cancel": "取消"
+  },
+  "alerts": {
+    "permission": {
+      "success": "权限更新成功"
+    }
+  }
+}

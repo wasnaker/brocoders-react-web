@@ -3,6 +3,10 @@
   "title1": "Edit Profile",
   "title2": "Change Email",
   "title3": "Change Password",
+  "tabs": {
+    "account": "Account",
+    "security": "Security"
+  },
   "actions": {
     "edit": "Edit",
     "submit": "Save",

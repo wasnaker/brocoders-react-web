@@ -1,0 +1,17 @@
+{
+  "title": "Pengaturan",
+  "tabs": {
+    "general": "Umum",
+    "appearance": "Tampilan",
+    "language": "Bahasa",
+    "roles": "Peran"
+  },
+  "fields": {
+    "appName": { "label": "Nama Aplikasi" },
+    "defaultLanguage": { "label": "Bahasa Default" },
+    "theme": { "label": "Tema" }
+  },
+  "submit": "Simpan perubahan",
+  "saved": "Pengaturan disimpan",
+  "error": "Gagal memuat pengaturan. Silakan coba lagi."
+}

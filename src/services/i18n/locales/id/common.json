@@ -1,0 +1,42 @@
+{
+  "app-name": "Boilerplate",
+  "loading": "Memuat ...",
+  "close": "Tutup",
+  "navigation": {
+    "home": "Beranda",
+    "signIn": "Masuk",
+    "signUp": "Daftar",
+    "profile": "Profil",
+    "users": "Pengguna",
+    "permissions": "Izin",
+    "logout": "Keluar"
+  },
+  "formInputs": {
+    "avatarInput": {
+      "dropzoneText": "Letakkan gambar di sini ...",
+      "dragAndDrop": "Atau seret dan lepas gambar di sini",
+      "selectFile": "Pilih file"
+    },
+    "multipleImageInput": {
+      "dropzoneText": "Letakkan gambar di sini ...",
+      "dragAndDrop": "Atau seret dan lepas gambar di sini",
+      "selectFile": "Pilih file"
+    },
+    "singleImageInput": {
+      "dropzoneText": "Letakkan gambar di sini ...",
+      "dragAndDrop": "Atau seret dan lepas gambar di sini",
+      "selectFile": "Pilih file"
+    }
+  },
+  "leavePage": {
+    "title": "Tinggalkan halaman ini?",
+    "message": "Perubahan yang Anda buat mungkin tidak tersimpan",
+    "stay": "Tetap di Halaman",
+    "leave": "Tinggalkan Halaman"
+  },
+  "auth": {
+    "facebook": {
+      "action": "Masuk dengan Facebook"
+    }
+  }
+}

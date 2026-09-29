@@ -1,0 +1,28 @@
+{
+  "title": "권한",
+  "table": {
+    "column1": "ID",
+    "column2": "이름",
+    "column3": "설명"
+  },
+  "actions": {
+    "add": "권한 추가",
+    "edit": "수정",
+    "delete": "삭제",
+    "create": "권한 생성"
+  },
+  "confirm": {
+    "delete": {
+      "title": "권한 삭제",
+      "message": "이 권한을 삭제하시겠습니까?"
+    }
+  },
+  "form": {
+    "createTitle": "권한 생성",
+    "editTitle": "권한 수정",
+    "name": "이름",
+    "namePlaceholder": "예: create:post",
+    "description": "설명",
+    "descriptionPlaceholder": "이 권한이 허용하는 작업"
+  }
+}

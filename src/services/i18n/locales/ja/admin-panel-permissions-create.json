@@ -1,0 +1,26 @@
+{
+  "title": "権限を作成",
+  "inputs": {
+    "name": {
+      "label": "名前",
+      "validation": {
+        "required": "名前は必須です",
+        "server": {
+          "permissionNameAlreadyExists": "この権限名は既に存在します"
+        }
+      }
+    },
+    "description": {
+      "label": "説明"
+    }
+  },
+  "actions": {
+    "submit": "権限を作成",
+    "cancel": "キャンセル"
+  },
+  "alerts": {
+    "permission": {
+      "success": "権限を作成しました"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "title": "创建权限",
+  "inputs": {
+    "name": {
+      "label": "名称",
+      "validation": {
+        "required": "名称为必填项",
+        "server": {
+          "permissionNameAlreadyExists": "该权限名称已存在"
+        }
+      }
+    },
+    "description": {
+      "label": "描述"
+    }
+  },
+  "actions": {
+    "submit": "创建权限",
+    "cancel": "取消"
+  },
+  "alerts": {
+    "permission": {
+      "success": "权限创建成功"
+    }
+  }
+}

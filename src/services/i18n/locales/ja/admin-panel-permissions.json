@@ -1,0 +1,28 @@
+{
+  "title": "権限",
+  "table": {
+    "column1": "ID",
+    "column2": "名前",
+    "column3": "説明"
+  },
+  "actions": {
+    "add": "権限を追加",
+    "edit": "編集",
+    "delete": "削除",
+    "create": "権限を作成"
+  },
+  "confirm": {
+    "delete": {
+      "title": "権限を削除",
+      "message": "この権限を削除してもよろしいですか？"
+    }
+  },
+  "form": {
+    "createTitle": "権限を作成",
+    "editTitle": "権限を編集",
+    "name": "名前",
+    "namePlaceholder": "例: create:post",
+    "description": "説明",
+    "descriptionPlaceholder": "この権限で許可される操作"
+  }
+}

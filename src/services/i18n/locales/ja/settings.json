@@ -1,0 +1,17 @@
+{
+  "title": "設定",
+  "tabs": {
+    "general": "一般",
+    "appearance": "外観",
+    "language": "言語",
+    "roles": "役割"
+  },
+  "fields": {
+    "appName": { "label": "アプリケーション名" },
+    "defaultLanguage": { "label": "デフォルト言語" },
+    "theme": { "label": "テーマ" }
+  },
+  "submit": "変更を保存",
+  "saved": "設定を保存しました",
+  "error": "設定の読み込みに失敗しました。もう一度お試しください。"
+}

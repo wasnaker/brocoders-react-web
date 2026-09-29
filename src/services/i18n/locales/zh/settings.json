@@ -1,0 +1,17 @@
+{
+  "title": "设置",
+  "tabs": {
+    "general": "常规",
+    "appearance": "外观",
+    "language": "语言",
+    "roles": "角色"
+  },
+  "fields": {
+    "appName": { "label": "应用名称" },
+    "defaultLanguage": { "label": "默认语言" },
+    "theme": { "label": "主题" }
+  },
+  "submit": "保存更改",
+  "saved": "设置已保存",
+  "error": "无法加载设置，请重试。"
+}

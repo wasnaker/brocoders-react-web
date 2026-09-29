@@ -1,0 +1,26 @@
+{
+  "title": "権限を編集",
+  "inputs": {
+    "name": {
+      "label": "名前",
+      "validation": {
+        "required": "名前は必須です",
+        "server": {
+          "permissionNameAlreadyExists": "この権限名は既に存在します"
+        }
+      }
+    },
+    "description": {
+      "label": "説明"
+    }
+  },
+  "actions": {
+    "submit": "変更を保存",
+    "cancel": "キャンセル"
+  },
+  "alerts": {
+    "permission": {
+      "success": "権限を更新しました"
+    }
+  }
+}

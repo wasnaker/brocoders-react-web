@@ -1,0 +1,26 @@
+{
+  "title": "권한 수정",
+  "inputs": {
+    "name": {
+      "label": "이름",
+      "validation": {
+        "required": "이름은 필수입니다",
+        "server": {
+          "permissionNameAlreadyExists": "이미 존재하는 권한 이름입니다"
+        }
+      }
+    },
+    "description": {
+      "label": "설명"
+    }
+  },
+  "actions": {
+    "submit": "변경사항 저장",
+    "cancel": "취소"
+  },
+  "alerts": {
+    "permission": {
+      "success": "권한이 성공적으로 수정되었습니다"
+    }
+  }
+}

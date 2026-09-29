@@ -1,0 +1,28 @@
+{
+  "title": "Izin",
+  "table": {
+    "column1": "ID",
+    "column2": "Nama",
+    "column3": "Deskripsi"
+  },
+  "actions": {
+    "add": "Tambah Izin",
+    "edit": "Ubah",
+    "delete": "Hapus",
+    "create": "Buat Izin"
+  },
+  "confirm": {
+    "delete": {
+      "title": "Hapus Izin",
+      "message": "Apakah Anda yakin ingin menghapus izin ini?"
+    }
+  },
+  "form": {
+    "createTitle": "Buat Izin",
+    "editTitle": "Ubah Izin",
+    "name": "Nama",
+    "namePlaceholder": "mis. create:post",
+    "description": "Deskripsi",
+    "descriptionPlaceholder": "Apa yang diizinkan oleh izin ini"
+  }
+}
