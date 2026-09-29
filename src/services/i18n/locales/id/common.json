@@ -4,6 +4,7 @@
   "close": "Tutup",
   "navigation": {
     "home": "Beranda",
+    "dashboard": "Dasbor",
     "signIn": "Masuk",
     "signUp": "Daftar",
     "profile": "Profil",

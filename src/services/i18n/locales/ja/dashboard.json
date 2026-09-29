@@ -14,5 +14,18 @@
   "widget_quick_links_profile": "プロフィール",
   "widget_quick_links_profile_desc": "プロフィールを表示",
   "widget_quick_links_settings": "設定",
-  "widget_quick_links_settings_desc": "アプリケーション設定"
+  "widget_quick_links_settings_desc": "アプリケーション設定",
+  "toolbar_hint": "ウィジェットのグリップをドラッグして並べ替えやエリア間の移動ができます。",
+  "toolbar_widgets": "ウィジェット",
+  "toolbar_show_areas": "ウィジェットエリアを表示",
+  "toolbar_hide_areas": "ウィジェットエリアを隠す",
+  "toolbar_reset": "ダッシュボードをリセット",
+  "reset_title": "ダッシュボードをリセット",
+  "reset_message": "ダッシュボードのレイアウトとウィジェットの表示を既定に戻しますか？",
+  "area_empty": "このエリアにはウィジェットがありません",
+  "no_widgets": "あなたのロールで利用できるウィジェットはありません。",
+  "widget_not_implemented": "ウィジェット「{{module}}」は登録されていますがコンポーネントがまだありません — レジストリに追加してください。",
+  "widget_drag": "{{name}}をドラッグ",
+  "widget_hide": "{{name}}を隠す",
+  "widget_show": "{{name}}を表示"
 }

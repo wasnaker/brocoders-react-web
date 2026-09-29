@@ -4,6 +4,7 @@
   "close": "닫기",
   "navigation": {
     "home": "홈",
+    "dashboard": "대시보드",
     "signIn": "로그인",
     "signUp": "회원가입",
     "profile": "프로필",

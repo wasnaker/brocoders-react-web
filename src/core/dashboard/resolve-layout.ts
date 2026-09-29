@@ -58,7 +58,7 @@ export function sanitizeLayout(input: unknown): DashboardLayout | null {
  */
 export function resolveAreas(
   baseAreas: readonly string[],
-  widgets: readonly ResolvableWidget[],
+  widgets: readonly { area: string }[],
   layout: DashboardLayout | null
 ): string[] {
   const areas: string[] = [];
@@ -77,16 +77,16 @@ export function resolveAreas(
   return areas;
 }
 
-function sortWidgets(list: ResolvableWidget[]): ResolvableWidget[] {
+function sortWidgets<T extends ResolvableWidget>(list: T[]): T[] {
   return list.sort(
     (a, b) => (a.position ?? 0) - (b.position ?? 0) || a.id.localeCompare(b.id)
   );
 }
 
-function groupByDefaultArea(
-  widgets: readonly ResolvableWidget[]
-): Record<string, ResolvableWidget[]> {
-  const grouped: Record<string, ResolvableWidget[]> = {};
+function groupByDefaultArea<T extends ResolvableWidget>(
+  widgets: readonly T[]
+): Record<string, T[]> {
+  const grouped: Record<string, T[]> = {};
   for (const w of widgets) {
     (grouped[w.area] ??= []).push(w);
   }
@@ -111,11 +111,11 @@ function groupByDefaultArea(
  *  6. layout rusak (bukan object / area bukan array) -> jatuh ke default.
  *  7. id yang sama muncul dua kali di satu area -> render sekali.
  */
-export function resolveDashboardLayout(
+export function resolveDashboardLayout<T extends ResolvableWidget>(
   rawLayout: unknown,
-  widgets: readonly ResolvableWidget[],
+  widgets: readonly T[],
   areas: readonly string[]
-): Record<string, ResolvableWidget[]> {
+): Record<string, T[]> {
   const layout = sanitizeLayout(rawLayout);
   const byId = new Map(widgets.map((w) => [w.id, w]));
 
@@ -134,7 +134,7 @@ export function resolveDashboardLayout(
     }
   }
 
-  const unplaced: Record<string, ResolvableWidget[]> = {};
+  const unplaced: Record<string, T[]> = {};
   for (const w of widgets) {
     if (!placed.has(w.id)) {
       (unplaced[w.area] ??= []).push(w);
@@ -144,10 +144,10 @@ export function resolveDashboardLayout(
     sortWidgets(list);
   }
 
-  const resolved: Record<string, ResolvableWidget[]> = {};
+  const resolved: Record<string, T[]> = {};
 
   for (const area of areas) {
-    const saved: ResolvableWidget[] = [];
+    const saved: T[] = [];
     const seen = new Set<string>();
 
     for (const id of layout[area] ?? []) {

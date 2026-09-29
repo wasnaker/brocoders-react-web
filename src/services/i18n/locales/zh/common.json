@@ -4,6 +4,7 @@
   "close": "关闭",
   "navigation": {
     "home": "首页",
+    "dashboard": "仪表盘",
     "signIn": "登录",
     "signUp": "注册",
     "profile": "个人资料",

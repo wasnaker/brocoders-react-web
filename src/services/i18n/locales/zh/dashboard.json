@@ -14,5 +14,18 @@
   "widget_quick_links_profile": "我的资料",
   "widget_quick_links_profile_desc": "查看资料",
   "widget_quick_links_settings": "设置",
-  "widget_quick_links_settings_desc": "应用配置"
+  "widget_quick_links_settings_desc": "应用配置",
+  "toolbar_hint": "拖动部件的手柄可重新排序或在区域之间移动。",
+  "toolbar_widgets": "部件",
+  "toolbar_show_areas": "显示部件区域",
+  "toolbar_hide_areas": "隐藏部件区域",
+  "toolbar_reset": "重置仪表盘",
+  "reset_title": "重置仪表盘",
+  "reset_message": "将仪表盘布局和部件可见性恢复为默认设置？",
+  "area_empty": "此区域暂无部件",
+  "no_widgets": "您的角色没有可用的部件。",
+  "widget_not_implemented": "部件“{{module}}”已注册但还没有组件 — 请添加到部件注册表。",
+  "widget_drag": "拖动{{name}}",
+  "widget_hide": "隐藏{{name}}",
+  "widget_show": "显示{{name}}"
 }

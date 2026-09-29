@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
 import House from "lucide-react/dist/esm/icons/house";
+import LayoutGrid from "lucide-react/dist/esm/icons/layout-grid";
 import Users from "lucide-react/dist/esm/icons/users";
 import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
 import Settings from "lucide-react/dist/esm/icons/settings";
@@ -193,6 +194,17 @@ function AppSidebar() {
 
                 {isAdmin && (
                   <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.includes("/admin-panel/dashboard")}
+                      >
+                        <Link href="/admin-panel/dashboard">
+                          <LayoutGrid />
+                          {t("common:navigation.dashboard")}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild

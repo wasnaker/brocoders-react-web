@@ -14,5 +14,18 @@
   "widget_quick_links_profile": "내 프로필",
   "widget_quick_links_profile_desc": "프로필 보기",
   "widget_quick_links_settings": "설정",
-  "widget_quick_links_settings_desc": "애플리케이션 설정"
+  "widget_quick_links_settings_desc": "애플리케이션 설정",
+  "toolbar_hint": "위젯의 그립을 드래그하여 정렬하거나 영역 간에 이동하세요.",
+  "toolbar_widgets": "위젯",
+  "toolbar_show_areas": "위젯 영역 표시",
+  "toolbar_hide_areas": "위젯 영역 숨기기",
+  "toolbar_reset": "대시보드 초기화",
+  "reset_title": "대시보드 초기화",
+  "reset_message": "대시보드 레이아웃과 위젯 표시를 기본값으로 되돌릴까요?",
+  "area_empty": "이 영역에는 위젯이 없습니다",
+  "no_widgets": "내 역할에서 사용할 수 있는 위젯이 없습니다.",
+  "widget_not_implemented": "위젯 \"{{module}}\"이(가) 등록되었지만 아직 컴포넌트가 없습니다 — 레지스트리에 추가하세요.",
+  "widget_drag": "{{name}} 드래그",
+  "widget_hide": "{{name}} 숨기기",
+  "widget_show": "{{name}} 표시"
 }

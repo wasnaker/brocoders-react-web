@@ -14,5 +14,18 @@
   "widget_quick_links_profile": "Profil saya",
   "widget_quick_links_profile_desc": "Lihat profil",
   "widget_quick_links_settings": "Pengaturan",
-  "widget_quick_links_settings_desc": "Konfigurasi aplikasi"
+  "widget_quick_links_settings_desc": "Konfigurasi aplikasi",
+  "toolbar_hint": "Drag a widget by its grip to reorder or move it between areas.",
+  "toolbar_widgets": "Widgets",
+  "toolbar_show_areas": "Show widget areas",
+  "toolbar_hide_areas": "Hide widget areas",
+  "toolbar_reset": "Reset dashboard",
+  "reset_title": "Reset dashboard",
+  "reset_message": "Restore the default dashboard layout and widget visibility?",
+  "area_empty": "No widget in this area",
+  "no_widgets": "No widget available for your role.",
+  "widget_not_implemented": "Widget \"{{module}}\" is registered but has no component yet — add one to the widget registry.",
+  "widget_drag": "Drag {{name}}",
+  "widget_hide": "Hide {{name}}",
+  "widget_show": "Show {{name}}"
 }
