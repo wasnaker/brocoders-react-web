@@ -39,6 +39,10 @@ Semantic classes are declared in `src/app/globals.css` (`@layer components`) and
 | `form__error` | Pesan error form |
 | `form-field` | Wrapper satu field + bantuan |
 | `form-field__help` | Teks bantuan di bawah field |
+| `app-bar` | Wrapper header aplikasi (flex, height var(--header-height), gap, px) |
+| `app-bar__brand` | Brand/app-name: `me-auto min-w-0 truncate font-mono text-lg font-bold`, tracking step-down (`tracking-[0.15em] sm:tracking-[0.3em]`) |
+| `app-bar__actions` | Wrapper action buttons (theme, language) di kanan: `flex shrink-0 items-center gap-2` |
+| `language-switcher` | Trigger language select: `min-w-0 sm:min-w-[7.5rem]` (menggantikan hardcoded `min-w-[120px]`) |
 
 Aturan:
 
@@ -46,3 +50,15 @@ Aturan:
 2. Utility Tailwind tetap boleh untuk children kecil (`span`, `button`, `th`, `td`) dan untuk komponen primitive shadcn di `src/components/ui/`.
 3. Kalau class semantic yang dibutuhkan belum ada, TAMBAHKAN di `@layer components` — jangan hardcode utility di komponen.
 4. Primitif shadcn di `src/components/ui/` **tidak** dimigrasikan. Itu design system, bukan layout aplikasi.
+
+## Elevation Tokens
+
+Added in `src/app/globals.css` (identik di `:root` dan `.dark`):
+
+| Token | Nilai | Peran |
+|-------|-------|-------|
+| `--elevation-1` | `0 1px 2px 0 rgb(0 0 0 / 0.04)` | Permukaan statis (card, table border) |
+| `--elevation-2` | `0 1px 2px 0 rgb(0 0 0 / 0.05), 0 4px 8px -2px rgb(0 0 0 / 0.06)` | Mengambang (dropdown, popover, select, tooltip) |
+| `--elevation-3` | `0 2px 4px -1px rgb(0 0 0 / 0.05), 0 12px 20px -4px rgb(0 0 0 / 0.1)` | Overlay (dialog, alert-dialog, sheet) |
+
+Shadow **tidak** dinaikkan di dark mode — nilai identik. Bayangan netral, tanpa hue, agar tidak menimbulkan warna pada permukaan.

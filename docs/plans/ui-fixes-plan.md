@@ -375,5 +375,23 @@ sendiri: container tetap lebar, kolom input tetap nyaman dipindai.
   utility langsung. Migrasi sisanya adalah pekerjaan terpisah dan belum
   dilakukan; lakukan per-fitur, jangan sekali gus.
 - Primitif shadcn di `src/components/ui/` sengaja **tidak** dimigrasikan.
+
+### Bug overflow app bar @390px — ditemukan saat audit Phase 5 (2026-09-29)
+
+Checklist lama yang **100% tercentang** tidak menangkap bug ini. Bug ditemukan lewat render audit (bukan baca kode) pada viewport 390px:
+
+| Elemen | Lebar | Masalah |
+|---|---|---|
+| Sidebar trigger | 28px | OK |
+| Brand "Boilerplate" | **172px** | `tracking-[.3rem]` = 4.8px letter-spacing (48px murni spasi) |
+| Theme switch | 36px | OK |
+| Language switcher | **120px** | `min-w-[120px]` hardcoded |
+| Gap 3×8px | 24px | OK |
+| **Total** | **380px** | **Ruang tersedia: 358px** (390 − px-4 16×2) |
+
+**Akar bug:** brand (letter-spacing besar) + language switcher (min-width hardcoded).  
+**Perbaikan:** semantic class `app-bar__brand` (`min-w-0 truncate`, tracking step-down `tracking-[0.15em] sm:tracking-[0.3em]`) + `language-switcher` (`min-w-0 sm:min-w-[7.5rem]`).
+
+Pelajaran: **checklist 100% ≠ zero bug** — checklist hanya mencakup yang diketahui; audit render (Playwright + screenshot + distinct-value count) menemukan yang tidak terduga.
 - Migrasi bersifat visual-identik: setiap `className` utility diganti
   class semantic dengan deklarasi `@apply` yang isinya sama persis.
