@@ -6,6 +6,14 @@ Next.js 16 admin-panel boilerplate (React 19, TypeScript, shadcn, TanStack Query
 
 Use the `generate` skill (auto-loaded from [.claude/skills/generate/SKILL.md](.claude/skills/generate/SKILL.md)). It wraps the project's hygen generators (`npm run generate:resource`, `npm run generate:field`) which scaffold list/edit/create pages, queries, schemas, and i18n. Do not hand-write resource files.
 
+## Settings Form (`SettingsFieldsTab.tsx`)
+
+Manifest field keys contain dots (`general.appName`) — fine as a DB `key` column, but **never use them directly as react-hook-form `name`**.
+
+1. **Dots in `name` mean nested paths.** react-hook-form treats `general.appName` as the path `general` -> `appName`, so the value lands under `{ general: { appName } }` and `formValues["general.appName"]` stays `undefined`. The "did it change?" comparison then always says "unchanged", `items` comes out empty, and the PATCH is never sent. Symptom: the value saves, then reverts after reload. Use `formFieldName(index, key)` (dot-free, unique per tab) and map back to `field.key` on submit.
+2. **Use `values:`, not `defaultValues:` + `reset()`.** `defaultValues` is read once at mount, when the settings query is still loading, so the form registers empty values permanently. `reset()` moves the values but does not re-sync already-registered inputs. `values` is react-hook-form's supported pattern for async data — it re-syncs and keeps registered inputs connected.
+3. **Gate the query on auth.** `enabled: !!group && isLoaded && !!user`. Without it the query fires before the token cookie is read, gets 401, returns `[]`, and the form silently renders defaults.
+
 ## Semantic CSS Classes
 
 Every layout wrapper `div`, `section`, or `article` MUST carry a semantic class. Do not put layout utilities (`flex w-full gap-6`, `mx-auto max-w-2xl px-4`, `py-8 text-center`) directly on a layout wrapper — use the class declared in `src/app/globals.css` under `@layer components`.
