@@ -38,6 +38,18 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: t("title"),
+    // Identitas build di-render ke dalam HTML pada SETIAP page load.
+    //
+    // Ini yang membuat deteksi build bekerja tanpa polling: nilainya segar
+    // dari server tiap kali halaman diload, sementara `useBuildVersion()`
+    // membandingkannya dengan versi yang INGAT browser dari load sebelumnya.
+    // Setelah deploy, keduanya berbeda -> banner muncul.
+    //
+    // Kalau nilainya diambil dari env yang ter-bake ke bundle, keduanya
+    // selalu bergerak bersama dan tidak pernah bisa berbeda.
+    other: {
+      "build-version": process.env.BUILD_VERSION ?? "unknown",
+    },
   };
 }
 

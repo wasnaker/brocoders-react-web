@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
-# Deploy brocoders-react-web dengan build-version yang selalu segar.
+# Deploy brocoders-react-web dengan build-version yang berbasis ISI SOURCE.
 #
-# Kenapa harus ada: `NEXT_PUBLIC_BUILD_VERSION` di-inline Next.js ke dalam
-# bundle SAAT BUILD. Kalau nilainya tidak di-regenerate sebelum build, `/api/build-id`
-# mengembalikan versi lama yang sama dengan yang ter-bake di bundle -> banner
-# "versi baru tersedia" tidak pernah muncul, dan kalau diisi manual sekali
-# saja, nilainya cepat basi dan diam-diam tidak berguna lagi.
+# Kenapa hash, bukan timestamp: pola crm-web memakai content hash dari Vite
+# manifest, jadi rebuild yang tidak mengubah output TIDAK memunculkan banner
+# "versi baru tersedia". Timestamp akan selalu berubah — dependency bump,
+# whitespace, atau rebuild sia-sia semuanya akan membangun ulang user dengan
+# banner yang tidak berguna. Hash hanya berubah kalau isinya berubah.
+#
+# Trade-off yang disadari: hash dihitung dari SOURCE, bukan dari manifest
+# aset yang benar-benar ter-emit. Jadi perubahan pada file yang tidak memengaruhi
+# bundle (mis. storybook yang tidak terpakai, halaman yang tidak lagi dirujuk)
+# tetap mengubah hash dan memunculkan banner. False positive ini murah — banner
+# bisa ditutup — tapi tidak sepresis crm-web. Menepatkannya butuh hash dari
+# manifest SETELAH build, yang berarti build dua kali.
 #
 # Env var ini hanya untuk UMUM, bukan rahasia, dan `.env.local` sudah
 # gitignored — jadi aman ditulis di sini.
+#
+# Sengaja TIDAK memakai prefix NEXT_PUBLIC_: prefix itu membuat Next.js
+# meng-inline nilainya ke bundle browser. Deteksi build membaca versi dari
+# <meta> yang di-render server, jadi client tidak perlu nilai itu sama sekali.
 #
 # Deploy harus lewat systemd. JANGAN pernah `next start` manual: proses
 # kedua di port yang sama menyebabkan bundle lama dan baru dilayani bergantian
@@ -18,7 +29,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$ROOT/.env.local"
 SERVICE="brocoders-react-web.service"
-BUILD_VERSION="$(date -u +%Y%m%dT%H%M%SZ)"
 
 cd "$ROOT"
 
@@ -27,20 +37,40 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 1
 fi
 
-# Ganti key yang sudah ada, atau tambahkan di akhir kalau belum ada.
-if grep -q '^NEXT_PUBLIC_BUILD_VERSION=' "$ENV_FILE"; then
-  sed -i "s|^NEXT_PUBLIC_BUILD_VERSION=.*|NEXT_PUBLIC_BUILD_VERSION=${BUILD_VERSION}|" "$ENV_FILE"
+# Hash konten deterministik: daftar file diurutkan (sort -z) supaya urutan
+# filesystem tidak memengaruhi hasil. Hanya file yang bisa memengaruhi bundle.
+content_hash() {
+  {
+    find src -type f \
+      \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.mjs' \
+         -o -name '*.css' -o -name '*.json' \) -print0 \
+      | sort -z \
+      | xargs -0 sha256sum
+    for f in package.json package-lock.json next.config.js postcss.config.mjs; do
+      [[ -f "$f" ]] && sha256sum "$f"
+    done
+  } | sha256sum | cut -c1-16
+}
+
+BUILD_VERSION="$(content_hash)"
+
+# Buang key lama (NEXT_PUBLIC_BUILD_VERSION) supaya tidak menyesatkan — versi
+# sekarang hanya dibaca server, bukan di-inline ke bundle.
+sed -i '/^NEXT_PUBLIC_BUILD_VERSION=/d' "$ENV_FILE"
+
+if grep -q '^BUILD_VERSION=' "$ENV_FILE"; then
+  sed -i "s|^BUILD_VERSION=.*|BUILD_VERSION=${BUILD_VERSION}|" "$ENV_FILE"
 else
-  printf '\n# Di-generate oleh scripts/deploy.sh — jangan di-edit manual\nNEXT_PUBLIC_BUILD_VERSION=%s\n' \
+  printf '\n# Di-generate oleh scripts/deploy.sh — jangan di-edit manual\nBUILD_VERSION=%s\n' \
     "$BUILD_VERSION" >> "$ENV_FILE"
 fi
 
-echo "==> NEXT_PUBLIC_BUILD_VERSION=${BUILD_VERSION}"
+echo "==> BUILD_VERSION=${BUILD_VERSION} (dari hash source)"
 
 echo "==> stop ${SERVICE}"
 sudo systemctl stop "$SERVICE"
 
-echo "==> build (env ter-bake ke bundle)"
+echo "==> build"
 npm run build
 
 echo "==> start ${SERVICE}"

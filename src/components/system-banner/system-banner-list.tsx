@@ -4,23 +4,20 @@ import X from "lucide-react/dist/esm/icons/x";
 import { useTranslation } from "@/services/i18n/client";
 import { BannerIcon } from "./banner-icon";
 import { cn } from "@/lib/utils";
+import { resolveActionHandler } from "@/services/system-banner/banner-actions";
 import type { SystemBanner } from "@/services/system-banner/banner-types";
 
 interface SystemBannerListProps {
   banners: SystemBanner[];
   dismiss: (id: string) => void;
-  /** Peta id -> action handler, dari ref provider (tidak memicu re-render). */
-  handlers: Map<string, () => void>;
 }
 
 function BannerItem({
   banner,
   dismiss,
-  handlers,
 }: {
   banner: SystemBanner;
   dismiss: (id: string) => void;
-  handlers: Map<string, () => void>;
 }) {
   const { t } = useTranslation("system-banner");
 
@@ -30,7 +27,10 @@ function BannerItem({
     banner.severity === "warning" || banner.severity === "error";
 
   const onAction = () => {
-    handlers.get(banner.id)?.();
+    const handler = banner.action
+      ? resolveActionHandler(banner.action.intent)
+      : undefined;
+    handler?.();
     dismiss(banner.id);
   };
 
@@ -90,11 +90,7 @@ function BannerItem({
   );
 }
 
-export function SystemBannerList({
-  banners,
-  dismiss,
-  handlers,
-}: SystemBannerListProps) {
+export function SystemBannerList({ banners, dismiss }: SystemBannerListProps) {
   // Nol banner -> nol DOM. Tidak ada elemen kosong yang menambah tinggi.
   if (banners.length === 0) {
     return null;
@@ -103,12 +99,7 @@ export function SystemBannerList({
   return (
     <div className="system-banner__stack" data-testid="system-banner-stack">
       {banners.map((banner) => (
-        <BannerItem
-          key={banner.id}
-          banner={banner}
-          dismiss={dismiss}
-          handlers={handlers}
-        />
+        <BannerItem key={banner.id} banner={banner} dismiss={dismiss} />
       ))}
     </div>
   );

@@ -1,64 +1,84 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { emitBanner } from "@/services/system-banner/banner-events";
 import { buildBannerIdForBuild } from "@/services/system-banner/banner-ids";
 
 /**
- * Deteksi build baru.
+ * Nama localStorage yang menyimpan versi build terakhir yang dilihat browser ini.
+ * Berisi nilai dari <meta>, bukan id acak — itu yang membuat dismissal
+ * bertahan: event yang sama menghasilkan id yang sama.
+ */
+const STORAGE_KEY = "brocoders.build-version";
+
+/**
+ * Deteksi build baru — pola yang sama dengan crm-web
+ * (`resources/js/hooks/useBuildVersion.ts`).
  *
- * `buildIdClient` di-bake ke bundle saat build; `buildIdServer` dibaca lewat
- * HTTP runtime. Kalau keduanya ada DAN berbeda, tab ini memegang JS lama.
+ * Cara kerjanya, dan kenapa harus begini:
  *
- * Fetch SEKALI saat mount (§6.3) — bukan polling. Build baru tidak akan
- * pernah "muncul di tengah halaman terbuka" dengan cara lain: tab yang
- * memegang JS lama harus hard-reload untuk dapat bundle baru, dan saat
- * reload provider baru mount dan cek versi lagi.
+ *   serverVersion = <meta name="build-version">  → SEGAR, di-render server
+ *                  pada setiap page load
+ *   cached        = localStorage                 → INGATAN browser dari
+ *                  load sebelumnya
  *
- * Guard wajib (§6.2): kalau env server kosong atau fetch gagal, TIDAK ada
- * banner sama sekali. Tanpa guard itu, env kosong bisa menghasilkan banner
- * permanen yang tidak bisa hilang. Prinsipnya: lebih baik diam daripada
- * menampilkan banner yang salah.
+ * Setelah deploy, load berikutnya menerima <meta> baru sementara
+ * localStorage masih memegang nilai lama → keduanya berbeda → banner muncul.
+ *
+ * Yang TIDAK dilakukan: polling. Server tidak bisa mendorong pesan ke dalam
+ * tab yang sedang berjalan, tapi tab bisa bertanya — hanya saja di sini
+ * "bertanya" cukup dilakukan sekali, karena setiap page load sudah otomatis
+ * membawa <meta> terbaru. Bandingkan ini dengan pendekatan yang memakai env
+ * yang ter-bake ke bundle + endpoint terpisah: keduanya berasal dari build
+ * yang sama, jadi setelah reload keduanya identik dan banner mustahil muncul.
+ *
+ * Konsekuensi yang disadari: tab yang TIDAK PERNAH di-reload tidak akan
+ * pernah diberi tahu. Pola ini memang begitu, termasuk di crm-web.
  */
 export function useBuildVersion() {
-  const doneRef = useRef(false);
+  const getMetaVersion = useCallback((): string | null => {
+    const meta = document.querySelector('meta[name="build-version"]');
+    return meta?.getAttribute("content") ?? null;
+  }, []);
 
   useEffect(() => {
-    if (doneRef.current) {
-      return;
-    }
-    doneRef.current = true;
-
-    const clientBuildId = process.env.NEXT_PUBLIC_BUILD_VERSION;
-    if (!clientBuildId) {
+    const serverVersion = getMetaVersion();
+    if (!serverVersion) {
+      // Env kosong atau meta tidak ter-render -> diam. Lebih baik tidak
+      // menampilkan apa-apa daripada banner yang salah.
       return;
     }
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    let cached: string | null = null;
+    try {
+      cached = window.localStorage.getItem(STORAGE_KEY);
+    } catch {
+      // Mode privat Safari / kuota penuh -> tidak bisa membandingkan, diam.
+      return;
+    }
 
-    fetch("/api/build-id", { signal: controller.signal, cache: "no-store" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((body: { buildId?: string | null } | null) => {
-        const serverBuildId = body?.buildId;
-        if (!serverBuildId || serverBuildId === clientBuildId) {
-          return;
-        }
-        emitBanner({
-          id: buildBannerIdForBuild(serverBuildId),
-          kind: "build",
-          severity: "info",
-          message: "build.available",
-          detail: serverBuildId,
-          action: {
-            label: "build.reload",
-            onClick: () => window.location.reload(),
-          },
-        });
-      })
-      .catch(() => {
-        // Fetch gagal/timeout -> default diam, tidak ada banner.
-      })
-      .finally(() => clearTimeout(timeout));
-  }, []);
+    // `cached &&`$: pada load pertama tidak ada apa pun untuk dibandingkan,
+    // jadi banner tidak muncul (user memang baru datang, bukan "diam-diam
+    // tertinggal versi lama").
+    if (cached && cached !== serverVersion) {
+      emitBanner({
+        id: buildBannerIdForBuild(serverVersion),
+        kind: "build",
+        severity: "info",
+        message: "build.available",
+        detail: serverVersion,
+        action: {
+          label: "build.reload",
+          intent: "reload",
+        },
+      });
+    }
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, serverVersion);
+    } catch {
+      // Gagal menulis: banner tetap muncul sekali, load berikutnya mengulang.
+      // Tidak merusak apa pun.
+    }
+  }, [getMetaVersion]);
 }

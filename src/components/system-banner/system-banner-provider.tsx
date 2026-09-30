@@ -8,7 +8,6 @@ import {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from "react";
 import {
   emitBanner,
@@ -19,7 +18,6 @@ import {
 import {
   isDismissed,
   markDismissed,
-  pruneDismissals,
 } from "@/services/system-banner/banner-dismissal";
 import { useBuildVersion } from "@/services/system-banner/use-build-version";
 import {
@@ -82,20 +80,13 @@ export function SystemBannerProvider() {
   const { t } = useTranslation("system-banner");
   const { user } = useAuth();
 
-  // `action.onClick` disimpan di ref terpisah (bukan state) supaya function
-  // tidak memicu re-render dan tidak ikut ter-serialize.
-  const actionHandlersRef = useRef(new Map<string, () => void>());
   const timersRef = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
-  // Dismissal dibaca setelah mount, BUKAN saat render. Kalau dibaca saat
-  // render, server merender banner yang seharusnya sudah di-dismiss lalu
-  // hydration melompat — pola yang sama dengan gate `isLoaded` di AuthProvider.
-  const [dismissalReady, setDismissalReady] = useState(false);
-
-  useEffect(() => {
-    pruneDismissals();
-    setDismissalReady(true);
-  }, []);
+  // Dismissal dibaca via isDismissed() di listener, BUKAN saat render.
+  // Kalau dibaca saat render, server merender banner yang seharusnya sudah
+  // di-dismiss lalu hydration melompat — pola yang sama dengan gate `isLoaded`
+  // di AuthProvider. Sekarang isDismissed() dipakai di dalam callback listener
+  // yang berjalan setelah mount.
 
   const dismiss = useCallback((id: string) => {
     const timer = timersRef.current.get(id);
@@ -103,7 +94,6 @@ export function SystemBannerProvider() {
       clearTimeout(timer);
       timersRef.current.delete(id);
     }
-    actionHandlersRef.current.delete(id);
     markDismissed(id);
     dispatch({ type: "dismiss", id });
     // Tab lain menampilkan banner yang sama; tanpa ini tab B masih
@@ -111,20 +101,14 @@ export function SystemBannerProvider() {
     emitBannerDismissed(id);
   }, []);
 
-  // Satu listener untuk semua sumber event.
+  // Satu listener untuk semua sumber event. Penempatannya sebelum
+  // `useBuildVersion()` itu wajib: efek listener dan efek useBuildVersion sama-sama
+  // berjalan setelah render pertama, dan listener harus sudah terdaftar saat
+  // useBuildVersion memanggil emitBanner — kalau tidak, banner build hilang.
   useEffect(() => {
-    if (!dismissalReady) {
-      return;
-    }
-
     return onBanner((input) => {
       if (isDismissed(input.id)) {
         return;
-      }
-
-      const onClick = input.action?.onClick;
-      if (onClick) {
-        actionHandlersRef.current.set(input.id, onClick);
       }
 
       // `raw` = konten broadcast apa adanya dari admin; selain itu semua
@@ -145,10 +129,9 @@ export function SystemBannerProvider() {
           title: tr(input.title),
           message: input.raw ? input.message : t(input.message),
           detail: tr(input.detail),
-          // `onClick` sengaja TIDAK disimpan di banner: penangan ada di
-          // `actionHandlersRef` supaya function tidak memicu re-render dan
-          // tidak ikut ter-serialize. UI membacanya dari map tersebut.
-          action: input.action ? { label: t(input.action.label) } : undefined,
+          action: input.action
+            ? { label: t(input.action.label), intent: input.action.intent }
+            : undefined,
           autoDismissAfter: input.autoDismissAfter,
           closable: input.closable ?? true,
           createdAt: Date.now(),
@@ -163,7 +146,7 @@ export function SystemBannerProvider() {
         timersRef.current.set(input.id, timer);
       }
     });
-  }, [dismiss, dismissalReady, t]);
+  }, [dismiss, t]);
 
   useBuildVersion();
   useConnectionWatcher();
@@ -176,7 +159,6 @@ export function SystemBannerProvider() {
         clearTimeout(timer);
         timersRef.current.delete(id);
       }
-      actionHandlersRef.current.delete(id);
       dispatch({ type: "dismiss", id });
     });
   }, []);
@@ -225,11 +207,7 @@ export function SystemBannerProvider() {
 
   return (
     <SystemBannerContext.Provider value={value}>
-      <SystemBannerList
-        banners={state.banners}
-        dismiss={dismiss}
-        handlers={actionHandlersRef.current}
-      />
+      <SystemBannerList banners={state.banners} dismiss={dismiss} />
     </SystemBannerContext.Provider>
   );
 }

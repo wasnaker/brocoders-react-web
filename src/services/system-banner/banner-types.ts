@@ -28,16 +28,27 @@ export interface SystemBanner {
   /** Teks tambahan kecil, mis. build id (monospace). */
   detail?: string;
   /**
-   * Tombol aksi. `onClick` TIDAK disimpan di sini saat runtime — provider
-   * menyimpannya di `Map` ref (id -> handler) supaya function tidak memicu
-   * re-render dan tidak ikut ter-serialize. Field ini hanya menyimpan label.
+   * Tombol aksi.
+   *
+   * `intent` BUKAN `onClick`: function tidak bisa di-structured-clone, jadi
+   * ia tidak bisa menyeberahi BroadcastChannel ke tab lain — `postMessage`
+   * akan melempar DataCloneError dan membatalkan seluruh pengiriman banner.
+   * Yang dikirim antar tab adalah intent (data), dan tiap tab merekonstruksi
+   * handler-nya sendiri lewat `resolveActionHandler()`.
    */
-  action?: { label: string };
+  action?: { label: string; intent: BannerActionIntent };
   /** Detik; `undefined` = sticky. */
   autoDismissAfter?: number;
   closable: boolean;
   createdAt: number;
 }
+
+/**
+ * Aksi yang bisa dilakukan banner. Sengaja enum, bukan string bebas:
+ * setiap intent wajib punya handler, sehingga tidak mungkin ada intent yang
+ * terserialisasi tapi tidak bisa dieksekusi tab tujuan.
+ */
+export type BannerActionIntent = "reload";
 
 export type SystemBannerInput = Omit<
   SystemBanner,
@@ -45,10 +56,9 @@ export type SystemBannerInput = Omit<
 > & {
   severity?: BannerSeverity;
   closable?: boolean;
-  /**
-   * `onClick` ikut di-*push* ke ref map provider, bukan disimpan di banner.
-   */
-  action?: { label: string; onClick: () => void };
+  /** Serializable — inilah yang membuat seluruh input bisa menyeberahi
+   *  `BroadcastChannel` ke tab lain tanpa `DataCloneError`. */
+  action?: { label: string; intent: BannerActionIntent };
   /**
    * true = `title`/`message`/`detail` adalah TEKS MENTAH, bukan key i18n.
    *

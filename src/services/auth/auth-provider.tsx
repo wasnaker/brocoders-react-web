@@ -70,6 +70,16 @@ function AuthProvider(props: PropsWithChildren) {
           return;
         }
 
+        // Hanya 401 yang berarti token benar-benar basi. Status lain (502/503
+        // saat service restart, 5xx, timeout) bersifat sementara: JANGAN parse
+        // body-nya — isinya bukan User, dan `setUser(nonUser)` membuat
+        // auth_guard memaksa redirect. `user` dibiarkan null supaya UI tetap
+        // di state "memuat", dan cookie token tidak disentuh sehingga load
+        // berikutnya memulihkan session tanpa user login ulang.
+        if (!response.ok) {
+          return;
+        }
+
         const data = await response.json();
         setUser(data);
       }
