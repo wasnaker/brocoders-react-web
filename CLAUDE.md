@@ -6,6 +6,16 @@ Next.js 16 admin-panel boilerplate (React 19, TypeScript, shadcn, TanStack Query
 
 Use the `generate` skill (auto-loaded from [.claude/skills/generate/SKILL.md](.claude/skills/generate/SKILL.md)). It wraps the project's hygen generators (`npm run generate:resource`, `npm run generate:field`) which scaffold list/edit/create pages, queries, schemas, and i18n. Do not hand-write resource files.
 
+## Deploy
+
+`npm run deploy` (`scripts/deploy.sh`) — **pakai ini, jangan `npm run build` manual untuk produksi.** Script ini stop service → tulis `NEXT_PUBLIC_BUILD_VERSION` ke `.env.local` → build → start service.
+
+Env var itu wajib di-regenerate SETIAP build: nilainya di-inline Next.js ke dalam bundle, jadi kalau tidak di-update, `/api/build-id` mengembalikan versi yang sama dengan yang ter-bake → banner "versi baru tersedia" tidak pernah muncul. Script menuliskannya otomatis supaya tidak perlu diisi manual dan tidak cepat basi.
+
+Jangan pernah menjalankan `next start` manual di samping systemd — dua proses di port sama menyebabkan bundle lama dan baru dilayani bergantian (gejala: `GET /_next/static/css/<hash-lama>.css 400 Bad Request`).
+
+Untuk uji cepat tanpa deploy penuh, selalu lewat `npm run deploy`.
+
 ## Settings Form (`SettingsFieldsTab.tsx`)
 
 Manifest field keys contain dots (`general.appName`) — fine as a DB `key` column, but **never use them directly as react-hook-form `name`**.
@@ -125,9 +135,16 @@ Banner pesan global (build baru, broadcast admin, status koneksi). Docs lengkap:
   tidak memicu re-render dan tidak ikut ter-serialize.
 - Dismissal **dibaca setelah mount**, bukan saat render, supaya server tidak
   merender banner yang sudah di-dismiss lalu hydration melompat.
-- `NEXT_PUBLIC_BUILD_VERSION` harus di-set sebelum `npm run build`. Kalau
+- `NEXT_PUBLIC_BUILD_VERSION` di-set otomatis oleh `npm run deploy`. Kalau
   kosong, `useBuildVersion` sengaja diam — lebih baik tidak menampilkan
   apa-apa daripada banner yang salah/tidak bisa hilang.
+- **Banner build punya jendela pemicu yang sempit.** `useBuildVersion` hanya
+  fetch sekali saat mount (§6.3 plan), jadi banner muncul HANYA kalau tab
+  sedang menjalankan bundle versi lama LALU provider-nya mount ulang saat
+  server sudah punya build baru. Reload biasa justru membawa bundle baru,
+  jadi versi server cocok dan banner diam. Kanal yang andal untuk
+  meng Pandemic notifikasi lintas versi adalah **broadcast**, bukan banner
+  build.
 - `pushEntityEvent()` / `buildBannerIdForEntity()` ada sebagai API publik
   tetapi **TIDAK di-wire** ke halaman atau template hygen mana pun. Sonner
   masih memegang pesan CRUD.

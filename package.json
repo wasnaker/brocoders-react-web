@@ -17,6 +17,7 @@
     "generate:resource": "hygen generate resource",
     "postgenerate:resource": "npm run lint -- --fix",
     "lint:fix": "eslint . --fix",
+    "deploy": "bash scripts/deploy.sh",
     "generate:field": "hygen generate field",
     "postgenerate:field": "npm run lint -- --fix",
     "test:merge": "bash scripts/test-dashboard-merge.sh",
