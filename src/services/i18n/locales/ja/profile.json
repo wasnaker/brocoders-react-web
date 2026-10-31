@@ -32,7 +32,8 @@
         "email": "Email must be valid",
         "currentEmail": "Email must be different from current email",
         "server": {
-          "emailExists": "Email is already taken"
+          "emailExists": "このメールアドレスは既に使用されています",
+          "emailChangeNotAllowed": "このアカウントではメールアドレスの変更は許可されていません"
         }
       }
     },
@@ -61,11 +62,14 @@
       }
     },
     "passwordConfirmation": {
-      "label": "Password Confirmation",
+      "label": "パスワードの確認",
       "validation": {
-        "required": "Password Confirmation is required",
-        "match": "Password Confirmation must match password"
+        "required": "パスワードの確認が必要です",
+        "match": "パスワードが一致しません"
       }
+    },
+    "language": {
+      "label": "言語"
     }
   },
   "alerts": {

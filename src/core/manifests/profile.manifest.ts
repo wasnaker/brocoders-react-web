@@ -1,8 +1,8 @@
 import CircleUser from "lucide-react/dist/esm/icons/circle-user";
 import Shield from "lucide-react/dist/esm/icons/shield";
 import { defineModuleManifest } from "@/core/modules/types";
-import { AccountTab } from "./tabs/AccountTab";
-import { SecurityTab } from "./tabs/SecurityTab";
+import { AccountTab } from "../tabs/AccountTab";
+import { SecurityTab } from "../tabs/SecurityTab";
 
 export default defineModuleManifest({
   alias: "core-profile",

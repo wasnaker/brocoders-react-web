@@ -33,8 +33,8 @@ function CheckboxBooleanInput(
   const id = `checkbox-${props.name}`;
 
   return (
-    <div className="flex flex-col gap-1.5" data-testid={props.testId}>
-      <div className="flex items-center gap-2">
+    <div className="form-field" data-testid={props.testId}>
+      <div className="form-field__inline">
         <Checkbox
           id={id}
           ref={props.ref}

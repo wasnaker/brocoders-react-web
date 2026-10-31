@@ -61,10 +61,7 @@ function MultipleImagePicker(props: MultipleImagePickerProps) {
     };
 
   return (
-    <div
-      {...getRootProps()}
-      className="relative mt-4 flex cursor-pointer flex-col items-center rounded-md border border-dashed border-border p-4 hover:border-foreground"
-    >
+    <div {...getRootProps()} className="form-upload">
       {isDragActive && (
         <div className="absolute inset-0 z-10 bg-black/50">
           <p className="mt-10 text-center text-xl font-bold text-white">
@@ -73,13 +70,13 @@ function MultipleImagePicker(props: MultipleImagePickerProps) {
         </div>
       )}
       {props?.value?.length ? (
-        <div className="grid w-full grid-cols-3 gap-2">
+        <div className="form-upload__grid">
           {props.value.map((item) => (
             <div
               key={item.id}
               className="group/img relative h-[250px] overflow-hidden rounded-md"
             >
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 opacity-0 transition-opacity duration-500 group-hover/img:opacity-100">
+              <div className="form-upload__overlay">
                 <button
                   type="button"
                   aria-label="remove"
@@ -99,7 +96,7 @@ function MultipleImagePicker(props: MultipleImagePickerProps) {
         </div>
       ) : null}
 
-      <div className="mt-4">
+      <div className="form-upload__hint">
         <Button
           asChild
           data-testid={props.testId}
@@ -114,12 +111,12 @@ function MultipleImagePicker(props: MultipleImagePickerProps) {
         </Button>
       </div>
 
-      <div className="mt-2">
+      <div className="form-upload__caption">
         <p>{t("common:formInputs.multipleImageInput.dragAndDrop")}</p>
       </div>
 
       {props.error && (
-        <div className="mt-2">
+        <div className="form-upload__caption">
           <p className="text-destructive">{props.error}</p>
         </div>
       )}

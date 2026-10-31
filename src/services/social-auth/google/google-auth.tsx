@@ -69,7 +69,7 @@ export default function GoogleAuth() {
 
   return (
     <>
-      <div ref={containerRef} className="w-full min-h-10 [color-scheme:light]">
+      <div ref={containerRef} className="social-auth__google">
         {isReady && (
           <GoogleLogin
             key={`${resolvedTheme}-${width}`}

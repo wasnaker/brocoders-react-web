@@ -187,19 +187,19 @@ function FormEditUser() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h1 className="text-xl font-semibold">
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h1 className="form-title">
                 {t("admin-panel-users-edit:title1")}
               </h1>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormAvatarInput<EditUserFormData> name="photo" testId="photo" />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditUserFormData>
                 name="email"
                 testId="email"
@@ -207,7 +207,7 @@ function FormEditUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditUserFormData>
                 name="firstName"
                 testId="first-name"
@@ -215,7 +215,7 @@ function FormEditUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditUserFormData>
                 name="lastName"
                 testId="last-name"
@@ -223,7 +223,7 @@ function FormEditUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormSelectInput<EditUserFormData, Pick<Role, "id">>
                 name="role"
                 testId="role"
@@ -243,7 +243,7 @@ function FormEditUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <EditUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
@@ -306,16 +306,16 @@ function FormChangePasswordUser() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h1 className="text-xl font-semibold">
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h1 className="form-title">
                 {t("admin-panel-users-edit:title2")}
               </h1>
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<ChangeUserPasswordFormData>
                 name="password"
                 type="password"
@@ -323,7 +323,7 @@ function FormChangePasswordUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<ChangeUserPasswordFormData>
                 name="passwordConfirmation"
                 label={t(
@@ -333,7 +333,7 @@ function FormChangePasswordUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <ChangePasswordUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">

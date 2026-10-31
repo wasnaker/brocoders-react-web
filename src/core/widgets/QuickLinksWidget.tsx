@@ -33,17 +33,12 @@ export function QuickLinksWidget() {
   ];
 
   return (
-    <ul className="grid grid-cols-2 gap-3">
+    <ul className="widget-grid">
       {links.map((l) => (
         <li key={l.href}>
-          <Link
-            href={l.href}
-            className="flex flex-col gap-1 rounded-lg border border-border bg-background p-3 hover:border-primary/40 hover:bg-primary/5 transition-colors"
-          >
-            <span className="text-sm font-medium">{l.label}</span>
-            <span className="text-xs text-muted-foreground">
-              {l.description}
-            </span>
+          <Link href={l.href} className="widget-card-link">
+            <span className="widget-card-link__title">{l.label}</span>
+            <span className="widget-card-link__meta">{l.description}</span>
           </Link>
         </li>
       ))}

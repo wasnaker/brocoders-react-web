@@ -34,9 +34,25 @@ Semantic classes are declared in `src/app/globals.css` (`@layer components`) and
 |-------|--------|
 | `page-content` | Container utama halaman |
 | `page-content--narrow` | Container halaman dibatasi lebar, responsif: `max-w-3xl` → `xl:max-w-5xl` → `2xl:max-w-screen-xl` (profil, settings) |
+| `page-content--wide` | Container lebar penuh `max-w-screen-xl` untuk tabel admin (bukan `--narrow` — tabel butuh lebar, bukan kolom baca) |
+| `page-content--form` | Container `max-w-md` untuk halaman form auth/create/edit |
+| `page-content--reading` | `max-w-3xl` non-responsif untuk konten baca (home, landing admin, tab modul) |
+| `page-content--document` | `max-w-3xl` + `py-8` untuk halaman dokumen (privacy policy) |
+| `page-content--centered` | `max-w-xl` untuk halaman spinner/redirect (confirm-email) |
+| `page-content--body` | Isi halaman daftar admin: stack header → tabel, `gap-6 pt-6` |
 | `page-header` | Wrapper header halaman |
+| `page-header--split` | Header daftar: judul kiri, aksi kanan, wrap di layar sempit |
+| `page-header__actions` | Grup tombol aksi di kanan header |
 | `page-title` | Judul halaman |
 | `page-subtitle` | Subtitle di bawah judul |
+| `page-hero` | Halaman depan: tinggi 90vh, judul atas / link bawah |
+| `page-hero__body` | Blok grow di dalam `page-hero` |
+| `page-hero__footer` | Blok link di dasar `page-hero` |
+| `page-status` | Spinner besar di tengah halaman yang menunggu redirect |
+| `table-shell` | Wadah `TableVirtuoso`: `overflow-x-auto`, border, `bg-card` |
+| `table-sort` | Tombol header tabel yang bisa di-sort |
+| `table-shell__progress` | Track bar loading infinite scroll |
+| `table-shell__progress-bar` | Isi bar loading (pasangkan dengan `animate-progress-bar`) |
 | `empty-state` | Placeholder saat tidak ada data |
 | `empty-state__skeleton` | Susunan skeleton untuk state loading |
 | `identity-block` | Blok identitas pengguna (avatar + nama) |
@@ -51,16 +67,67 @@ Semantic classes are declared in `src/app/globals.css` (`@layer components`) and
 | `user-menu__name` | Nama user (truncate) |
 | `user-menu__email` | Email user (truncate) |
 | `user-menu__item-destructive` | Item menu aksi destruktif (logout) |
+| `user-menu__trigger-identity` | Nama + email pada trigger dropdown di sidebar footer |
+| `user-menu__trigger-email` | Baris email di trigger (warna token sidebar) |
+| `app-shell` | Baris `flex flex-1` yang membungkus sidebar + konten di layout |
 | `form` | Wrapper form |
 | `form__fields` | Stack field dalam form |
 | `form__actions` | Baris tombol aksi form |
 | `form__error` | Pesan error form |
 | `form-field` | Wrapper satu field + bantuan |
 | `form-field__help` | Teks bantuan di bawah field |
+| `form-field--full` | Modifier `w-full` untuk `.form-field` (text input, select, autocomplete) |
+| `form-field__row` | Baris kontrol + label di dalam field (checkbox, switch) |
+| `form-field__inline` | `flex items-center gap-2` — kontrol dan label sebaris |
+| `form-fieldset` | Fieldset grup permission (checkbox list) |
+| `form-fieldset__legend` | Legend grup permission |
+| `form-grid` | Grid 12 kolom halaman form auth/create/edit |
+| `form-grid--auth` | `mb-4` — halaman auth, judul punya jarak atas sendiri |
+| `form-grid--page` | `mt-6 mb-6` — halaman admin create/edit |
+| `form-grid--tab` | `mb-6` — tab profil (SecurityTab) |
+| `form-grid__cell` | Satu sel grid: `col-span-12` |
+| `form-grid__cell--lead` | Sel pertama halaman auth, `mt-6` |
+| `form-title` | Judul form `text-xl font-semibold` — BEDA dari `page-title` (`text-3xl`) |
+| `form-divider` | Baris pemisah "atau" sebelum social auth |
+| `form-divider__label` | Label pill di tengah `form-divider` |
+| `form-upload` | Area drop image picker (kotak putus-putus) |
+| `form-upload__grid` | Grid thumbnail 3 kolom |
+| `form-upload__preview` | Wadah thumbnail; **wajib**_write `group/img` di className — `group/*` tidak bisa di-`@apply` (build gagal) |
+| `form-upload__preview--avatar` | Versi avatar lingkaran; butuh `group/avatar` |
+| `form-upload__overlay` | Overlay hapus saat hover (pakai `group-hover/img`) |
+| `form-upload__overlay--round` | Overlay avatar (pakai `group-hover/avatar`) |
+| `form-upload__hint` | `mt-4` di bawah area drop |
+| `form-upload__caption` | `mt-2` untuk keterangan thumbnail |
+| `form-option-panel` | `p-2` panel opsi multi-select |
+| `form-control` | `relative` untuk elemen yang diposisikan relatif input |
+| `form-control__action` | Ikon aksi menempel tepi kanan input |
+| `social-auth` | `max-w-[400px]` stack tombol Google/Facebook |
+| `social-auth__google` | Wadah tombol Google: `min-h-10` + `color-scheme:light` |
+| `alert` | Inline alert di dalam form |
+| `alert--error` | Varian destructive untuk `.alert` |
+| `alert__title` | Judul alert |
+| `alert__body` | Isi alert |
 | `app-bar` | Wrapper header aplikasi (flex, height var(--header-height), gap, px) |
 | `app-bar__brand` | Brand/app-name: `me-auto min-w-0 truncate font-mono text-lg font-bold`, tracking step-down (`tracking-[0.15em] sm:tracking-[0.3em]`) |
 | `app-bar__actions` | Wrapper action buttons (theme, language) di kanan: `flex shrink-0 items-center gap-2` |
 | `language-switcher` | Trigger language select: `min-w-0 sm:min-w-[7.5rem]` (menggantikan hardcoded `min-w-[120px]`) |
+| `doc-title` | Judul dokumen (`text-4xl font-bold`) |
+| `doc-heading-2` / `-3` / `-4` | Heading dokumen dengan margin atas bertingkat |
+| `doc-list` | Daftar bullet dokumen |
+| `doc-p` / `doc-p--strong` | Paragraf dokumen (jarak bawah seragam) |
+| `doc-link` | Link di dalam dokumen |
+| `widget-list` | Stack baris ringkas di dalam widget dashboard |
+| `widget-list__row` | Baris list: media kiri, nama tengah, badge kanan |
+| `widget-list__avatar` | Inisial dalam lingkaran di baris list |
+| `widget-list__details` | Kolom nama + keterangan |
+| `widget-list__name` / `__meta` | Nama utama / keterangan kecil |
+| `widget-list__badge` | Badge kecil di ujung baris |
+| `widget-grid` | Grid 2 kolom untuk kartu navigasi (quick links) |
+| `widget-card-link` | Kartu navigasi yang bisa diklik |
+| `widget-card-link__title` / `__meta` | Judul / keterangan kartu navigasi |
+| `dashboard-grid--offset` | `mt-4` — jarak grid dari toolbar di atasnya |
+| `widget-card--overlay` | Bayangan kartu saat di-drag (`DragOverlay`) |
+| `filter-grid` | Grid filter di dalam popover (tanpa margin vertikal) |
 
 Aturan:
 
@@ -68,6 +135,9 @@ Aturan:
 2. Utility Tailwind tetap boleh untuk children kecil (`span`, `button`, `th`, `td`) dan untuk komponen primitive shadcn di `src/components/ui/`.
 3. Kalau class semantic yang dibutuhkan belum ada, TAMBAHKAN di `@layer components` — jangan hardcode utility di komponen.
 4. Primitif shadcn di `src/components/ui/` **tidak** dimigrasikan. Itu design system, bukan layout aplikasi.
+5. **`group/*` tidak bisa di-`@apply`.** `group`, `group/img`, `group/avatar` harus tetap ditulis di `className` komponen, berdampingan dengan class semantic. Menulisnya di `@apply` gagal build: `Cannot apply unknown utility class 'group/img'`.
+6. Saat memindahkan utility ke class semantic, **gradient/spacing modifier dibuat terpisah** kalau aslinya berbeda (`form-grid--auth` vs `--page` vs `--tab`). Jangan disamakan diam-diam — itu perubahan visual yang tidak terlihat di diff.
+7. Semua yang ada di `@layer components` tapi tidak dipakai di mana pun adalah dead CSS. Class yang dipakai lewat template literal (`` `system-banner__item--${severity}` ``) atau `cn()` tidak akan terdeteksi pencarian teks biasa.
 
 ## Dashboard Widgets
 
@@ -79,7 +149,7 @@ Pola dashboard (grid area + drag-and-drop reorder):
 - `src/core/dashboard/use-stats-summary.ts` — query KPI bersama. Ketiga tile membaca tiga field dari objek yang sama dan **WAJIB** memakai satu `queryKey` supaya React Query hanya melakukan satu request, bukan tiga.
 - `StatTile` menampilkan angka besar + hint. Angka `0` adalah nilai valid dan tidak boleh disamarkan jadi "—"; `null` (belum diketahui) yang memakai "—".
 - `src/core/dashboard/use-dashboard-state.ts` — state dashboard per user. **Fase 0: localStorage** (tabel `setting` di API tidak punya `userId` dan endpoint-nya admin-only). Query key WAJIB memuat userId — `AuthProvider` memang `queryClient.clear()` saat logout, tapi key per-user adalah pengaman kedua terhadap layout user lain mewarisi di akun yang sama.
-- Widget didaftarkan di `src/modules/*/module.manifest.ts` via `dashboardWidgets[]`. Manifest baru harus ditambah satu baris di `src/modules/core/manifests/index.ts` supaya ikut ter-registry.
+- Widget didaftarkan di `module.manifest.ts` modul tersebut via `dashboardWidgets[]`. Modul **tidak ditulis langsung** ke `src/modules/` — folder itu di-`.gitignore` karena isinya milik repo modul. Pasang dengan `npm run module:add -- <alias>`; `npm run module:list` / `npm run module:rm -- <alias>` untuk status dan melepas. Generator me-scan disk: core dari `src/core/manifests/*.manifest.ts`, eksternal dari `src/modules/*/module.manifest.ts`. Folder tanpa `module.manifest.ts` = **error build**, bukan modul yang belum jadi.
 - **Drag-and-drop** (`@dnd-kit/core` v6): `DashboardGrid` bungkus `DndContext`, tiap area punya `DashboardAreaColumn` yang `useDroppable` (id berawalan `column::`), tiap widget punya `WidgetCard` yang `useSortable`. `useSortable` **tidak** menerima `group`/`index` di v6 — itu datang dari `<SortableContext id={area} items={ids}>` induk.
 - **Collision detection custom** (`dashboardCollision` di DashboardGrid). `closestCorners` bawaan **tidak bisa dipakai** untuk grid: ia membandingkan sudut kartu dengan sudut droppable, sehingga area kosong yang lebar selalu kalah dari widget yang lebih dekat sudutnya — drop ke kolom kosong jadi tidak pernah terjadi. Pakai `pointerWithin` → prioritaskan target widget, fallback ke kolom.
 - Drag hanya boleh mulai dari grip (`setActivatorNodeRef`), bukan dari kartu penuh, supaya tombol/link di dalam widget tetap bisa diklik.

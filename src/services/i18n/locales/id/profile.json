@@ -32,7 +32,8 @@
         "email": "Email must be valid",
         "currentEmail": "Email must be different from current email",
         "server": {
-          "emailExists": "Email is already taken"
+          "emailExists": "Email sudah digunakan",
+          "emailChangeNotAllowed": "Perubahan email tidak diizinkan untuk akun Anda"
         }
       }
     },
@@ -61,11 +62,14 @@
       }
     },
     "passwordConfirmation": {
-      "label": "Password Confirmation",
+      "label": "Konfirmasi Kata Sandi",
       "validation": {
-        "required": "Password Confirmation is required",
-        "match": "Password Confirmation must match password"
+        "required": "Konfirmasi Kata Sandi wajib diisi",
+        "match": "Konfirmasi Kata Sandi harus sesuai dengan Kata Sandi"
       }
+    },
+    "language": {
+      "label": "Bahasa"
     }
   },
   "alerts": {

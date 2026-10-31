@@ -95,13 +95,13 @@ function Form() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-4 grid grid-cols-12 gap-4">
-            <div className="col-span-12 mt-6">
-              <h1 className="text-xl font-semibold">{t("sign-in:title")}</h1>
+          <div className="form-grid form-grid--auth">
+            <div className="form-grid__cell form-grid__cell--lead">
+              <h1 className="form-title">{t("sign-in:title")}</h1>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignInFormData>
                 name="email"
                 label={t("sign-in:inputs.email.label")}
@@ -111,7 +111,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignInFormData>
                 name="password"
                 label={t("sign-in:inputs.password.label")}
@@ -119,7 +119,7 @@ function Form() {
                 testId="password"
               />
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <Link
                 href="/forgot-password"
                 data-testid="forgot-password"
@@ -129,7 +129,7 @@ function Form() {
               </Link>
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormActions />
 
               {IS_SIGN_UP_ENABLED && (
@@ -148,16 +148,14 @@ function Form() {
             </div>
 
             {[isGoogleAuthEnabled, isFacebookAuthEnabled].some(Boolean) && (
-              <div className="col-span-12">
-                <div className="mb-4 flex items-center gap-2">
+              <div className="form-grid__cell">
+                <div className="form-divider">
                   <Separator className="flex-1" />
-                  <span className="rounded-full border bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    {t("sign-in:or")}
-                  </span>
+                  <span className="form-divider__label">{t("sign-in:or")}</span>
                   <Separator className="flex-1" />
                 </div>
 
-                <div className="flex flex-col items-center gap-2 w-full">
+                <div className="flex w-full flex-col items-center gap-2">
                   <SocialAuth />
                 </div>
               </div>

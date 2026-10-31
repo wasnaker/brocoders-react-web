@@ -87,9 +87,9 @@ function DateTimePickerInput(
   };
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={inputId}>{props.label}</Label>
-      <div className="flex gap-2">
+      <div className="form-field__inline">
         <Popover
           open={open}
           onOpenChange={(next) => {

@@ -8,10 +8,10 @@ function AdminPanel() {
   const { t } = useTranslation("admin-panel-home");
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4">
-      <div className="flex gap-6 pt-6">
+    <div className="page-content--reading">
+      <div className="page-content--body">
         <div>
-          <h1 className="mb-2 text-3xl font-semibold">{t("title")}</h1>
+          <h1 className="page-title mb-2">{t("title")}</h1>
           <p>{t("description")}</p>
         </div>
       </div>

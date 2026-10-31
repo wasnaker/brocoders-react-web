@@ -225,8 +225,76 @@
   .page-content {
     @apply flex w-full flex-col;
   }
+  /* Isi halaman daftar admin: stack header -> toolbar -> tabel, dengan
+     jarak atas 1.5rem supaya tidak menempel ke app bar. */
+  .page-content--body {
+    @apply flex flex-col gap-6 pt-6;
+  }
   .page-content--narrow {
     @apply mx-auto w-full max-w-3xl px-4 xl:max-w-5xl 2xl:max-w-screen-xl;
+  }
+  /* Konten lebar penuh untuk tabel admin. Berbeda dari `--narrow`: tabel
+     butuh lebar penuh, bukan kolom baca. */
+  .page-content--wide {
+    @apply mx-auto w-full max-w-screen-xl px-4;
+  }
+  /* Tampilan sementara / spinner konfirmasi (confirm-email, dll) */
+  .page-content--centered {
+    @apply mx-auto w-full max-w-xl px-4;
+  }
+  /* Spinner besar di tengah halaman yang sedang menunggu hasil redirect */
+  .page-status {
+    @apply flex items-center justify-center p-4;
+  }
+  /* Halaman baca non-form: privacy policy, home, tab modul. Lebar tetap
+     `max-w-3xl` — bukan `--narrow` yang responsif, karena konten dokumen
+     punya ukuran huruf sendiri dan tidak boleh ikut melar. */
+  .page-content--reading {
+    @apply mx-auto w-full max-w-3xl px-4;
+  }
+  /* Halaman dokumen (privacy policy): max-w-3xl + padding vertikal penuh */
+  .page-content--document {
+    @apply mx-auto w-full max-w-3xl px-4 py-8;
+  }
+
+  /* Tipografi dokumen. Padding `mt-*` ikut di class supaya hierarki heading
+     konsisten di seluruh halaman, bukan bribakan perParagraf. */
+  .doc-title {
+    @apply mb-4 text-4xl font-bold;
+  }
+  .doc-heading-2 {
+    @apply mt-14 mb-4 text-3xl font-semibold tracking-tight;
+  }
+  .doc-heading-3 {
+    @apply mt-10 mb-4 text-2xl font-semibold;
+  }
+  .doc-heading-4 {
+    @apply mt-8 mb-2 text-xl font-semibold;
+  }
+  .doc-list {
+    @apply mb-6 list-disc ps-10;
+  }
+  /* Paragraf dokumen: jarak bawah seragam. Dipakai 45× di privacy policy —
+     utility inline-nya berulang identik, jadi layak jadi class. */
+  .doc-p {
+    @apply mb-4;
+  }
+  .doc-p--strong {
+    @apply mb-2 font-bold;
+  }
+  .doc-link {
+    @apply text-primary underline-offset-4 underline;
+  }
+
+  /* Halaman depan: judul di atas, link privacyPolicy di bawah, setinggi layar */
+  .page-hero {
+    @apply flex h-[90vh] flex-col justify-between gap-6 pt-6;
+  }
+  .page-hero__body {
+    @apply flex-grow;
+  }
+  .page-hero__footer {
+    @apply mx-auto;
   }
 
   /* App bar */
@@ -255,11 +323,36 @@
   .page-header {
     @apply flex flex-col;
   }
+  /* Header halaman daftar: judul di kiri, aksi di kanan, wrap di layar sempit */
+  .page-header--split {
+    @apply flex flex-wrap items-center justify-between gap-2;
+  }
+  .page-header__actions {
+    @apply flex items-center gap-2;
+  }
   .page-title {
     @apply text-3xl font-semibold;
   }
   .page-subtitle {
     @apply text-xl text-muted-foreground;
+  }
+
+  /* Wadah tabel virtual (TableVirtuoso) — shell yang sama di 4 halaman
+     daftar admin, scroll horizontal disembunyikan vertikal supaya header
+     fixed tidak ikut ter-scroll. */
+  .table-shell {
+    @apply mb-2 overflow-x-auto overflow-y-hidden rounded-md border bg-card;
+  }
+  /* Tombol header tabel yang bisa di-sort: ikon panah muncul saat aktif */
+  .table-sort {
+    @apply inline-flex items-center gap-1 font-medium hover:text-foreground;
+  }
+  /* Baris loading infinite scroll di bawah header tabel */
+  .table-shell__progress {
+    @apply h-1 w-full overflow-hidden bg-primary/20;
+  }
+  .table-shell__progress-bar {
+    @apply h-full w-full origin-left bg-primary;
   }
 
   /* Empty / loading state */
@@ -302,6 +395,15 @@
   .user-menu__identity {
     @apply grid min-w-0 flex-1 text-start leading-tight;
   }
+  /* Identitas user pada trigger dropdown di sidebar footer. Sama bentuknya
+     dengan `.user-menu__identity`, tapi warna teks mengikuti token sidebar
+     (bukan foreground) dan ukurannya explicit `text-sm`. */
+  .user-menu__trigger-identity {
+    @apply grid flex-1 text-start text-sm leading-tight;
+  }
+  .user-menu__trigger-email {
+    @apply truncate text-xs text-sidebar-foreground/70;
+  }
   .user-menu__name {
     @apply truncate font-medium;
   }
@@ -331,10 +433,196 @@
   .form-field__help {
     @apply text-sm text-muted-foreground;
   }
+  /* Fieldset grup permission: satu blok checkbox dengan legend grup */
+  .form-fieldset {
+    @apply flex flex-col gap-2;
+  }
+  .form-fieldset__legend {
+    @apply text-sm font-medium tracking-wide text-muted-foreground uppercase;
+  }
+
+  /* ── Komponen form (src/components/form) ────────────────────────────
+     Wrapper input: label + kontrol + pesan error, disusun vertikal.
+     Varian `--full` dipakai kontrol yang butuh lebar penuh (text input,
+     select, autocomplete); tanpa varian untuk yang intrinsic. */
+  .form-field--full {
+    @apply w-full;
+  }
+  /* Baris kontrol + label di dalam satu field (checkbox, switch, radio) */
+  .form-field__row {
+    @apply flex flex-col gap-2;
+  }
+  .form-field__inline {
+    @apply flex items-center gap-2;
+  }
+  /* Area drop untuk image picker: kotak putus-putus yang bisa diklik */
+  .form-upload {
+    @apply relative mt-4 flex cursor-pointer flex-col items-center rounded-md border border-dashed border-border p-4 hover:border-foreground;
+  }
+  /* Grid thumbnail pada image picker */
+  .form-upload__grid {
+    @apply grid w-full grid-cols-3 gap-2;
+  }
+  /* Penanda `group/img` dan `group/avatar` TIDAK bisa di-@apply — Tailwind
+     memperlakukannya sebagai utility yang tidak dikenal dan build gagal.
+     Keduanya tetap ditulis di className komponen, berdampingan dengan class
+     semantic di sini. */
+  .form-upload__preview {
+    @apply relative h-[250px] overflow-hidden rounded-md;
+  }
+  .form-upload__preview--avatar {
+    @apply relative size-[100px];
+  }
+  /* Overlay "hapus" yang muncul saat hover thumbnail. Varian `--round` untuk
+     avatar (shape lingkaran, tanpa z-index karena tidak ada preview lain). */
+  .form-upload__overlay {
+    @apply absolute inset-0 z-10 flex items-center justify-center bg-black/70 opacity-0 transition-opacity duration-500 group-hover/img:opacity-100;
+  }
+  .form-upload__overlay--round {
+    @apply absolute inset-0 flex items-center justify-center rounded-full bg-black/70 opacity-0 transition-opacity duration-500 group-hover/avatar:opacity-100;
+  }
+  .form-upload__hint {
+    @apply mt-4;
+  }
+  .form-upload__caption {
+    @apply mt-2;
+  }
+  /* Panel opsi pada select yang bisa multi-pilih */
+  .form-option-panel {
+    @apply p-2;
+  }
+  /* Wadah relatif untuk elemen yang diposisikan relatif terhadap input —
+    dipakai uffix ikon (ikon tampil/hide password) yang menempel di tepi
+    kanan. */
+  .form-control {
+    @apply relative;
+  }
+  /* Ikon aksi yang menempel di tepi kanan input */
+  .form-control__action {
+    @apply absolute inset-y-0 end-0 flex items-center px-3 text-muted-foreground hover:text-foreground;
+  }
+
+  /* Halaman form auth / create / edit — wrapper `max-w-md` + grid 12 kolom
+     yang setiap selnya `col-span-12` (grid ini belum pernah memakai kolom
+     kedua). Pola identik di 12 file, jadi utility inline-nya dipindah ke
+     sini. */
+  .page-content--form {
+    @apply mx-auto w-full max-w-md px-4;
+  }
+  .form-grid {
+    @apply grid grid-cols-12 gap-4;
+  }
+  /* Sel grid: satu kolom penuh. */
+  .form-grid__cell {
+    @apply col-span-12;
+  }
+  /* Sel pertama pada halaman auth — judul form diberi jarak atas sendiri
+     karena `.form-grid--auth` sengaja tidak punya `mt`. */
+  .form-grid__cell--lead {
+    @apply mt-6;
+  }
+  /* Grid filter di dalam popover — dipisah dari `.form-grid` karena tidak
+     memakai margin vertikal dan tidak diberi pembungkus `page-content--form`. */
+  .filter-grid {
+    @apply grid grid-cols-12 gap-4;
+  }
+  /* Jarak vertikal grid dibedakan karena aslinya berbeda: halaman auth pakai
+     `mb-4` saja, halaman admin create/edit + tab profil pakai `mt-6 mb-6`.
+     Jangan disamakan diam-diam — itu perubahan visual. */
+  .form-grid--auth {
+    @apply mb-4;
+  }
+  .form-grid--page {
+    @apply mt-6 mb-6;
+  }
+  .form-grid--tab {
+    @apply mb-6;
+  }
+  /* Judul form: `text-xl font-semibold`. Beda dari `.page-title` (text-3xl)
+     yang dipakai header halaman, bukan header form. */
+  .form-title {
+    @apply text-xl font-semibold;
+  }
+  /* Pemisah "atau" di antara form credentials dan social auth */
+  .form-divider {
+    @apply mb-4 flex items-center gap-2;
+  }
+  .form-divider__label {
+    @apply rounded-full border bg-muted px-2 py-0.5 text-xs text-muted-foreground;
+  }
+
+  /* Tombol social auth (Google / Facebook) di bawah form auth */
+  .social-auth {
+    @apply mx-auto flex w-full max-w-[400px] flex-col gap-4;
+  }
+  /* Wadah tombol Google. `min-h-10` mencegah layout shift saat script Google
+     selesai dimuat; `color-scheme:light` memaksa iframe Google tetap terang
+     supaya tidak ikut jadi gelap di mode gelap. */
+  .social-auth__google {
+    @apply min-h-10 w-full [color-scheme:light];
+  }
+
+  /* Inline alert di dalam form (link reset kadaluarsa, role admin terlindungi) */
+  .alert {
+    @apply rounded-md border text-sm;
+  }
+  .alert--error {
+    @apply border-destructive/50 bg-destructive/10 text-destructive;
+  }
+  .alert__title {
+    @apply font-medium;
+  }
+  .alert__body {
+    @apply text-muted-foreground;
+  }
+
+  /* Isi widget dashboard — daftar baris ringkas. Dipakai widget user,
+     permission, dan quick links; ketiganya struktur list yang sama. */
+  .widget-list {
+    @apply flex flex-col gap-2;
+  }
+  /* Baris list: avatar/bingkai di kiri, nama + keterangan di tengah,
+     badge role di kanan. */
+  .widget-list__row {
+    @apply flex items-center gap-2 rounded-lg border border-border bg-background p-2.5 transition-colors hover:bg-muted/50;
+  }
+  .widget-list__avatar {
+    @apply flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium;
+  }
+  .widget-list__details {
+    @apply min-w-0 flex-1;
+  }
+  .widget-list__name {
+    @apply truncate text-sm font-medium;
+  }
+  .widget-list__meta {
+    @apply truncate text-xs text-muted-foreground;
+  }
+  /* Badge kecil (mis. nama role) di ujung baris */
+  .widget-list__badge {
+    @apply inline-flex shrink-0 items-center rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary;
+  }
+  /* Grid kartu navigasi (quick links): 2 kolom */
+  .widget-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+  .widget-card-link {
+    @apply flex flex-col gap-1 rounded-lg border border-border bg-background p-3 transition-colors hover:border-primary/40 hover:bg-primary/5;
+  }
+  .widget-card-link__title {
+    @apply text-sm font-medium;
+  }
+  .widget-card-link__meta {
+    @apply text-xs text-muted-foreground;
+  }
 
   /* Dashboard — grid area + kartu widget */
   .dashboard-grid {
     @apply grid grid-cols-12 gap-4;
+  }
+  /* Jarak dari toolbar di atasnya */
+  .dashboard-grid--offset {
+    @apply mt-4;
   }
   .dashboard-area {
     @apply flex flex-col;
@@ -390,6 +678,11 @@
   .widget-card--placeholder {
     @apply border-dashed text-sm text-muted-foreground;
   }
+  /* Bayangan kartu saat sedang diseret (DragOverlay). Lebarnya tetap Fixed
+     supaya tidak ikut mengikuti lebar grid saat di-drag. */
+  .widget-card--overlay {
+    @apply w-56 px-4 py-3;
+  }
 
   /* Stat tile — KPI angka: tinggi tetap, angka besar, label kecil. */
   .stat-tile {
@@ -438,6 +731,11 @@
   }
 
   /* System banner — melebar penuh, sibling app bar di dalam SidebarProvider */
+  /* Shell aplikasi: baris yang membungkus sidebar + konten, mengisi sisa
+     tinggi viewport di bawah app bar dan system banner. */
+  .app-shell {
+    @apply flex flex-1;
+  }
   .system-banner {
     @apply w-full shrink-0;
   }

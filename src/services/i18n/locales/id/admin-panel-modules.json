@@ -1,0 +1,12 @@
+{
+  "title": "Modul",
+  "table": {
+    "column1": "Nama",
+    "column2": "Versi",
+    "column3": "Alias",
+    "column4": "Deskripsi"
+  },
+  "alerts": {
+    "empty": "Tidak ada modul ditemukan."
+  }
+}

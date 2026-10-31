@@ -36,7 +36,7 @@ function RadioInput<T>(
   const selectedKey = props.value?.[props.keyValue]?.toString() ?? "";
 
   return (
-    <div className="flex flex-col gap-1.5" data-testid={props.testId}>
+    <div className="form-field" data-testid={props.testId}>
       <Label data-testid={`${props.testId}-label`}>{props.label}</Label>
       <RadioGroup
         ref={props.ref}
@@ -58,7 +58,7 @@ function RadioInput<T>(
           return (
             <div
               key={props.keyExtractor(option)}
-              className="flex items-center gap-2"
+              className="form-field__inline"
             >
               <RadioGroupItem
                 id={id}

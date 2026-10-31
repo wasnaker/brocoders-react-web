@@ -96,7 +96,7 @@ export default async function RootLayout(props: {
                             <div className="system-banner">
                               <SystemBannerProvider />
                             </div>
-                            <div className="flex flex-1">
+                            <div className="app-shell">
                               <AppSidebar />
                               <SidebarInset>{children}</SidebarInset>
                             </div>

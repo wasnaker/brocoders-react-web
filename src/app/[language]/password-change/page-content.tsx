@@ -75,11 +75,11 @@ function ExpiresAlert() {
 
   return (
     isExpired && (
-      <div className="col-span-12">
+      <div className="form-grid__cell">
         <div
           role="alert"
           data-testid="reset-link-expired-alert"
-          className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="alert alert--error px-4 py-3"
         >
           {t("password-change:alerts.expired")}
         </div>
@@ -141,16 +141,14 @@ function Form() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-4 grid grid-cols-12 gap-4">
-            <div className="col-span-12 mt-6">
-              <h1 className="text-xl font-semibold">
-                {t("password-change:title")}
-              </h1>
+          <div className="form-grid form-grid--auth">
+            <div className="form-grid__cell form-grid__cell--lead">
+              <h1 className="form-title">{t("password-change:title")}</h1>
             </div>
             <ExpiresAlert />
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<PasswordChangeFormData>
                 name="password"
                 label={t("password-change:inputs.password.label")}
@@ -158,7 +156,7 @@ function Form() {
                 testId="password"
               />
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<PasswordChangeFormData>
                 name="passwordConfirmation"
                 label={t("password-change:inputs.passwordConfirmation.label")}
@@ -167,7 +165,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormActions />
             </div>
           </div>

@@ -42,8 +42,8 @@ export default function ConfirmEmail() {
   }, [fetchConfirmEmail, router, enqueueSnackbar, t]);
 
   return (
-    <div className="mx-auto w-full max-w-xl px-4">
-      <div className="flex items-center justify-center p-4">
+    <div className="page-content--centered">
+      <div className="page-status">
         <Loader2 className="size-10 animate-spin" />
       </div>
     </div>

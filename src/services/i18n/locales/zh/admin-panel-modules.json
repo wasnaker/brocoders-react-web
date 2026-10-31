@@ -1,0 +1,12 @@
+{
+  "title": "Modules",
+  "table": {
+    "column1": "Name",
+    "column2": "Version",
+    "column3": "Alias",
+    "column4": "Description"
+  },
+  "alerts": {
+    "empty": "No modules found."
+  }
+}

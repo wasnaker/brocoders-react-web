@@ -3,7 +3,7 @@ import Palette from "lucide-react/dist/esm/icons/palette";
 import SlidersHorizontal from "lucide-react/dist/esm/icons/sliders-horizontal";
 import UsersRound from "lucide-react/dist/esm/icons/users-round";
 import { defineModuleManifest } from "@/core/modules/types";
-import { RolesTab } from "./tabs/RolesTab";
+import { RolesTab } from "../tabs/RolesTab";
 
 export default defineModuleManifest({
   alias: "core-settings",

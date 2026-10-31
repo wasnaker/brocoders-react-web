@@ -11,6 +11,8 @@ import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
 import Settings from "lucide-react/dist/esm/icons/settings";
 import CircleUser from "lucide-react/dist/esm/icons/circle-user";
 import LogOut from "lucide-react/dist/esm/icons/log-out";
+import ShieldUser from "lucide-react/dist/esm/icons/shield-user";
+import Blocks from "lucide-react/dist/esm/icons/blocks";
 import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
@@ -37,6 +39,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { resolveMenu } from "@/core/modules/resolve-menu";
+import { getManifests } from "@/core/modules/registry";
+import type { I18nLabel } from "@/core/modules/types";
 
 function CloseSidebarOnNavigate() {
   const pathname = usePathname();
@@ -47,6 +52,14 @@ function CloseSidebarOnNavigate() {
   }, [pathname, setOpenMobile]);
 
   return null;
+}
+
+/** Resolve I18nLabel (string | { namespace, key }) to a translated string.
+ *  Same helper used in SettingsShell.tsx and WidgetCard.tsx. */
+function resolveLabel(label: I18nLabel, t: (key: string) => string): string {
+  return typeof label === "string"
+    ? label
+    : t(`${label.namespace}:${label.key}`);
 }
 
 function NavUser() {
@@ -60,7 +73,7 @@ function NavUser() {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" disabled>
             <Loader2 className="size-4 animate-spin" />
-            <span className="text-sidebar-foreground/70">
+            <span className="user-menu__trigger-email">
               {t("common:loading")}
             </span>
           </SidebarMenuButton>
@@ -111,11 +124,9 @@ function NavUser() {
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-start text-sm leading-tight">
+              <div className="user-menu__trigger-identity">
                 <span className="truncate font-medium">{fullName}</span>
-                <span className="truncate text-xs text-sidebar-foreground/70">
-                  {user.email}
-                </span>
+                <span className="user-menu__trigger-email">{user.email}</span>
               </div>
               <ChevronsUpDown className="ms-auto size-4" />
             </SidebarMenuButton>
@@ -172,6 +183,13 @@ function AppSidebar() {
   const isAdmin =
     !!user?.role && [RoleEnum.ADMIN].includes(Number(user?.role?.id));
 
+  // Module menu items from registry. Resolver already filters by permission
+  // (fail-closed) and sorts by position → moduleAlias → slug. We do NOT
+  // wrap this in `isAdmin` because each item carries its own permission;
+  // a non-admin user with a specific permission should see their allowed
+  // module menu items. The resolver handles all permission logic.
+  const moduleMenu = resolveMenu(getManifests(), user);
+
   return (
     <>
       <CloseSidebarOnNavigate />
@@ -227,9 +245,49 @@ function AppSidebar() {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    {/* sidebar-menu-items */}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.includes("/admin-panel/roles")}
+                      >
+                        <Link href="/admin-panel/roles">
+                          <ShieldUser />
+                          {t("common:navigation.roles")}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.includes("/admin-panel/modules")}
+                      >
+                        <Link href="/admin-panel/modules">
+                          <Blocks />
+                          {t("common:navigation.modules")}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </>
                 )}
+
+                {/* Module menu items from registry — rendered after core items.
+                    Each item has its own permission; resolver already filtered. */}
+                {moduleMenu.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <SidebarMenuItem key={item.slug}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname.includes(item.href)}
+                      >
+                        <Link href={item.href}>
+                          {Icon ? <Icon /> : null}
+                          {resolveLabel(item.label, t)}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

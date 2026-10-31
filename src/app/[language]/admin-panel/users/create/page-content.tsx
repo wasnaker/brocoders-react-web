@@ -139,19 +139,19 @@ function FormCreateUser() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit} autoComplete="create-new-user">
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h1 className="text-xl font-semibold">
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h1 className="form-title">
                 {t("admin-panel-users-create:title")}
               </h1>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormAvatarInput<CreateFormData> name="photo" testId="photo" />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="email"
                 testId="new-user-email"
@@ -160,7 +160,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="password"
                 type="password"
@@ -170,7 +170,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="passwordConfirmation"
                 testId="new-user-password-confirmation"
@@ -181,7 +181,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="firstName"
                 testId="first-name"
@@ -189,7 +189,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="lastName"
                 testId="last-name"
@@ -197,7 +197,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormSelectInput<CreateFormData, Pick<Role, "id">>
                 name="role"
                 testId="role"
@@ -217,7 +217,7 @@ function FormCreateUser() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <CreateUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">

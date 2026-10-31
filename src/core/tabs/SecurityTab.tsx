@@ -13,6 +13,7 @@ import useLeavePage from "@/services/leave-page/use-leave-page";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
 import { UserProviderEnum } from "@/services/api/types/user";
+import { RoleEnum } from "@/services/api/types/role";
 
 type EditProfileChangeEmailFormData = {
   email: string;
@@ -143,16 +144,16 @@ function FormChangeEmail() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h2 className="text-xl font-semibold">{t("profile:title2")}</h2>
+          <div className="form-grid form-grid--tab">
+            <div className="form-grid__cell">
+              <h2 className="form-title">{t("profile:title2")}</h2>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <p>{user?.email}</p>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileChangeEmailFormData>
                 name="email"
                 label={t("profile:inputs.email.label")}
@@ -161,7 +162,7 @@ function FormChangeEmail() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileChangeEmailFormData>
                 name="emailConfirmation"
                 label={t("profile:inputs.emailConfirmation.label")}
@@ -170,7 +171,7 @@ function FormChangeEmail() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <ChangeEmailFormActions />
               <span className="ms-2">
                 <Button
@@ -240,13 +241,13 @@ function FormChangePassword() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-4 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h2 className="text-xl font-semibold">{t("profile:title3")}</h2>
+          <div className="form-grid form-grid--auth">
+            <div className="form-grid__cell">
+              <h2 className="form-title">{t("profile:title3")}</h2>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="oldPassword"
                 label={t("profile:inputs.oldPassword.label")}
@@ -255,7 +256,7 @@ function FormChangePassword() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="password"
                 label={t("profile:inputs.password.label")}
@@ -264,7 +265,7 @@ function FormChangePassword() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileChangePasswordFormData>
                 name="passwordConfirmation"
                 label={t("profile:inputs.passwordConfirmation.label")}
@@ -273,7 +274,7 @@ function FormChangePassword() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <ChangePasswordFormActions />
               <span className="ms-2">
                 <Button
@@ -294,8 +295,11 @@ function FormChangePassword() {
 
 function FormChangeEmailWrapper() {
   const { user } = useAuth();
+  const isAdmin = user?.role?.id === RoleEnum.ADMIN;
 
-  return user?.provider === UserProviderEnum.EMAIL ? <FormChangeEmail /> : null;
+  return user?.provider === UserProviderEnum.EMAIL && isAdmin ? (
+    <FormChangeEmail />
+  ) : null;
 }
 
 function FormChangePasswordWrapper() {

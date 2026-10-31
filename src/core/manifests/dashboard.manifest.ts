@@ -1,12 +1,12 @@
 import { defineModuleManifest } from "@/core/modules/types";
-import { RecentUsersWidget } from "./widgets/RecentUsersWidget";
-import { PermissionsWidget } from "./widgets/PermissionsWidget";
-import { QuickLinksWidget } from "./widgets/QuickLinksWidget";
+import { RecentUsersWidget } from "../widgets/RecentUsersWidget";
+import { PermissionsWidget } from "../widgets/PermissionsWidget";
+import { QuickLinksWidget } from "../widgets/QuickLinksWidget";
 import {
   StatTotalUsersWidget,
   StatNewUsersWidget,
   StatTotalRolesWidget,
-} from "./widgets/StatWidgets";
+} from "../widgets/StatWidgets";
 
 export default defineModuleManifest({
   alias: "core-dashboard",

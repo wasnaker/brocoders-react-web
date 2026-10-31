@@ -2,5 +2,40 @@
   "role": {
     "1": "Admin",
     "2": "User"
+  },
+  "title": "Roles",
+  "table": {
+    "column1": "Name",
+    "column2": "Permissions"
+  },
+  "actions": {
+    "editPermissions": "Edit Permissions"
+  },
+  "form": {
+    "editTitle": "Permissions for {{roleName}}",
+    "permissionsLabel": "Permissions",
+    "groupOther": "Other",
+    "submit": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading ...",
+    "adminWarning": {
+      "title": "This role is protected",
+      "message": "The admin role always keeps every permission. Removing them would lock all administrators out of the panel, so this form is disabled."
+    }
+  },
+  "confirm": {
+    "save": {
+      "title": "Save Permissions",
+      "message": "Are you sure you want to replace the permissions of this role?"
+    }
+  },
+  "alerts": {
+    "empty": {
+      "roles": "No roles found.",
+      "permissions": "No permissions available."
+    },
+    "success": {
+      "permissions": "Role permissions updated"
+    }
   }
 }

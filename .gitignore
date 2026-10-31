@@ -34,6 +34,18 @@ yarn-error.log*
 *.tsbuildinfo
 src/generated/
 next-env.d.ts
+
+# Modul eksternal. Isi folder ini datang dari repo modul sendiri lewat
+# `npm run module:add <alias>` (scripts/module-add.mjs), bukan dari repo core —
+# supaya core yang sama bisa dipakai aplikasi dengan modul berbeda. Folder ini
+# di-ignore utuh karena TIDAK ada lagi file core di dalamnya; manifest core
+# tinggal di src/core/manifests/.
+/src/modules/
+
+# Terjemahan milik modul eksternal. Namespace `module-*` hanya dirujuk dari
+# manifest modul, jadi tidak boleh ikut ter-track di core. Namespace aplikasi
+# (common, profile, settings, admin-panel-*, …) tetap tracked.
+/src/services/i18n/locales/*/module-*.json
 /test-results/
 /playwright-report/
 /blob-report/

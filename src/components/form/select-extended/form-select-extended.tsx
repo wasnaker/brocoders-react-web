@@ -54,7 +54,7 @@ function SelectExtendedInput<T extends object>(
   const inputId = `select-extended-${props.name}`;
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={inputId}>{props.label}</Label>
       <Popover
         open={open}
@@ -91,7 +91,7 @@ function SelectExtendedInput<T extends object>(
           align="start"
         >
           {props.isSearchable && (
-            <div className="p-2">
+            <div className="form-option-panel">
               <Input
                 placeholder={props.searchPlaceholder}
                 value={props.search}

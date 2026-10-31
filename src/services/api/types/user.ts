@@ -14,5 +14,6 @@ export type User = {
   photo?: FileEntity;
   provider?: UserProviderEnum;
   socialId?: string;
+  language?: string | null;
   role?: Role;
 };

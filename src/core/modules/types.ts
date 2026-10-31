@@ -39,6 +39,20 @@ export interface TabDef {
   content: TabContent;
 }
 
+export interface MenuItem {
+  /** Unik dalam satu manifest. */
+  slug: string;
+  label: I18nLabel;
+  href: string;
+  /** Komponen, bukan string. Lihat catatan di bawah. */
+  icon?: ComponentType<{ className?: string }>;
+  /** Lebih kecil = lebih atas. Default core 10–90. */
+  position: number;
+  permission?: string;
+  /** Pengelompokan visual, opsional. */
+  group?: string;
+}
+
 import type { DashboardWidgetDef } from "@/core/dashboard/areas";
 
 export interface ModuleManifest {
@@ -46,6 +60,8 @@ export interface ModuleManifest {
   profileTabs?: TabDef[];
   settingsTabs?: TabDef[];
   dashboardWidgets?: DashboardWidgetDef[];
+  /** Slot menu navigasi — BELUM diimplementasikan (resolver & sidebar Coming di T-065/T-066). */
+  menu?: MenuItem[];
 }
 
 export function defineModuleManifest(m: ModuleManifest): ModuleManifest {

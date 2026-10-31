@@ -59,7 +59,7 @@ function TableSortCellWrapper(
       <button
         type="button"
         onClick={(event) => props.handleRequestSort(event, props.column)}
-        className="inline-flex items-center gap-1 font-medium hover:text-foreground"
+        className="table-sort"
       >
         {props.children}
         {isActive ? (
@@ -229,13 +229,11 @@ function Users() {
   }, [data]);
 
   return (
-    <div className="mx-auto w-full max-w-screen-xl px-4">
-      <div className="flex flex-col gap-6 pt-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-3xl font-semibold">
-            {tUsers("admin-panel-users:title")}
-          </h3>
-          <div className="flex items-center gap-2">
+    <div className="page-content--wide">
+      <div className="page-content--body">
+        <div className="page-header--split">
+          <h3 className="page-title">{tUsers("admin-panel-users:title")}</h3>
+          <div className="page-header__actions">
             <UserFilter />
             <Button
               asChild
@@ -248,7 +246,7 @@ function Users() {
           </div>
         </div>
 
-        <div className="mb-2 overflow-x-auto overflow-y-hidden rounded-md border bg-card">
+        <div className="table-shell">
           <TableVirtuoso
             data={result}
             components={TableComponents}
@@ -289,8 +287,8 @@ function Users() {
                 {isFetchingNextPage && (
                   <TableRow>
                     <TableHead colSpan={6} className="p-0">
-                      <div className="h-1 w-full overflow-hidden bg-primary/20">
-                        <div className="animate-progress-bar h-full w-full origin-left bg-primary" />
+                      <div className="table-shell__progress">
+                        <div className="table-shell__progress-bar animate-progress-bar" />
                       </div>
                     </TableHead>
                   </TableRow>

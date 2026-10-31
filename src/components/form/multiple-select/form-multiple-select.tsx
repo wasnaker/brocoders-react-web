@@ -58,7 +58,7 @@ function MultipleSelectInput<T extends object>(
   };
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={inputId}>{props.label}</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

@@ -43,7 +43,7 @@ function SelectInput<T extends object>(
   const selectedKey = props.value?.[props.keyValue]?.toString() ?? "";
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={selectId}>{props.label}</Label>
       <Select
         value={selectedKey}

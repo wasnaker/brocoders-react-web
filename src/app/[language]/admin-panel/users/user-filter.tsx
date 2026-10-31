@@ -56,8 +56,8 @@ function UserFilter() {
               );
             })}
           >
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12">
+            <div className="filter-grid">
+              <div className="form-grid__cell">
                 <FormMultipleSelectInput<UserFilterFormData, Pick<Role, "id">>
                   name="roles"
                   testId="roles"
@@ -87,7 +87,7 @@ function UserFilter() {
                   }
                 />
               </div>
-              <div className="col-span-12">
+              <div className="form-grid__cell">
                 <Button type="submit">
                   {t("admin-panel-users:filter.actions.apply")}
                 </Button>

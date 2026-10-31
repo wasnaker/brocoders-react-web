@@ -46,9 +46,9 @@ function TextInput(
   const handleClickShowPassword = () => setIsShowPassword((show) => !show);
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={inputId}>{props.label}</Label>
-      <div className="relative">
+      <div className="form-control">
         {props.multiline ? (
           <Textarea
             id={inputId}
@@ -93,7 +93,7 @@ function TextInput(
             type="button"
             aria-label="toggle password visibility"
             onClick={handleClickShowPassword}
-            className="absolute inset-y-0 end-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+            className="form-control__action"
           >
             {isShowPassword ? (
               <EyeOff className="size-4" />

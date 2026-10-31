@@ -59,10 +59,7 @@ function AvatarInput(props: AvatarInputProps) {
   };
 
   return (
-    <div
-      {...getRootProps()}
-      className="relative mt-4 flex cursor-pointer flex-col items-center rounded-md border border-dashed border-border p-4 hover:border-foreground"
-    >
+    <div {...getRootProps()} className="form-upload">
       {isDragActive && (
         <div className="absolute inset-0 z-10 bg-black/50">
           <p className="mt-10 text-center text-xl font-bold text-white">
@@ -71,12 +68,12 @@ function AvatarInput(props: AvatarInputProps) {
         </div>
       )}
       {props?.value ? (
-        <div className="group/avatar relative size-[100px]">
+        <div className="group/avatar form-upload__preview--avatar">
           <Avatar className="size-[100px]">
             <AvatarImage src={props.value?.path} />
             <AvatarFallback />
           </Avatar>
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/70 opacity-0 transition-opacity duration-500 group-hover/avatar:opacity-100">
+          <div className="form-upload__overlay--round">
             <button
               type="button"
               aria-label="remove"
@@ -93,7 +90,7 @@ function AvatarInput(props: AvatarInputProps) {
         </Avatar>
       )}
 
-      <div className="mt-4">
+      <div className="form-upload__hint">
         <Button
           asChild
           data-testid={props.testId}
@@ -108,12 +105,12 @@ function AvatarInput(props: AvatarInputProps) {
         </Button>
       </div>
 
-      <div className="mt-2">
+      <div className="form-upload__caption">
         <p>{t("common:formInputs.avatarInput.dragAndDrop")}</p>
       </div>
 
       {props.error && (
-        <div className="mt-2">
+        <div className="form-upload__caption">
           <p className="text-destructive">{props.error}</p>
         </div>
       )}

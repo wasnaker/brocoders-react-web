@@ -20,33 +20,24 @@ export function PermissionsWidget() {
   });
 
   if (isLoading) {
-    return (
-      <p className="animate-pulse text-sm text-muted-foreground">Memuat...</p>
-    );
+    return <p className="widget-list__meta animate-pulse">Memuat...</p>;
   }
   if (isError) {
     return <p className="text-sm text-destructive">Gagal memuat permission.</p>;
   }
   if (!data?.length) {
-    return (
-      <p className="text-sm text-muted-foreground">Belum ada permission.</p>
-    );
+    return <p className="widget-list__meta">Belum ada permission.</p>;
   }
 
   return (
-    <ul className="space-y-2">
+    <ul className="widget-list">
       {data.map((permission: Permission) => (
-        <li
-          key={permission.id}
-          className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background p-2.5 transition-colors hover:bg-muted/50"
-        >
+        <li key={permission.id} className="widget-list__row">
           <code className="truncate font-mono text-sm text-primary">
             {permission.name}
           </code>
           {permission.description ? (
-            <span className="truncate text-xs text-muted-foreground">
-              {permission.description}
-            </span>
+            <span className="widget-list__meta">{permission.description}</span>
           ) : null}
         </li>
       ))}

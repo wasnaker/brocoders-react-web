@@ -2,5 +2,40 @@
   "role": {
     "1": "Admin",
     "2": "User"
+  },
+  "title": "Peran",
+  "table": {
+    "column1": "Nama",
+    "column2": "Izin"
+  },
+  "actions": {
+    "editPermissions": "Ubah Izin"
+  },
+  "form": {
+    "editTitle": "Izin untuk {{roleName}}",
+    "permissionsLabel": "Izin",
+    "groupOther": "Lainnya",
+    "submit": "Simpan",
+    "cancel": "Batal",
+    "loading": "Memuat ...",
+    "adminWarning": {
+      "title": "Peran ini dilindungi",
+      "message": "Peran admin selalu memiliki seluruh izin. Menghapusnya akan membuat semua administrator terkunci dari panel, jadi form ini dinonaktifkan."
+    }
+  },
+  "confirm": {
+    "save": {
+      "title": "Simpan Izin",
+      "message": "Apakah Anda yakin ingin mengganti izin pada peran ini?"
+    }
+  },
+  "alerts": {
+    "empty": {
+      "roles": "Tidak ada peran ditemukan.",
+      "permissions": "Tidak ada izin tersedia."
+    },
+    "success": {
+      "permissions": "Izin peran berhasil diperbarui"
+    }
   }
 }

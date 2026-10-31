@@ -120,16 +120,16 @@ function FormEditPermission() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h1 className="text-xl font-semibold">
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h1 className="form-title">
                 {t("admin-panel-permissions-edit:title")}
               </h1>
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditPermissionFormData>
                 name="name"
                 testId="permission-name"
@@ -138,7 +138,7 @@ function FormEditPermission() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditPermissionFormData>
                 name="description"
                 testId="permission-description"
@@ -149,7 +149,7 @@ function FormEditPermission() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <EditPermissionFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">

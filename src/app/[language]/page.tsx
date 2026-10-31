@@ -21,10 +21,10 @@ export default async function Home(props: Props) {
   const { t } = await getServerTranslation(params.language, "home");
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4">
-      <div className="flex h-[90vh] flex-col justify-between gap-6 pt-6">
-        <div className="flex-grow">
-          <h1 className="mb-4 text-3xl font-semibold" data-testid="home-title">
+    <div className="page-content--reading">
+      <div className="page-hero">
+        <div className="page-hero__body">
+          <h1 className="page-title mb-4" data-testid="home-title">
             {t("title")}
           </h1>
           <p>
@@ -45,7 +45,7 @@ export default async function Home(props: Props) {
             />
           </p>
         </div>
-        <div className="mx-auto">
+        <div className="page-hero__footer">
           <Link
             href="/privacy-policy"
             className="text-primary underline-offset-4 underline"

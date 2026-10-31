@@ -78,15 +78,13 @@ function Form() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-4 grid grid-cols-12 gap-4">
-            <div className="col-span-12 mt-6">
-              <h1 className="text-xl font-semibold">
-                {t("forgot-password:title")}
-              </h1>
+          <div className="form-grid form-grid--auth">
+            <div className="form-grid__cell form-grid__cell--lead">
+              <h1 className="form-title">{t("forgot-password:title")}</h1>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<ForgotPasswordFormData>
                 name="email"
                 label={t("forgot-password:inputs.email.label")}
@@ -95,7 +93,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormActions />
             </div>
           </div>

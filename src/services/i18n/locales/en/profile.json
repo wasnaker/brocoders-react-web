@@ -32,7 +32,8 @@
         "email": "Email must be valid",
         "currentEmail": "Email must be different from current email",
         "server": {
-          "emailExists": "Email is already taken"
+          "emailExists": "Email is already taken",
+          "emailChangeNotAllowed": "Email change is not allowed for your account"
         }
       }
     },
@@ -66,6 +67,9 @@
         "required": "Password Confirmation is required",
         "match": "Password Confirmation must match password"
       }
+    },
+    "language": {
+      "label": "Language"
     }
   },
   "alerts": {

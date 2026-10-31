@@ -1,6 +1,6 @@
 "use client";
 
-import i18next from "i18next";
+import i18next, { type TFunction } from "i18next";
 import { useEffect, useState } from "react";
 import {
   initReactI18next,
@@ -47,6 +47,40 @@ function canSuspendOn(namespace: string) {
   return true;
 }
 
+/**
+ * Wrap the `t` function to auto-load namespaces for cross-namespace keys.
+ * Keys in format "namespace:key" will trigger loading of "namespace" if not
+ * already loaded. This allows components subscribed to one namespace (e.g.,
+ * "common") to translate keys from other namespaces (e.g., "module-post:menu")
+ * without manually calling `loadNamespaces`.
+ */
+function wrapTWithNamespaceLoading(
+  t: TFunction,
+  i18n: ReturnType<typeof useTranslationOriginal>["i18n"]
+): TFunction {
+  const wrapped = (
+    key: string | string[],
+    options?: Record<string, unknown>
+  ) => {
+    // Detect cross-namespace key format: "namespace:key"
+    const keyStr = Array.isArray(key) ? key[0] : key;
+    const colonIndex = keyStr.indexOf(":");
+    if (colonIndex > 0) {
+      const ns = keyStr.slice(0, colonIndex);
+      const lang = i18n.resolvedLanguage;
+      // Only load if not the default namespace and not already loaded
+      if (lang && ns !== "common" && !i18n.hasResourceBundle(lang, ns)) {
+        // Fire-and-forget: load the namespace for current language
+        i18n.loadNamespaces(ns).catch(() => {
+          // Silently ignore load failures; original t() will return key as fallback
+        });
+      }
+    }
+    return t(key, options);
+  };
+  return wrapped as TFunction;
+}
+
 export function useTranslation(namespace: string, options?: object) {
   const language = useLanguage();
   const { language: cookies } = useStoreLanguage();
@@ -55,7 +89,11 @@ export function useTranslation(namespace: string, options?: object) {
     ...options,
     useSuspense: runsOnServerSide || canSuspendOn(namespace),
   });
-  const { i18n } = originalInstance;
+  const { i18n, t } = originalInstance;
+
+  // Wrap t to auto-load cross-namespace keys
+  const wrappedT = wrapTWithNamespaceLoading(t, i18n);
+
   if (runsOnServerSide && language && i18n.resolvedLanguage !== language) {
     i18n.changeLanguage(language);
   } else {
@@ -82,5 +120,5 @@ export function useTranslation(namespace: string, options?: object) {
     }, [language, cookies, setCookie]);
   }
 
-  return originalInstance;
+  return { ...originalInstance, t: wrappedT };
 }

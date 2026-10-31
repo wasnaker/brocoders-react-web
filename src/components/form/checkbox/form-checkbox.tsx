@@ -49,9 +49,9 @@ function CheckboxInput<T>(
   };
 
   return (
-    <div className="flex flex-col gap-1.5" data-testid={props.testId}>
+    <div className="form-field" data-testid={props.testId}>
       <Label data-testid={`${props.testId}-label`}>{props.label}</Label>
-      <div ref={props.ref} className="flex flex-col gap-2">
+      <div ref={props.ref} className="form-field__row">
         {props.options.map((option) => {
           const checked = value
             .map((valueOption) => valueOption[props.keyValue])
@@ -61,7 +61,7 @@ function CheckboxInput<T>(
           return (
             <div
               key={props.keyExtractor(option)}
-              className="flex items-center gap-2"
+              className="form-field__inline"
             >
               <Checkbox
                 id={id}

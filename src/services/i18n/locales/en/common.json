@@ -10,6 +10,8 @@
     "profile": "Profile",
     "users": "Users",
     "permissions": "Permissions",
+    "roles": "Roles",
+    "modules": "Modules",
     "settings": "Settings",
     "logout": "Logout"
   },

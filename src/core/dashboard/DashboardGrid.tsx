@@ -298,7 +298,7 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
         onDragEnd={handleDragEnd}
         onDragCancel={() => setActiveWidgetId(null)}
       >
-        <div className="dashboard-grid mt-4">
+        <div className="dashboard-grid dashboard-grid--offset">
           {areas.map((areaId) => {
             const def = DASHBOARD_AREAS.find((a) => a.id === areaId) ??
               // Area dari katalog modul / layout lama: label = id, span penuh,
@@ -358,7 +358,7 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
         <DragOverlay>
           {activeWidget ? (
             <div
-              className="widget-card w-56 px-4 py-3"
+              className="widget-card widget-card--overlay"
               data-testid="dashboard-drag-overlay"
             >
               <p className="truncate text-sm font-semibold">

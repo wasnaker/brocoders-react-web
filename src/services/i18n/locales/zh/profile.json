@@ -32,7 +32,8 @@
         "email": "邮箱格式必须有效",
         "currentEmail": "新邮箱必须与当前邮箱不同",
         "server": {
-          "emailExists": "该邮箱已被占用"
+          "emailExists": "该邮箱已被占用",
+          "emailChangeNotAllowed": "您的账户不允许更改邮箱"
         }
       }
     },
@@ -66,6 +67,9 @@
         "required": "请确认密码",
         "match": "两次输入的密码必须一致"
       }
+    },
+    "language": {
+      "label": "语言"
     }
   },
   "alerts": {

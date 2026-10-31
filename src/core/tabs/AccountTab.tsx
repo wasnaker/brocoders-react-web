@@ -15,11 +15,14 @@ import { useSnackbar } from "@/hooks/use-snackbar";
 import useLeavePage from "@/services/leave-page/use-leave-page";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
+import { languages, fallbackLanguage } from "@/services/i18n/config";
 import { FileEntity } from "@/services/api/types/file-entity";
+import FormSelectInput from "@/components/form/select/form-select";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
   lastName: string;
+  language?: string | null;
   photo?: FileEntity;
 };
 
@@ -61,6 +64,7 @@ export function AccountTab() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      language: fallbackLanguage,
       photo: undefined,
     },
   });
@@ -98,26 +102,27 @@ export function AccountTab() {
     reset({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
+      language: user?.language ?? fallbackLanguage,
       photo: user?.photo,
     });
   }, [user, reset]);
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h2 className="text-xl font-semibold">{t("profile:title1")}</h2>
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h2 className="form-title">{t("profile:title1")}</h2>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormAvatarInput<EditProfileBasicInfoFormData>
                 name="photo"
                 testId="photo"
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileBasicInfoFormData>
                 name="firstName"
                 label={t("profile:inputs.firstName.label")}
@@ -125,7 +130,7 @@ export function AccountTab() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<EditProfileBasicInfoFormData>
                 name="lastName"
                 label={t("profile:inputs.lastName.label")}
@@ -133,7 +138,24 @@ export function AccountTab() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
+              <FormSelectInput<
+                EditProfileBasicInfoFormData,
+                { value: string; label: string }
+              >
+                name="language"
+                label={t("profile:inputs.language.label")}
+                testId="language"
+                keyValue="value"
+                options={languages.map((lang) => ({
+                  value: lang,
+                  label: lang,
+                }))}
+                renderOption={(option) => <span>{option.label}</span>}
+              />
+            </div>
+
+            <div className="form-grid__cell">
               <BasicInfoFormActions />
               <span className="ms-2">
                 <Button

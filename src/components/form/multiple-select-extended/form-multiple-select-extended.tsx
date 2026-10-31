@@ -56,7 +56,7 @@ function MultipleSelectExtendedInput<T extends object>(
   const valueKeys = props.value?.map(props.keyExtractor) ?? [];
 
   return (
-    <div className="flex w-full flex-col gap-1.5">
+    <div className="form-field form-field--full">
       <Label htmlFor={inputId}>{props.label}</Label>
       <Popover
         open={open}
@@ -96,7 +96,7 @@ function MultipleSelectExtendedInput<T extends object>(
           align="start"
         >
           {props.isSearchable && (
-            <div className="p-2">
+            <div className="form-option-panel">
               <Input
                 placeholder={props.searchPlaceholder}
                 value={props.search}

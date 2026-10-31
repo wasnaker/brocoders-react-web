@@ -129,13 +129,13 @@ function Form() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit}>
-          <div className="mb-4 grid grid-cols-12 gap-4">
-            <div className="col-span-12 mt-6">
-              <h1 className="text-xl font-semibold">{t("sign-up:title")}</h1>
+          <div className="form-grid form-grid--auth">
+            <div className="form-grid__cell form-grid__cell--lead">
+              <h1 className="form-title">{t("sign-up:title")}</h1>
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignUpFormData>
                 name="firstName"
                 label={t("sign-up:inputs.firstName.label")}
@@ -145,7 +145,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignUpFormData>
                 name="lastName"
                 label={t("sign-up:inputs.lastName.label")}
@@ -154,7 +154,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignUpFormData>
                 name="email"
                 label={t("sign-up:inputs.email.label")}
@@ -163,7 +163,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<SignUpFormData>
                 name="password"
                 label={t("sign-up:inputs.password.label")}
@@ -171,7 +171,7 @@ function Form() {
                 testId="password"
               />
             </div>
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormCheckboxInput
                 name="policy"
                 label=""
@@ -194,7 +194,7 @@ function Form() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary" data-testid="login">
@@ -206,12 +206,10 @@ function Form() {
             </div>
 
             {[isGoogleAuthEnabled, isFacebookAuthEnabled].some(Boolean) && (
-              <div className="col-span-12">
-                <div className="mb-4 flex items-center gap-2">
+              <div className="form-grid__cell">
+                <div className="form-divider">
                   <Separator className="flex-1" />
-                  <span className="rounded-full border bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                    {t("sign-up:or")}
-                  </span>
+                  <span className="form-divider__label">{t("sign-up:or")}</span>
                   <Separator className="flex-1" />
                 </div>
 

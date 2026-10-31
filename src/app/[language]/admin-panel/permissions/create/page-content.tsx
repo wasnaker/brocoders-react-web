@@ -91,16 +91,16 @@ function FormCreatePermission() {
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-md px-4">
+      <div className="page-content--form">
         <form onSubmit={onSubmit} autoComplete="create-new-permission">
-          <div className="mt-6 mb-6 grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <h1 className="text-xl font-semibold">
+          <div className="form-grid form-grid--page">
+            <div className="form-grid__cell">
+              <h1 className="form-title">
                 {t("admin-panel-permissions-create:title")}
               </h1>
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="name"
                 testId="permission-name"
@@ -109,7 +109,7 @@ function FormCreatePermission() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <FormTextInput<CreateFormData>
                 name="description"
                 testId="permission-description"
@@ -120,7 +120,7 @@ function FormCreatePermission() {
               />
             </div>
 
-            <div className="col-span-12">
+            <div className="form-grid__cell">
               <CreatePermissionFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
