@@ -69,6 +69,12 @@ test("legacy profile and settings URLs redirect to canonical admin routes", asyn
   await page.goto(`${SITE}/settings`);
   await expect(page).toHaveURL(`${SITE}/admin/settings`);
 
+  await page.goto(`${SITE}/en/profile`);
+  await expect(page).toHaveURL(`${SITE}/admin/profile`);
+
+  await page.goto(`${SITE}/en/settings`);
+  await expect(page).toHaveURL(`${SITE}/admin/settings`);
+
   await page.goto(`${SITE}/id/profile?tab=security`);
   await expect(page).toHaveURL(`${SITE}/admin/profile?tab=security`);
 
