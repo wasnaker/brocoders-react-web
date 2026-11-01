@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { dir } from "i18next";
+import i18next from "i18next";
 import useLanguage from "@/services/i18n/use-language";
 
 /**
@@ -14,7 +14,7 @@ export default function DocumentLanguageSync() {
 
   useEffect(() => {
     document.documentElement.lang = language;
-    document.documentElement.dir = dir(language);
+    document.documentElement.dir = i18next.dir(language);
   }, [language]);
 
   return null;
