@@ -1,0 +1,61 @@
+{
+  "menu": "Wilayah",
+  "title": "Wilayah",
+  "subtitle": "Data referensi wilayah administrasi Indonesia",
+  "actions": {
+    "create_province": "Tambah Provinsi",
+    "create_regency": "Tambah Kabupaten/Kota",
+    "edit_province": "Edit Provinsi",
+    "edit_regency": "Edit Kabupaten/Kota",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "saving": "Menyimpan…",
+    "cancel": "Batal",
+    "collapse": "Tutup panel",
+    "expand": "Buka panel",
+    "prev_page": "Sebelumnya",
+    "next_page": "Berikutnya"
+  },
+  "table": {
+    "name": "Nama",
+    "isoCode": "Kode",
+    "coordinates": "Koordinat",
+    "latitude": "Lintang",
+    "longitude": "Bujur",
+    "loading": "Memuat…",
+    "empty": "Belum ada provinsi.",
+    "of": "dari",
+    "page": "Halaman {{page}} dari {{total}}"
+  },
+  "detail": {
+    "overview": "Ringkasan",
+    "regencies": "Kabupaten/Kota",
+    "empty": "Tidak ada data.",
+    "regencies_empty": "Belum ada kabupaten/kota."
+  },
+  "confirm": {
+    "delete": {
+      "message": "Hapus item ini? Tindakan ini tidak dapat dibatalkan."
+    }
+  },
+  "form": {
+    "field": {
+      "name": "Nama",
+      "isoCode": "Kode (ISO)",
+      "latitude": "Lintang",
+      "longitude": "Bujur",
+      "province": "Provinsi",
+      "type": "Jenis",
+      "isActive": "Aktif"
+    },
+    "placeholder": {
+      "name": "mis. Jawa Barat",
+      "province": "Pilih provinsi"
+    },
+    "validation": {
+      "required": "Kolom ini wajib diisi.",
+      "number": "Harus berupa angka yang valid."
+    }
+  }
+}
