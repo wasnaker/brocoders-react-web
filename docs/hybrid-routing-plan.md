@@ -62,6 +62,26 @@ The following snapshot is based on the repository's main branch at the latest co
 **Important:** do not mark Phase 2 complete solely because the build succeeds or the two layout files exist. Its exit gate requires valid document ownership, correct providers for both route classes, correct document language/direction, direct-load and refresh coverage, and no public-route regression.
 
 
+### 2.4 Implementation branch status — `fix/hybrid-routing-foundation`
+
+The following changes have been implemented on the draft branch and are not yet merged into `main`:
+
+- The root `src/app/layout.tsx` is now a Server Component and owns the only `html`/`body`. Interactive root-only providers are isolated in `RootProviders`.
+- Shared authenticated application providers are composed in `AppProviders` and mounted by both `/[language]` and `/admin` layouts. The nested admin layout no longer renders document elements.
+- The proxy resolves the request language, passes it through `x-app-language`, keeps `/admin/*` locale-free, and redirects legacy `/admin-panel/*`, `/{language}/admin-panel/*`, and `/{language}/admin/*` URLs to canonical `/admin/*` paths while preserving query strings.
+- All 12 existing admin page routes (home, dashboard, modules, users, user create/edit, permissions, permission create/edit, roles, role edit, and region) now have route entries under `src/app/admin`. Existing page-content and query implementations are reused to avoid duplicating business logic.
+- `useLanguage`, `StoreLanguageProvider`, `DocumentLanguageSync`, the custom `Link`, and `url-builder` now share the hybrid locale contract. Public links keep or add a locale; admin links remain locale-free.
+- The language switcher now offers only the languages supported by the frontend configuration and does not rewrite admin URLs.
+- Hygen resource templates, generator fixtures, cleanup scripts, and CRUD route assertions now target `src/app/admin` and `/admin/*`.
+- Routing verification cases cover locale precedence, path boundaries, and legacy URL normalization.
+
+**Important backend dependency:** the frontend `User` type has an optional `language` property, but the inspected `brocoders/nestjs-boilerplate` default-branch user entity and profile-update DTO do not currently persist that property. Therefore, this frontend branch can use the validated `i18next` preference cookie and update the in-memory authenticated user, but it cannot guarantee cross-device persistence of an admin language preference as a backend profile setting. If durable `user.language` storage is a product requirement, that needs a separately reviewed backend schema/API change; this frontend PR does not silently change the backend contract.
+
+**CI status:** an initial generator run exposed two lint errors in the branch (an unused import and an obsolete dashboard placeholder), which have been fixed. The initial Playwright run also exposed that the current `ubuntu-latest` runner image was newer than Playwright 1.60 supports; both workflows are now pinned to Ubuntu 24.04. Re-run CI on the latest branch head and require lint, build, generator, and E2E checks to pass before merge. A pending workflow is not a passing check.
+
+The branch remains a draft. No changes have been merged into `main`.
+
+
 ## 3. Goals and non-goals
 
 ### Goals
