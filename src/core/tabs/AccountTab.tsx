@@ -36,6 +36,7 @@ const useValidationBasicInfoSchema = () => {
     lastName: yup
       .string()
       .required(t("profile:inputs.lastName.validation.required")),
+    language: yup.string().oneOf([...languages]).required(),
   });
 };
 
