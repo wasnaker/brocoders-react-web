@@ -3,14 +3,14 @@
 import { useParams } from "next/navigation";
 import { fallbackLanguage, languages } from "./config";
 import useAuth from "@/services/auth/use-auth";
-import type { ParamValue } from "next/dist/shared/lib/router/utils/route-matcher";
+import { isAdminRoute } from "@/services/routing/locale-precedence";
 
 /**
  * Tentukan language aktif.
  *
  * Prioritas:
  * - Halaman PUBLIK (sign-in, sign-up, forgot-password, dll): URL param > user.language > fallback
- * - Halaman LOGIN (profile, settings, admin-panel, dll): user.language > fallback
+ * - Halaman ADMIN (admin/dashboard, admin/profile, dll): user.language > URL param > fallback
  *
  * Daftar halaman publik yang memakai URL param:
  */
@@ -24,21 +24,32 @@ const PUBLIC_PATHS = [
   "privacy-policy",
 ];
 
-function isPublicPath(params: Record<string, ParamValue | ParamValue[]>): boolean {
-  // params selalu punya 'language' (dari [language] di URL)
-  // Cek apakah path setelah language adalah halaman publik
-  const pathParts = Object.keys(params).filter(k => k !== 'language');
-  if (pathParts.length === 0) return false; // root /id
-  const firstPath = pathParts[0];
-  return PUBLIC_PATHS.includes(firstPath);
+function isPublicPath(pathname: string): boolean {
+  // Cek apakah path adalah halaman publik
+  if (isAdminRoute(pathname)) return false;
+  
+  // Cek apakah path adalah halaman publik non-locale
+  if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`))) {
+    return true;
+  }
+  
+  // Cek apakah path adalah halaman publik dengan locale
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length > 1 && languages.includes(segments[0] as (typeof languages)[number])) {
+    const rest = `/${segments.slice(1).join("/")}`;
+    return PUBLIC_PATHS.some(p => rest === p || rest.startsWith(`${p}/`));
+  }
+  
+  return false;
 }
 
 function useLanguage() {
   const params = useParams();
   const { user, isLoaded } = useAuth();
-
-  // Deteksi halaman publik dari params (tersedia di SSR & CSR)
-  const isPublic = isPublicPath(params as Record<string, ParamValue | ParamValue[]>);
+  
+  // Gunakan pathname dari URL (tersedia di client)
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+  const isPublic = isPublicPath(pathname);
 
   if (isPublic) {
     // Halaman publik: prioritas URL param
@@ -58,7 +69,7 @@ function useLanguage() {
     return fallbackLanguage;
   }
 
-  // Halaman login: prioritas user.language
+  // Halaman admin: prioritas user.language
   if (isLoaded && user?.language && languages.includes(user.language as (typeof languages)[number])) {
     return user.language;
   }

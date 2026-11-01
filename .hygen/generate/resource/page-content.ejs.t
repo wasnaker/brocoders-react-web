@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page-content.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page-content.tsx
 ---
 "use client";
 
@@ -30,7 +30,7 @@ function Actions({ entityItem }: { entityItem: <%= h.pascalName(name) %> }) {
   const { confirmDialog } = useConfirmDialog();
   const fetchDelete<%= h.pascalName(name) %> = useDelete<%= h.pascalName(name) %>Service();
   const queryClient = useQueryClient();
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
 
   const handleDelete = async () => {
     const isConfirmed = await confirmDialog({
@@ -72,7 +72,7 @@ function Actions({ entityItem }: { entityItem: <%= h.pascalName(name) %> }) {
         data-testid="edit-button"
       >
         <Link
-          href={`/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/${entityItem.id}`}
+          href={`/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/${entityItem.id}`}
         >
           {t("actions.edit")}
         </Link>
@@ -103,7 +103,7 @@ function Actions({ entityItem }: { entityItem: <%= h.pascalName(name) %> }) {
 }
 
 function <%= h.pascalPluralName(name) %>PageContent() {
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
 
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useGet<%= h.pascalPluralName(name) %>ListQuery();
@@ -132,7 +132,7 @@ function <%= h.pascalPluralName(name) %>PageContent() {
               className="bg-success text-success-foreground hover:bg-success/90"
               data-testid="add-button"
             >
-              <Link href="/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create">
+              <Link href="/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create">
                 {t("actions.create")}
               </Link>
             </Button>

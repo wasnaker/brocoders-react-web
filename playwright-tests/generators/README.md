@@ -16,7 +16,7 @@ Per entity the suite verifies:
 - Each property has a label key in the create and edit i18n JSON `inputs` sections.
 - Properties with `isShowInTable: true` render a `TableCell` in the list page-content.
 - Properties with `isShowInTable: false` do **not** render a `TableCell`.
-- `app-bar.tsx` gets a nav link to `/admin-panel/{plural}` for every entity.
+- `app-bar.tsx` gets a nav link to `/admin/{plural}` for every entity.
 - All three i18n JSON files (`admin-panel-{plural}{,-create,-edit}.json`) parse.
 - `npm run lint` and `npm run build` succeed against the generated source tree.
 
@@ -32,7 +32,7 @@ npm run test:generators:static
 
 The orchestrator installs an `EXIT` trap that:
 
-- `rm -rf src/app/[language]/admin-panel/{tags,blog-comments,articles}` — removes generated route trees.
+- `rm -rf src/app/[language]/admin/{tags,blog-comments,articles}` — removes generated route trees.
 - `rm -f` the generated type, service, and i18n JSON files (enumerated, not globbed).
 - `git checkout -- src` — reverts every tracked change inside `src/`, including the auto-patched `app-bar.tsx`, `common.json`, and any lint-fix incidentals.
 

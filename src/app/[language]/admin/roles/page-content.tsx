@@ -16,7 +16,7 @@ function Actions({ role }: { role: Role }) {
 
   return (
     <Button asChild size="sm">
-      <Link href={`/admin-panel/roles/edit/${role.id}`}>
+      <Link href={`/admin/roles/edit/${role.id}`}>
         {t("admin-panel-roles:actions.editPermissions")}
       </Link>
     </Button>

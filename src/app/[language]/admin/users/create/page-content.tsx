@@ -133,7 +133,7 @@ function FormCreateUser() {
       enqueueSnackbar(t("admin-panel-users-create:alerts.user.success"), {
         variant: "success",
       });
-      router.push("/admin-panel/users");
+      router.push("/admin/users");
     }
   });
 
@@ -221,7 +221,7 @@ function FormCreateUser() {
               <CreateUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/users">
+                  <Link href="/admin/users">
                     {t("admin-panel-users-create:actions.cancel")}
                   </Link>
                 </Button>

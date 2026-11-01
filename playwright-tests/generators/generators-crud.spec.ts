@@ -26,14 +26,14 @@ test.describe("Generators CRUD — Tag", () => {
 
   test("admin can log in and reach the tag list", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/en/admin-panel/tags");
+    await page.goto("/en/admin/tags");
     await expect(page.getByTestId("index-page-title")).toBeVisible();
     await expect(page.getByTestId("add-button")).toBeVisible();
   });
 
   test("creates a new tag", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/en/admin-panel/tags");
+    await page.goto("/en/admin/tags");
     await page.getByTestId("add-button").click();
 
     await expect(page).toHaveURL(/\/admin-panel\/tags\/create$/);
@@ -54,7 +54,7 @@ test.describe("Generators CRUD — Tag", () => {
 
   test("edits the created tag", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/en/admin-panel/tags");
+    await page.goto("/en/admin/tags");
     await expect(page.getByText(createdName).first()).toBeVisible();
 
     const row = page.getByRole("row").filter({ hasText: createdName }).first();
@@ -80,7 +80,7 @@ test.describe("Generators CRUD — Tag", () => {
 
   test("deletes the tag", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.goto("/en/admin-panel/tags");
+    await page.goto("/en/admin/tags");
     await expect(page.getByText(updatedName).first()).toBeVisible();
 
     const row = page.getByRole("row").filter({ hasText: updatedName }).first();

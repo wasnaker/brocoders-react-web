@@ -110,9 +110,9 @@ test.describe("Generators — file-level assertions", () => {
 
     for (const entity of matrix.entities) {
       const route = entityRouteSegment(entity.name);
-      test(`adds /admin-panel/${route} nav link`, () => {
+      test(`adds /admin/${route} nav link`, () => {
         const content = readFile(appSidebar);
-        expect(content).toContain(`/admin-panel/${route}`);
+        expect(content).toContain(`/admin/${route}`);
       });
     }
   });

@@ -247,7 +247,7 @@ function FormEditUser() {
               <EditUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/users">
+                  <Link href="/admin/users">
                     {t("admin-panel-users-edit:actions.cancel")}
                   </Link>
                 </Button>
@@ -337,7 +337,7 @@ function FormChangePasswordUser() {
               <ChangePasswordUserFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/users">
+                  <Link href="/admin/users">
                     {t("admin-panel-users-edit:actions.cancel")}
                   </Link>
                 </Button>

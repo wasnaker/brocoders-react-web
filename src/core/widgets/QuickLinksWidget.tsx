@@ -11,12 +11,12 @@ export function QuickLinksWidget() {
   // locale sendiri, jadi hardcode /en akan merusak 4 locale lainnya.
   const links = [
     {
-      href: "/admin-panel/users",
+      href: "/admin/users",
       label: t("widget_quick_links_users"),
       description: t("widget_quick_links_users_desc"),
     },
     {
-      href: "/admin-panel/permissions",
+      href: "/admin/permissions",
       label: t("widget_quick_links_permissions"),
       description: t("widget_quick_links_permissions_desc"),
     },

@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page-content.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page-content.tsx
 ---
 "use client";
 
@@ -27,7 +27,7 @@ const defaultValues: CreateFormData = {
 
 const useValidationSchema = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
 
   return yup.object().shape({
     // Do not remove this comment. <create-form-validation-schema />
@@ -37,7 +37,7 @@ const useValidationSchema = () => {
 // Do not remove this comment. <create-component-reference-field />
 
 function CreateFormActions() {
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -51,7 +51,7 @@ function CreateFormActions() {
 function FormCreate() {
   const router = useRouter();
   const fetchCreate<%= h.pascalName(name) %> = useCreate<%= h.pascalName(name) %>Service();
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
   const validationSchema = useValidationSchema();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -89,7 +89,7 @@ function FormCreate() {
         enqueueSnackbar(t("alerts.success"), {
           variant: "success",
         });
-        router.push("/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
+        router.push("/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
       }
     }
   );
@@ -109,7 +109,7 @@ function FormCreate() {
               <CreateFormActions />
               <span className="ml-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>">
+                  <Link href="/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>">
                     {t("actions.cancel")}
                   </Link>
                 </Button>

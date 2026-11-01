@@ -86,7 +86,7 @@ Do not classify a route as public or authenticated solely from its folder name. 
 
 - A locale prefix is valid only when the first path segment exactly matches a supported language.
 - Public routes require a supported locale segment. Define one deterministic policy for missing/unsupported locale: redirect to a supported locale or return not-found. Do not infer from a stale client-only value.
-- Admin routes must not contain a locale prefix. A legacy URL such as /id/admin-panel/dashboard should redirect to the chosen canonical admin URL only after its mapping is known.
+- Admin routes must not contain a locale prefix. A legacy URL such as /id/admin/dashboard should redirect to the chosen canonical admin URL only after its mapping is known.
 - Query strings and fragments must survive redirects where semantically appropriate.
 - Define trailing slash, percent-encoded path, basePath (if configured), and locale-like route-name behavior.
 - Do not rewrite API routes, Next.js internals, static assets, image optimizer paths, or unrelated public routes as part of locale handling.

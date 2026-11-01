@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/[id]/page.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/[id]/page.tsx
 ---
 import type { Metadata } from "next";
 import Edit<%= h.pascalName(name) %> from "./page-content";
@@ -14,7 +14,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const { t } = await getServerTranslation(
     params.language,
-    "admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit"
+    "admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit"
   );
 
   return {

@@ -1,5 +1,5 @@
 ---
-to: src/services/i18n/locales/en/admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit.json
+to: src/services/i18n/locales/en/admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit.json
 ---
 {
   "title": "Edit <%= h.inflection.humanize(name, true) %>",

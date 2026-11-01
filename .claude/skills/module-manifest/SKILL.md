@@ -159,7 +159,7 @@ export default defineModuleManifest({
     {
       slug: "newsletter",
       label: "Newsletter",
-      href: "/admin-panel/newsletter", // no locale prefix
+      href: "/admin/newsletter", // no locale prefix
       position: 60, // core occupies 10-90
       permission: "read:user",
       icon: Megaphone, // component, deep import
@@ -197,11 +197,11 @@ Four rules that are not obvious from the type.
 **3. `href` must NOT start with a locale.** `Link` prepends the active language itself.
 
 ```ts
-href: "/admin-panel/newsletter"          // correct
-href: "/en/admin-panel/newsletter"       // 404 — Link adds /en again
+href: "/admin/newsletter"          // correct
+href: "/en/admin/newsletter"       // 404 — Link adds /en again
 ```
 
-**Also: make sure the route exists.** Nothing validates it. A dead `href` renders a 404 on click and produces a `Link` prefetch console error. This already happened — `src/modules/post/module.manifest.ts` points at `/admin-panel/post`, and that resource was never generated. Check the route before shipping.
+**Also: make sure the route exists.** Nothing validates it. A dead `href` renders a 404 on click and produces a `Link` prefetch console error. This already happened — `src/modules/post/module.manifest.ts` points at `/admin/post`, and that resource was never generated. Check the route before shipping.
 
 **4. `permission` works exactly like a tab.** Same `can()` from `src/core/modules/can.ts`, same fail-closed ordering, same `resource:action` naming. `resolveMenu()` **already filtered** — do not re-filter in your component. A second `can()` call or a second `isAdmin` check is duplicated logic that will drift from the resolver.
 

@@ -136,7 +136,7 @@ function Actions({ user }: { user: User }) {
 
   const editButton = (
     <Button asChild size="sm" className={canDelete ? "rounded-e-none" : ""}>
-      <Link href={`/admin-panel/users/edit/${user.id}`}>
+      <Link href={`/admin/users/edit/${user.id}`}>
         {tUsers("admin-panel-users:actions.edit")}
       </Link>
     </Button>
@@ -239,7 +239,7 @@ function Users() {
               asChild
               className="bg-success text-success-foreground hover:bg-success/90"
             >
-              <Link href="/admin-panel/users/create">
+              <Link href="/admin/users/create">
                 {tUsers("admin-panel-users:actions.create")}
               </Link>
             </Button>

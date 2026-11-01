@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page.tsx
 ---
 "use server";
 
@@ -16,7 +16,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const { t } = await getServerTranslation(
     params.language,
-    "admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>"
+    "admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>"
   );
 
   return {

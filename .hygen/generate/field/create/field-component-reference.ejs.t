@@ -1,13 +1,13 @@
 ---
 inject: true
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page-content.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page-content.tsx
 before: \<create\-component\-reference\-field \/\>
 ---
 
 <% if (kind === 'reference' || kind === 'denormalized') { -%>
   <% if (type !== 'File') { -%>
     function <%= h.inflection.camelize(property, false) %>Field() {
-      const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
+      const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-create");
       const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
         useGet<%= h.inflection.transform(type, ['pluralize']) %>ListQuery();
 

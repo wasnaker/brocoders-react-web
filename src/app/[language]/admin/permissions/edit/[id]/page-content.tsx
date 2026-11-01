@@ -153,7 +153,7 @@ function FormEditPermission() {
               <EditPermissionFormActions />
               <span className="ms-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/permissions">
+                  <Link href="/admin/permissions">
                     {t("admin-panel-permissions-edit:actions.cancel")}
                   </Link>
                 </Button>

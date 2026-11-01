@@ -140,7 +140,7 @@ function Actions({ permission }: { permission: Permission }) {
 
   const editButton = (
     <Button asChild size="sm" className={canDelete ? "rounded-e-none" : ""}>
-      <Link href={`/admin-panel/permissions/edit/${permission.id}`}>
+      <Link href={`/admin/permissions/edit/${permission.id}`}>
         {tPermissions("admin-panel-permissions:actions.edit")}
       </Link>
     </Button>
@@ -252,7 +252,7 @@ function Permissions() {
               asChild
               className="bg-success text-success-foreground hover:bg-success/90"
             >
-              <Link href="/admin-panel/permissions/create">
+              <Link href="/admin/permissions/create">
                 {tPermissions("admin-panel-permissions:actions.create")}
               </Link>
             </Button>

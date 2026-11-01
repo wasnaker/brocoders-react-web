@@ -26,7 +26,7 @@ async function login(page: Page) {
 test.describe("Region module (bc-region)", () => {
   test("menu Wilayah tampil di sidebar & halaman render", async ({ page }) => {
     await login(page);
-    await page.goto(`${SITE}/id/admin-panel/region`);
+    await page.goto(`${SITE}/id/admin/region`);
 
     await expect(
       page.getByRole("link", { name: /wilayah/i })
@@ -36,7 +36,7 @@ test.describe("Region module (bc-region)", () => {
 
   test("klik row provinsi membuka panel detail di kanan", async ({ page }) => {
     await login(page);
-    await page.goto(`${SITE}/id/admin-panel/region`);
+    await page.goto(`${SITE}/id/admin/region`);
 
     // Selalu buat provinsi sendiri (nama unik) supaya test independen.
     const name = `Panel Test ${Date.now()}`;
@@ -58,7 +58,7 @@ test.describe("Region module (bc-region)", () => {
     page,
   }) => {
     await login(page);
-    await page.goto(`${SITE}/id/admin-panel/region`);
+    await page.goto(`${SITE}/id/admin/region`);
 
     const name = `Prov Test ${Date.now()}`;
     await page.getByRole("button", { name: /tambah provinsi/i }).click();

@@ -198,7 +198,7 @@ function EditRoleForm() {
       enqueueSnackbar(t("admin-panel-roles:alerts.success.permissions"), {
         variant: "success",
       });
-      router.push("/admin-panel/roles");
+      router.push("/admin/roles");
     }
   });
 
@@ -278,7 +278,7 @@ function EditRoleForm() {
               <EditRoleFormActions isProtected={isProtected} />
               <span className="ms-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/roles">
+                  <Link href="/admin/roles">
                     {t("admin-panel-roles:form.cancel")}
                   </Link>
                 </Button>

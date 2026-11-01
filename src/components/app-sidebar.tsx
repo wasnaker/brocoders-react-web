@@ -228,9 +228,9 @@ function AppSidebar() {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.includes("/admin-panel/dashboard")}
+                        isActive={pathname.includes("/admin/dashboard")}
                       >
-                        <Link href="/admin-panel/dashboard">
+                        <Link href="/admin/dashboard">
                           <LayoutGrid />
                           {t("common:navigation.dashboard")}
                         </Link>
@@ -239,9 +239,9 @@ function AppSidebar() {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.includes("/admin-panel/users")}
+                        isActive={pathname.includes("/admin/users")}
                       >
-                        <Link href="/admin-panel/users">
+                        <Link href="/admin/users">
                           <Users />
                           {t("common:navigation.users")}
                         </Link>
@@ -250,9 +250,9 @@ function AppSidebar() {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.includes("/admin-panel/permissions")}
+                        isActive={pathname.includes("/admin/permissions")}
                       >
-                        <Link href="/admin-panel/permissions">
+                        <Link href="/admin/permissions">
                           <ShieldCheck />
                           {t("common:navigation.permissions")}
                         </Link>
@@ -261,9 +261,9 @@ function AppSidebar() {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.includes("/admin-panel/roles")}
+                        isActive={pathname.includes("/admin/roles")}
                       >
-                        <Link href="/admin-panel/roles">
+                        <Link href="/admin/roles">
                           <ShieldUser />
                           {t("common:navigation.roles")}
                         </Link>
@@ -272,9 +272,9 @@ function AppSidebar() {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={pathname.includes("/admin-panel/modules")}
+                        isActive={pathname.includes("/admin/modules")}
                       >
-                        <Link href="/admin-panel/modules">
+                        <Link href="/admin/modules">
                           <Blocks />
                           {t("common:navigation.modules")}
                         </Link>

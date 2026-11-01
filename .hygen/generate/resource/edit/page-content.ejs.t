@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/[id]/page-content.tsx
+to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/edit/[id]/page-content.tsx
 ---
 "use client";
 
@@ -32,7 +32,7 @@ const defaultValues: EditFormData = {
 
 const useValidationSchema = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
 
   return yup.object().shape({
     // Do not remove this comment. <edit-form-validation-schema />
@@ -42,7 +42,7 @@ const useValidationSchema = () => {
 // Do not remove this comment. <edit-component-reference-field />
 
 function EditFormActions() {
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
   const { isSubmitting, isDirty } = useFormState();
   useLeavePage(isDirty);
 
@@ -58,7 +58,7 @@ function FormEdit() {
   const params = useParams<{ id: string }>();
   const entityId = params.id;
   const fetchEdit<%= h.pascalName(name) %> = useEdit<%= h.pascalName(name) %>Service();
-  const { t } = useTranslation("admin-panel-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
+  const { t } = useTranslation("admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>-edit");
   const validationSchema = useValidationSchema();
   const { data: initialData } = useGet<%= h.pascalName(name) %>Query({ id: entityId });
 
@@ -95,7 +95,7 @@ function FormEdit() {
       enqueueSnackbar(t("alerts.success"), {
         variant: "success",
       });
-      router.push("/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
+      router.push("/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>");
     }
   });
 
@@ -122,7 +122,7 @@ function FormEdit() {
               <EditFormActions />
               <span className="ml-2">
                 <Button asChild variant="secondary">
-                  <Link href="/admin-panel/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>">
+                  <Link href="/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>">
                     {t("actions.cancel")}
                   </Link>
                 </Button>

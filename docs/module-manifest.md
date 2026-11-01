@@ -80,7 +80,7 @@ So the risk is real but narrower than "no TypeScript error": it is **no TypeScri
 
 `icon` on `TabDef` is optional; both shells render `{Icon ? <Icon /> : null}` (`ProfileShell.tsx`, `SettingsShell.tsx`), so a text-only tab is legal.
 
-**Core menu items added in T-066:** `Roles` (`/admin-panel/roles`) and `Modules` (`/admin-panel/modules`) were added to the sidebar as hardcoded core items (not from the registry) — both are admin-only pages that previously had no sidebar entry. They sit alongside `Users`, `Permissions`, and `Dashboard` under the `isAdmin` guard.
+**Core menu items added in T-066:** `Roles` (`/admin/roles`) and `Modules` (`/admin/modules`) were added to the sidebar as hardcoded core items (not from the registry) — both are admin-only pages that previously had no sidebar entry. They sit alongside `Users`, `Permissions`, and `Dashboard` under the `isAdmin` guard.
 
 ## Adding a library
 
@@ -273,7 +273,7 @@ interface MenuItem {
 | ------------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `slug`       | `string`          | Unique within the manifest. Doubles as the React key in the sidebar. The `key` for the sort tiebreaker, after `position` and `moduleAlias`. |
 | `label`      | `I18nLabel`       | Menu text. Same object form as tabs — but read the [cross-namespace caveat](#cross-namespace-i18n-is-broken-verified-bug) before using it. |
-| `href`       | `string`          | Route **without** a locale prefix. The `Link` component adds it. `"/admin-panel/newsletter"`, never `"/en/admin-panel/newsletter"`. |
+| `href`       | `string`          | Route **without** a locale prefix. The `Link` component adds it. `"/admin/newsletter"`, never `"/en/admin/newsletter"`. |
 | `icon`       | `ComponentType`   | Optional Lucide component, deep-imported. Not a string, not an emoji. Omitted renders text-only.                                  |
 | `position`   | `number`          | Sort key, ascending. Core items occupy 10–90, so a module should pick a range that leaves room.                                     |
 | `permission` | `string`          | Optional, identical semantics to `TabDef.permission` — same `can()`, same fail-closed behaviour. The resolver already filters; do not filter again. |
@@ -388,7 +388,7 @@ export default defineModuleManifest({
     {
       slug: "newsletter",
       label: "Newsletter",
-      href: "/admin-panel/newsletter",
+      href: "/admin/newsletter",
       position: 60,
       permission: "read:user",
       icon: Megaphone,
@@ -403,7 +403,7 @@ Register it:
 npm run module:add -- newsletter
 ```
 
-Note that `href: "/admin-panel/newsletter"` has no locale prefix. The `Link` component adds it — see [Trade-offs](#trade-offs) for what happens when you add it yourself.
+Note that `href: "/admin/newsletter"` has no locale prefix. The `Link` component adds it — see [Trade-offs](#trade-offs) for what happens when you add it yourself.
 
 ## Common mistakes
 
@@ -416,7 +416,7 @@ Note that `href: "/admin-panel/newsletter"` has no locale prefix. The `Link` com
 | `position: 1000 + offset`                                          | `position: 1000`                                                           | Generator fails the build — `position` must be a numeric literal. |
 | `slug: "general"` in a second module                               | a module-scoped slug                                                       | Generator fails the build on duplicate `slug`.              |
 | menu item with `component: FooPage` or `content: ...`              | menu items are navigation only — `href` and nothing else                  | Type error — `MenuItem` has neither field.                  |
-| `href: "/en/admin-panel/newsletter"`                               | `href: "/admin-panel/newsletter"`                                          | 404 in all five locales — `Link` prepends the locale again.  |
+| `href: "/en/admin/newsletter"`                               | `href: "/admin/newsletter"`                                          | 404 in all five locales — `Link` prepends the locale again.  |
 | re-filtering `menu` in your own component                          | trust `resolveMenu` — it already applied `can()`                          | Duplicated, divergent permission logic.                      |
 
 ### Tab content: the `kind` wrapper is required
@@ -472,7 +472,7 @@ import Megaphone from "lucide-react/dist/esm/icons/megaphone";
 { slug: "newsletter", icon: "📣", /* ... */ }        // type error
 ```
 
-`href` **must not** carry a locale prefix. `Link` (`src/components/link.tsx`) prepends the active language itself, so a manifest href of `/en/admin-panel/newsletter` resolves to `/en/en/admin-panel/newsletter` and 404s in every locale. Write the unprefixed path: `href: "/admin-panel/newsletter"`. This is the same rule the dashboard widgets already follow.
+`href` **must not** carry a locale prefix. `Link` (`src/components/link.tsx`) prepends the active language itself, so a manifest href of `/en/admin/newsletter` resolves to `/en/en/admin/newsletter` and 404s in every locale. Write the unprefixed path: `href: "/admin/newsletter"`. This is the same rule the dashboard widgets already follow.
 
 `permission` on a menu item uses **exactly** the same mechanism as a tab: the same `can()` in `src/core/modules/can.ts`, the same fail-closed ordering, the same `"resource:action"` naming. `resolveMenu()` has already applied it — items the user may not see are gone from the array you receive. **Do not filter again in the component.** A second `isAdmin` check or a second `can()` call produces logic that drifts from the resolver and is wrong in one of the two places.
 
@@ -540,7 +540,7 @@ The namespace is `module-<alias>` — the existing `post` module uses `module-po
 }
 ```
 
-Namespaces load lazily through `i18next-resources-to-backend`, one dynamic import per namespace per language. Core namespaces (`settings`, `profile`, `dashboard`, `common`) already exist per locale. One hard rule from the dashboard widgets: **do not hardcode locale-prefixed paths.** The `Link` component adds the locale prefix itself, so a widget href of `/admin-panel/users` is correct and `/en/admin-panel/users` is broken in the other four locales.
+Namespaces load lazily through `i18next-resources-to-backend`, one dynamic import per namespace per language. Core namespaces (`settings`, `profile`, `dashboard`, `common`) already exist per locale. One hard rule from the dashboard widgets: **do not hardcode locale-prefixed paths.** The `Link` component adds the locale prefix itself, so a widget href of `/admin/users` is correct and `/en/admin/users` is broken in the other four locales.
 
 ### Cross-namespace i18n is broken (verified bug)
 
@@ -598,9 +598,9 @@ The practical read: adding a library is a code change, a review, and a deploy. T
 
 Two costs of the `menu` slot are worth stating separately, because neither is visible at the type level.
 
-**A menu `href` must point at a route that actually exists.** Nothing validates it. A dead `href` produces two symptoms rather than an error: clicking the item renders a 404, and `Link` *prefetch*ing a route that does not exist produces a console error on every sidebar render. This happened in practice — `src/modules/post/module.manifest.ts` declares `href: "/admin-panel/post"`, and no `post` resource was ever generated, so that route does not exist. The manifest type-checks, the registry accepts it, and the failure only appears at click time. Check the route before you ship the item.
+**A menu `href` must point at a route that actually exists.** Nothing validates it. A dead `href` produces two symptoms rather than an error: clicking the item renders a 404, and `Link` *prefetch*ing a route that does not exist produces a console error on every sidebar render. This happened in practice — `src/modules/post/module.manifest.ts` declares `href: "/admin/post"`, and no `post` resource was ever generated, so that route does not exist. The manifest type-checks, the registry accepts it, and the failure only appears at click time. Check the route before you ship the item.
 
-**Menu `isActive` is `pathname.includes(href)`** (`app-sidebar.tsx:283`) — the same style the hardcoded core items use. The consequence is a loose match: with `href: "/admin-panel/users"`, visiting `/admin-panel/users/123` highlights **Users**. That is inherited legacy behaviour, deliberately not changed, because changing only module items while core items keep the old rule would make the sidebar behave two different ways. Module authors inherit the imprecision along with the rule.
+**Menu `isActive` is `pathname.includes(href)`** (`app-sidebar.tsx:283`) — the same style the hardcoded core items use. The consequence is a loose match: with `href: "/admin/users"`, visiting `/admin/users/123` highlights **Users**. That is inherited legacy behaviour, deliberately not changed, because changing only module items while core items keep the old rule would make the sidebar behave two different ways. Module authors inherit the imprecision along with the rule.
 
 ## Deferred
 
@@ -621,7 +621,7 @@ Two costs show up the moment a manifest becomes a package boundary, both traced 
 Flagged rather than guessed, because each needs a decision from the repo owner.
 
 1. **Cross-namespace i18n does not load.** The bug is [documented above](#cross-namespace-i18n-is-broken-verified-bug) and it predates the `menu` slot — profile tabs from `module-post` are already broken. The sidebar subscribes to `common`, `useTranslation` only suspends on the subscribed namespace, `preload` carries language codes rather than namespaces, and `loadNamespaces` is never called. **Unfixed.** Decisions needed: whether to call `loadNamespaces` eagerly for `module-*` namespaces at the app boundary, or to have each `resolveLabel` call site preload the namespace it is about to read, or to widen `preload` to accept namespaces. Any of those fixes the symptom properly; none of them is a manifest author's decision, which is why a workaround is documented above instead.
-2. **Menu `href` is not validated.** `src/modules/post/module.manifest.ts` points at `/admin-panel/post`, which does not exist — a 404 on click plus a prefetch console error. The generator has no route check, and adding one is not obviously possible from a manifest script. Decision needed: whether the generator should verify that a `menu[].href` resolves to a route, or whether dead hrefs stay the author's responsibility.
+2. **Menu `href` is not validated.** `src/modules/post/module.manifest.ts` points at `/admin/post`, which does not exist — a 404 on click plus a prefetch console error. The generator has no route check, and adding one is not obviously possible from a manifest script. Decision needed: whether the generator should verify that a `menu[].href` resolves to a route, or whether dead hrefs stay the author's responsibility.
 3. **Menu `group` is inert.** The field exists on `MenuItem` and survives the resolver, but the sidebar renders no group headings. Either core starts rendering them or the field should be dropped. Left in place because removing it is a breaking change to a published type.
 4. **Tab `position` spacing.** Existing manifests use steps of 10 (`10`, `20`, `30`, `90`) with no stated convention. Worth documenting whether gaps are reserved for core tabs.
 5. **`version` from `/api/v1/modules` is a placeholder.** The backend returns a hardcoded `'1.0.0'` for every module, not real data. `brocoders-api/src/config/modules.config.ts` is a static config list (there is no filesystem scan and no database), and its own comment says the field does not come from the frontend manifest — `ModuleManifest` has no `version` field to source it from. Anything that displays a module version to a user is showing a constant. Decision needed: add `version` to the manifest type so the backend can read a real value, or drop the field from the API response so the absence is visible rather than papered over. Note the config file must also be kept in sync by hand — it is not generated from the registry.
