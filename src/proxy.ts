@@ -55,6 +55,15 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Legacy unlocalized admin-panel URLs are permanently redirected to /admin.
+  if (pathname === "/admin-panel" || pathname.startsWith("/admin-panel/")) {
+    const canonicalPath = pathname.replace(/^\/admin-panel(?=\/|$)/, "/admin");
+    return NextResponse.redirect(
+      new URL(`${canonicalPath}${req.nextUrl.search}`, req.url),
+      308
+    );
+  }
+
   // Admin URLs are locale-free. Their interface language is selected from
   // the user's language cookie / Accept-Language, never from the URL.
   if (isAdminPath(pathname)) {
@@ -67,8 +76,10 @@ export function proxy(req: NextRequest) {
   // canonical locale-free route while preserving query strings.
   if (isSupportedLanguage(firstSegment)) {
     const segments = pathname.split("/").filter(Boolean);
-    if (segments[1] === "admin") {
-      const canonicalPath = `/${segments.slice(1).join("/")}`;
+    if (segments[1] === "admin" || segments[1] === "admin-panel") {
+      const canonicalSegments = segments.slice(1);
+      if (canonicalSegments[0] === "admin-panel") canonicalSegments[0] = "admin";
+      const canonicalPath = `/${canonicalSegments.join("/")}`;
       return NextResponse.redirect(
         new URL(`${canonicalPath}${req.nextUrl.search}`, req.url),
         308
