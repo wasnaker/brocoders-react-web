@@ -24,14 +24,31 @@ function hasLocalePrefix(pathname: string): boolean {
   return languages.some((language) => language === firstSegment);
 }
 
-function isAdminPath(pathname: string): boolean {
+function resolveCanonicalAdminPath(pathname: string): string | null {
   const segments = pathname.split("/").filter(Boolean);
-  if (segments[0] === "admin" || segments[0] === "admin-panel") return true;
-  return (
-    segments.length > 1 &&
-    languages.some((language) => language === segments[0]) &&
-    (segments[1] === "admin" || segments[1] === "admin-panel")
-  );
+  const routeSegments = languages.some((language) => language === segments[0])
+    ? segments.slice(1)
+    : segments;
+
+  // Profile and Settings are authenticated admin pages, not public pages.
+  // Normalize legacy callers here so Link never adds /{language} to them.
+  const legacyAccountRoutes: Record<string, string> = {
+    profile: "/admin/profile",
+    "profile/edit": "/admin/profile/edit",
+    settings: "/admin/settings",
+  };
+  const legacyAccountPath = legacyAccountRoutes[routeSegments.join("/")];
+  if (legacyAccountPath) return legacyAccountPath;
+
+  if (
+    routeSegments[0] !== "admin" &&
+    routeSegments[0] !== "admin-panel"
+  ) {
+    return null;
+  }
+
+  if (routeSegments[0] === "admin-panel") routeSegments[0] = "admin";
+  return `/${routeSegments.join("/")}`;
 }
 
 function normalizePath(pathname: string): string {
@@ -42,17 +59,9 @@ function normalizePath(pathname: string): string {
 export function buildUrl(pathname: string, options: UrlOptions = {}): string {
   const { path, suffix } = splitSuffix(normalizePath(pathname));
 
-  // Admin paths are always canonical and never carry a locale segment.
-  if (isAdminPath(path)) {
-    const segments = path.split("/").filter(Boolean);
-    const canonicalSegments = languages.some(
-      (language) => language === segments[0]
-    )
-      ? segments.slice(1)
-      : segments;
-    if (canonicalSegments[0] === "admin-panel") canonicalSegments[0] = "admin";
-    return `/${canonicalSegments.join("/")}${suffix}`;
-  }
+  // Admin paths and legacy account aliases are always locale-free.
+  const canonicalAdminPath = resolveCanonicalAdminPath(path);
+  if (canonicalAdminPath) return `${canonicalAdminPath}${suffix}`;
 
   // Explicit isPublic preserves the old call-site contract. When omitted,
   // known locale-prefixed paths are preserved and other paths remain neutral.
