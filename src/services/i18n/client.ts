@@ -81,15 +81,20 @@ function wrapTWithNamespaceLoading(
   return wrapped as TFunction;
 }
 
-export function useTranslation(namespace: string, options?: object) {
+export function useTranslation(
+  namespace: string | string[],
+  options?: object
+) {
+  const namespaces = Array.isArray(namespace) ? namespace : [namespace];
+  const primary = namespaces[0] ?? "common";
   const language = useLanguage();
   const { language: cookies } = useStoreLanguage();
   const { setLanguage: setCookie } = useStoreLanguageActions();
-  const originalInstance = useTranslationOriginal(namespace, {
+  const { i18n, t } = useTranslationOriginal<typeof namespaces>(namespaces, {
     ...options,
-    useSuspense: runsOnServerSide || canSuspendOn(namespace),
+    useSuspense: runsOnServerSide || canSuspendOn(primary),
   });
-  const { i18n, t } = originalInstance;
+  const originalInstance = { i18n, t };
 
   // Wrap t to auto-load cross-namespace keys
   const wrappedT = wrapTWithNamespaceLoading(t, i18n);

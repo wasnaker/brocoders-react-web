@@ -176,7 +176,6 @@ function NavUser() {
 }
 
 function AppSidebar() {
-  const { t } = useTranslation("common");
   const { user } = useAuth();
   const pathname = usePathname();
 
@@ -189,6 +188,20 @@ function AppSidebar() {
   // a non-admin user with a specific permission should see their allowed
   // module menu items. The resolver handles all permission logic.
   const moduleMenu = resolveMenu(getManifests(), user);
+
+  // Subscribe juga ke namespace label modul — kalau hanya "common",
+  // label lintas-namespace ("module-region:menu") dimuat fire-and-forget
+  // dan sidebar tidak pernah re-render → label tampil sebagai raw key.
+  const moduleNamespaces = [
+    ...new Set(
+      moduleMenu
+        .map((item) =>
+          typeof item.label === "object" ? item.label.namespace : null
+        )
+        .filter((ns): ns is string => Boolean(ns))
+    ),
+  ];
+  const { t } = useTranslation(["common", ...moduleNamespaces]);
 
   return (
     <>
