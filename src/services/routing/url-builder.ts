@@ -45,10 +45,11 @@ export function buildUrl(pathname: string, options: UrlOptions = {}): string {
   // Admin paths are always canonical and never carry a locale segment.
   if (isAdminPath(path)) {
     const segments = path.split("/").filter(Boolean);
-    const canonicalSegments =
-      languages.some((language) => language === segments[0])
-        ? segments.slice(1)
-        : segments;
+    const canonicalSegments = languages.some(
+      (language) => language === segments[0]
+    )
+      ? segments.slice(1)
+      : segments;
     if (canonicalSegments[0] === "admin-panel") canonicalSegments[0] = "admin";
     return `/${canonicalSegments.join("/")}${suffix}`;
   }
@@ -59,7 +60,8 @@ export function buildUrl(pathname: string, options: UrlOptions = {}): string {
     if (hasLocalePrefix(path)) return `${path}${suffix}`;
 
     const locale =
-      options.locale && languages.includes(options.locale as (typeof languages)[number])
+      options.locale &&
+      languages.includes(options.locale as (typeof languages)[number])
         ? options.locale
         : fallbackLanguage;
 

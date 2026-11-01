@@ -4,9 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "@/services/i18n/client";
 import { useProvinces, useDeleteProvince } from "../hooks/use-regions";
-import { SmallTable, type SmallTableColumn, type DetailTab } from "../components/small-table";
+import {
+  SmallTable,
+  type SmallTableColumn,
+  type DetailTab,
+} from "../components/small-table";
 import { ProvinceFormDialog } from "../components/province-form-dialog";
-import { ProvinceOverviewTab, ProvinceRegenciesTab } from "../components/province-detail-tab";
+import {
+  ProvinceOverviewTab,
+  ProvinceRegenciesTab,
+} from "../components/province-detail-tab";
 import { Button } from "@/components/ui/button";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
 import PencilIcon from "lucide-react/dist/esm/icons/pencil";
@@ -111,9 +118,7 @@ function PageInner() {
         key: "name",
         label: t("table.name"),
         primary: true,
-        render: (item) => (
-          <span className="font-medium">{item.name}</span>
-        ),
+        render: (item) => <span className="font-medium">{item.name}</span>,
       },
       {
         key: "isoCode",
@@ -133,7 +138,8 @@ function PageInner() {
             item.latitude === undefined ||
             item.longitude === null ||
             item.longitude === undefined
-          ) return "—";
+          )
+            return "—";
           return (
             <span className="font-mono text-xs text-muted-foreground">
               {item.latitude.toFixed(4)}, {item.longitude.toFixed(4)}
@@ -226,9 +232,7 @@ function PageInner() {
     );
   }
 
-  const tableEmptyText = isLoading
-    ? t("table.loading")
-    : t("table.empty");
+  const tableEmptyText = isLoading ? t("table.loading") : t("table.empty");
 
   return (
     <div className="page-content--wide">
@@ -257,9 +261,7 @@ function PageInner() {
           tabs={tabs}
           customTabBody={customTabBody}
           searchableKeys={["name", "isoCode"]}
-          getSearchText={(item) =>
-            [item.name, item.isoCode ?? ""].join(" ")
-          }
+          getSearchText={(item) => [item.name, item.isoCode ?? ""].join(" ")}
           perPage={PER_PAGE}
           emptyText={tableEmptyText}
           tabEmptyText={t("detail.empty")}
@@ -295,7 +297,10 @@ function PageInner() {
               {t("actions.prev_page")}
             </Button>
             <span className="flex items-center px-3 text-sm text-muted-foreground">
-              {t("table.page", { page, total: provincesData?.hasNextPage ? page + 1 : page })}
+              {t("table.page", {
+                page,
+                total: provincesData?.hasNextPage ? page + 1 : page,
+              })}
             </span>
             <Button
               variant="outline"
@@ -329,7 +334,9 @@ function PageInner() {
 
 export function RegionPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-muted-foreground">Loading…</div>}>
+    <Suspense
+      fallback={<div className="p-8 text-muted-foreground">Loading…</div>}
+    >
       <PageInner />
     </Suspense>
   );

@@ -134,7 +134,9 @@ export function RegencyFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? t("actions.edit_regency") : t("actions.create_regency")}
+            {isEditing
+              ? t("actions.edit_regency")
+              : t("actions.create_regency")}
           </DialogTitle>
         </DialogHeader>
 
@@ -142,7 +144,8 @@ export function RegencyFormDialog({
           {/* Province */}
           <div className="space-y-1.5">
             <Label htmlFor="regency-province">
-              {t("form.field.province")} <span className="text-destructive">*</span>
+              {t("form.field.province")}{" "}
+              <span className="text-destructive">*</span>
             </Label>
             <Select
               value={form.provinceId}

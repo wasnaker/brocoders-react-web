@@ -28,9 +28,7 @@ test.describe("Region module (bc-region)", () => {
     await login(page);
     await page.goto(`${SITE}/id/admin/region`);
 
-    await expect(
-      page.getByRole("link", { name: /wilayah/i })
-    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /wilayah/i })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Wilayah" })).toBeVisible();
   });
 

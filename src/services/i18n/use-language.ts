@@ -6,9 +6,13 @@ import useAuth from "@/services/auth/use-auth";
 import useStoreLanguage from "./use-store-language";
 import { isAdminRoute } from "@/services/routing/locale-precedence";
 
-function isSupportedLanguage(value: unknown): value is (typeof languages)[number] {
-  return typeof value === "string" &&
-    languages.includes(value as (typeof languages)[number]);
+function isSupportedLanguage(
+  value: unknown
+): value is (typeof languages)[number] {
+  return (
+    typeof value === "string" &&
+    languages.includes(value as (typeof languages)[number])
+  );
 }
 
 function useLanguage() {
@@ -24,9 +28,7 @@ function useLanguage() {
       ? params.language[0]
       : params.language;
 
-    return isSupportedLanguage(urlLanguage)
-      ? urlLanguage
-      : fallbackLanguage;
+    return isSupportedLanguage(urlLanguage) ? urlLanguage : fallbackLanguage;
   }
 
   // Locale-free admin routes use the authenticated profile preference.

@@ -15,9 +15,5 @@ export default async function AdminLayout({
     ? requestedLanguage!
     : fallbackLanguage;
 
-  return (
-    <AppProviders language={language}>
-      {children}
-    </AppProviders>
-  );
+  return <AppProviders language={language}>{children}</AppProviders>;
 }

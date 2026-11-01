@@ -143,7 +143,6 @@ export function SmallTable<T>({
   // Reset to page 0 when search changes
   useEffect(() => {
     setPageIndex(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
   // Sync pageSize from prop
@@ -352,7 +351,9 @@ export function SmallTable<T>({
                 customTabBody?.[activeTabDef.slug] ? (
                   customTabBody[activeTabDef.slug](selected, activeTabDef)
                 ) : (
-                  <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {tabEmptyText}
+                  </p>
                 )
               ) : (
                 <p className="text-sm text-muted-foreground">{tabEmptyText}</p>

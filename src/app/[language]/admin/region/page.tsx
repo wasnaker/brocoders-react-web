@@ -5,10 +5,7 @@ export async function generateMetadata(props: {
   params: Promise<{ language: string }>;
 }) {
   const params = await props.params;
-  const { t } = await getServerTranslation(
-    params.language,
-    "module-region"
-  );
+  const { t } = await getServerTranslation(params.language, "module-region");
   return {
     title: t("module-region:title"),
   };

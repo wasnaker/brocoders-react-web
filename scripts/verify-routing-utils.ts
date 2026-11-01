@@ -77,40 +77,78 @@ test("buildUrl: public default locale", () => {
 });
 
 test("buildUrl: admin routes (locale-free)", () => {
-  assert(buildUrl("/admin/dashboard") === "/admin/dashboard", "Expected /admin/dashboard");
+  assert(
+    buildUrl("/admin/dashboard") === "/admin/dashboard",
+    "Expected /admin/dashboard"
+  );
   assert(
     buildUrl("admin/profile", { locale: "id" }) === "/admin/profile",
     "Expected /admin/profile (ignores locale)"
   );
-  assert(buildUrl("/id/admin/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy localized admin path should become locale-free");
-  assert(buildUrl("/id/admin-panel/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy admin-panel path should become canonical /admin");
-  assert(buildUrl("/admin-panel/users") === "/admin/users", "Unlocalized admin-panel path should become canonical /admin");
-  assert(buildUrl("/id/sign-in?next=%2Fadmin", { isPublic: true, locale: "en" }) === "/id/sign-in?next=%2Fadmin", "Existing public locale and query should be preserved");
+  assert(
+    buildUrl("/id/admin/users", { isPublic: true, locale: "en" }) ===
+      "/admin/users",
+    "Legacy localized admin path should become locale-free"
+  );
+  assert(
+    buildUrl("/id/admin-panel/users", { isPublic: true, locale: "en" }) ===
+      "/admin/users",
+    "Legacy admin-panel path should become canonical /admin"
+  );
+  assert(
+    buildUrl("/admin-panel/users") === "/admin/users",
+    "Unlocalized admin-panel path should become canonical /admin"
+  );
+  assert(
+    buildUrl("/id/sign-in?next=%2Fadmin", { isPublic: true, locale: "en" }) ===
+      "/id/sign-in?next=%2Fadmin",
+    "Existing public locale and query should be preserved"
+  );
 });
 
 // --- Locale Precedence Tests ---
 test("resolveLocale: public route uses URL locale", () => {
-  const res = resolveLocale({ urlLocale: "id", userLanguage: "en", isPublicRoute: true });
+  const res = resolveLocale({
+    urlLocale: "id",
+    userLanguage: "en",
+    isPublicRoute: true,
+  });
   assert(res === "id", `Expected id, got ${res}`);
 });
 
 test("resolveLocale: public route without URL locale uses app fallback", () => {
-  const res = resolveLocale({ urlLocale: null, userLanguage: "ja", isPublicRoute: true });
+  const res = resolveLocale({
+    urlLocale: null,
+    userLanguage: "ja",
+    isPublicRoute: true,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: admin route uses user language", () => {
-  const res = resolveLocale({ urlLocale: "id", userLanguage: "ko", isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "id",
+    userLanguage: "ko",
+    isPublicRoute: false,
+  });
   assert(res === "ko", `Expected ko, got ${res}`);
 });
 
 test("resolveLocale: admin route without user preference uses app fallback", () => {
-  const res = resolveLocale({ urlLocale: "zh", userLanguage: null, isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "zh",
+    userLanguage: null,
+    isPublicRoute: false,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: both invalid falls back to default", () => {
-  const res = resolveLocale({ urlLocale: "xx", userLanguage: "yy", isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "xx",
+    userLanguage: "yy",
+    isPublicRoute: false,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
@@ -123,7 +161,10 @@ test("validateLocale: valid and invalid", () => {
 test("isAdminRoute & isPublicRoute helpers", () => {
   assert(isAdminRoute("/admin/dashboard") === true, "Expected true");
   assert(isAdminRoute("/id/admin") === false, "Expected false");
-  assert(isPublicRoute("/id/admin") === false, "Legacy admin URL is not public");
+  assert(
+    isPublicRoute("/id/admin") === false,
+    "Legacy admin URL is not public"
+  );
 
   assert(isPublicRoute("/id/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");

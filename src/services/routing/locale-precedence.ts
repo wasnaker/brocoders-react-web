@@ -81,6 +81,8 @@ export function resolveLocale(input: LocaleResolutionInput): string {
 }
 
 /** Validate and normalize a locale string. */
-export function validateLocale(locale: string | null | undefined): string | null {
+export function validateLocale(
+  locale: string | null | undefined
+): string | null {
   return isSupportedLocale(locale ?? undefined) ? (locale as string) : null;
 }

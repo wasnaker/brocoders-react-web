@@ -5,7 +5,10 @@ import { getRequestLanguage } from "@/services/i18n/get-request-language";
 
 export async function generateMetadata(): Promise<Metadata> {
   const language = await getRequestLanguage();
-  const { t } = await getServerTranslation(language, "admin-panel-permissions-create");
+  const { t } = await getServerTranslation(
+    language,
+    "admin-panel-permissions-create"
+  );
   return { title: t("admin-panel-permissions-create:title") };
 }
 

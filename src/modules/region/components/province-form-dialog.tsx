@@ -63,9 +63,14 @@ export function ProvinceFormDialog({
       setForm({
         name: editItem?.name ?? "",
         isoCode: editItem?.isoCode ?? "",
-        latitude: editItem?.latitude !== null && editItem?.latitude !== undefined ? String(editItem.latitude) : "",
+        latitude:
+          editItem?.latitude !== null && editItem?.latitude !== undefined
+            ? String(editItem.latitude)
+            : "",
         longitude:
-          editItem?.longitude !== null && editItem?.longitude !== undefined ? String(editItem.longitude) : "",
+          editItem?.longitude !== null && editItem?.longitude !== undefined
+            ? String(editItem.longitude)
+            : "",
       });
       setErrors({});
     }
@@ -121,7 +126,9 @@ export function ProvinceFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? t("actions.edit_province") : t("actions.create_province")}
+            {isEditing
+              ? t("actions.edit_province")
+              : t("actions.create_province")}
           </DialogTitle>
         </DialogHeader>
 

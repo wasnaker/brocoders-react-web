@@ -40,10 +40,7 @@ function StoreLanguageProvider({
   }, []);
 
   const contextValue = useMemo(() => ({ language }), [language]);
-  const contextActionsValue = useMemo(
-    () => ({ setLanguage }),
-    [setLanguage]
-  );
+  const contextActionsValue = useMemo(() => ({ setLanguage }), [setLanguage]);
 
   return (
     <StoreLanguageContext.Provider value={contextValue}>

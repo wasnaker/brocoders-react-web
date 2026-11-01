@@ -63,27 +63,47 @@ test("getRouteType: other routes", () => {
 
 // --- Locale Precedence Tests ---
 test("resolveLocale: public route uses URL locale", () => {
-  const res = resolveLocale({ urlLocale: "id", userLanguage: "en", isPublicRoute: true });
+  const res = resolveLocale({
+    urlLocale: "id",
+    userLanguage: "en",
+    isPublicRoute: true,
+  });
   assert(res === "id", `Expected id, got ${res}`);
 });
 
 test("resolveLocale: public route without URL locale uses app fallback", () => {
-  const res = resolveLocale({ urlLocale: null, userLanguage: "ja", isPublicRoute: true });
+  const res = resolveLocale({
+    urlLocale: null,
+    userLanguage: "ja",
+    isPublicRoute: true,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: admin route uses user language", () => {
-  const res = resolveLocale({ urlLocale: "id", userLanguage: "ko", isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "id",
+    userLanguage: "ko",
+    isPublicRoute: false,
+  });
   assert(res === "ko", `Expected ko, got ${res}`);
 });
 
 test("resolveLocale: admin route without user preference uses app fallback", () => {
-  const res = resolveLocale({ urlLocale: "zh", userLanguage: null, isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "zh",
+    userLanguage: null,
+    isPublicRoute: false,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: both invalid falls back to default", () => {
-  const res = resolveLocale({ urlLocale: "xx", userLanguage: "yy", isPublicRoute: false });
+  const res = resolveLocale({
+    urlLocale: "xx",
+    userLanguage: "yy",
+    isPublicRoute: false,
+  });
   assert(res === "en", `Expected en, got ${res}`);
 });
 
@@ -101,8 +121,14 @@ test("isPublicRoute", () => {
   assert(isPublicRoute("/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");
   assert(isPublicRoute("/unknown") === false, "Expected false");
-  assert(isPublicRoute("/id/admin/dashboard") === false, "Admin route must not be public");
-  assert(isPublicRoute("/id/unknown") === false, "Unknown locale route must not be public");
+  assert(
+    isPublicRoute("/id/admin/dashboard") === false,
+    "Admin route must not be public"
+  );
+  assert(
+    isPublicRoute("/id/unknown") === false,
+    "Unknown locale route must not be public"
+  );
   assert(isPublicRoute("/") === false, "Expected false");
 });
 
