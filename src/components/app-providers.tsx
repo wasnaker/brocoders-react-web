@@ -14,7 +14,7 @@ import ConfirmDialogProvider from "@/components/confirm-dialog/confirm-dialog-pr
 import StoreLanguageProvider from "@/services/i18n/store-language-provider";
 import LeavePageProvider from "@/services/leave-page/leave-page-provider";
 import { DirectionProvider } from "@radix-ui/react-direction";
-import { dir } from "i18next";
+import i18next from "i18next";
 
 type AppProvidersProps = PropsWithChildren<{
   language: string;
@@ -30,7 +30,7 @@ export default function AppProviders({
   language,
 }: AppProvidersProps) {
   return (
-    <DirectionProvider dir={dir(language)}>
+    <DirectionProvider dir={i18next.dir(language)}>
       <StoreLanguageProvider initialLanguage={language}>
         <AuthProvider>
           <DocumentLanguageSync />
