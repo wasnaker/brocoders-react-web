@@ -30,8 +30,8 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm ci
-      - name: Run lint and apply safe autofixes
-        run: npm run lint -- --fix
+      - name: Run lint
+        run: npm run lint
       - name: Resolve Playwright version
         id: pw
         run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
