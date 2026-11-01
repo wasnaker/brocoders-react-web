@@ -1,21 +1,18 @@
 ---
-to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page.tsx
+to: src/app/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page.tsx
 ---
 "use server";
 
 import type { Metadata } from "next";
 import { getServerTranslation } from "@/services/i18n";
+import { getRequestLanguage } from "@/services/i18n/get-request-language";
 import <%= h.pascalPluralName(name) %>PageContent from "./page-content";
 
-type Props = {
-  params: Promise<{ language: string }>;
-};
-
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params;
+export async function generateMetadata(): Promise<Metadata> {
+  const language = await getRequestLanguage();
 
   const { t } = await getServerTranslation(
-    params.language,
+    language,
     "admin-<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>"
   );
 
@@ -24,6 +21,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
-export default async function Page() {
+export default function Page() {
   return <<%= h.pascalPluralName(name) %>PageContent />;
 }
