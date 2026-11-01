@@ -51,18 +51,20 @@ export default function LanguageSwitcher() {
       try {
         const { data, status } = await patchMe({ language: newLanguage });
         if (status !== HTTP_CODES_ENUM.OK) {
-          enqueueSnackbar("Unable to save language preference. Please try again.", {
-            variant: "error",
-          });
+          enqueueSnackbar(
+            "Unable to save language preference. Please try again.",
+            { variant: "error" }
+          );
           return;
         }
 
         setUser(data);
         setLanguage(newLanguage);
       } catch {
-        enqueueSnackbar("Unable to save language preference. Please try again.", {
-          variant: "error",
-        });
+        enqueueSnackbar(
+          "Unable to save language preference. Please try again.",
+          { variant: "error" }
+        );
       } finally {
         setIsSavingLanguage(false);
       }
@@ -81,7 +83,11 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <Select value={currentLanguage} onValueChange={handleChange} disabled={isSavingLanguage}>
+    <Select
+      value={currentLanguage}
+      onValueChange={handleChange}
+      disabled={isSavingLanguage}
+    >
       <SelectTrigger size="sm" className="language-switcher">
         <SelectValue />
       </SelectTrigger>
