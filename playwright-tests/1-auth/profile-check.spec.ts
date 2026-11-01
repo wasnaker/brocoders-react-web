@@ -1,8 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const ADMIN = { email: "admin@example.com", password: "secret" };
-const API = "http://brocoders-api.lan/api";
-const SITE = "http://brocoders-react-web.lan";
+const API = "http://localhost:3001/api";
+const SITE = "http://localhost:3000";
 
 async function login(page: Page) {
   const res = await page.request.post(`${API}/v1/auth/email/login`, {
