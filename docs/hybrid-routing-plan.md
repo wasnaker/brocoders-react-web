@@ -1,5 +1,7 @@
 # Hybrid Routing Strategy — Architecture & Migration Plan
 
+> Status: Implemented on main; post-merge verification and follow-up corrections remain open.
+
 ## Post-merge audit — 2026-11-01
 
 This audit supersedes the historical branch-status statements and earlier source snapshots below.
@@ -14,8 +16,6 @@ This audit supersedes the historical branch-status statements and earlier source
 
 The original sections below preserve the design rationale and historical review notes. Re-check each item against current source and CI before marking an acceptance gate complete.
 
-
- > Status: Implemented on main; post-merge verification and follow-up corrections remain open.
 > Scope: routing, root layouts, authentication bootstrap, language resolution, navigation, module registry, SEO, and regression coverage.
 > Related issue: #185 (hydration mismatch on authenticated pages).
 > Baseline reviewed: Next.js 16.2.0 / React 19.2.4 on the repository default branch at the time of revision.
