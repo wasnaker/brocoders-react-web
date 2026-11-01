@@ -63,7 +63,7 @@ export function AccountTab() {
   const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<EditProfileBasicInfoFormData>({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema) as any,
     defaultValues: {
       firstName: "",
       lastName: "",
