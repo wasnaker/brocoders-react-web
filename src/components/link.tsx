@@ -1,4 +1,5 @@
 "use client";
+
 import useLanguage from "@/services/i18n/use-language";
 import {
   LeavePageActionsContext,
@@ -8,26 +9,60 @@ import {
 // eslint-disable-next-line no-restricted-imports
 import NextLink from "next/link";
 import { ComponentProps, Ref, useContext } from "react";
+import { languages } from "@/services/i18n/config";
 
-function Link(
-  props: ComponentProps<typeof NextLink> & { ref?: Ref<HTMLAnchorElement> }
-) {
+type LinkProps = ComponentProps<typeof NextLink> & {
+  ref?: Ref<HTMLAnchorElement>;
+};
+
+function isAdminPath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+function hasLocalePrefix(pathname: string): boolean {
+  const firstSegment = pathname.split("/").filter(Boolean)[0];
+  return languages.some((locale) => locale === firstSegment);
+}
+
+function resolveInternalPath(pathname: string, language: string): string {
+  // Admin URLs are canonical and locale-free.
+  if (isAdminPath(pathname)) return pathname;
+
+  // Do not double-prefix an already localized public URL.
+  if (hasLocalePrefix(pathname)) return pathname;
+
+  return `/${language}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+}
+
+function resolveHref(
+  href: ComponentProps<typeof NextLink>["href"],
+  language: string
+): ComponentProps<typeof NextLink>["href"] {
+  if (typeof href === "string") {
+    if (!href.startsWith("/") || href.startsWith("//")) return href;
+    return resolveInternalPath(href, language);
+  }
+
+  if (href && typeof href === "object" && "pathname" in href) {
+    const pathname = href.pathname;
+    if (typeof pathname !== "string" || !pathname.startsWith("/") || pathname.startsWith("//")) {
+      return href;
+    }
+
+    return {
+      ...href,
+      pathname: resolveInternalPath(pathname, language),
+    };
+  }
+
+  return href;
+}
+
+function Link(props: LinkProps) {
   const language = useLanguage();
   const { isLeavePage } = useContext(LeavePageContext);
   const { setLeavePage, openModal } = useContext(LeavePageActionsContext);
-  let href = props.href;
-
-  if (typeof href === "string" && href.startsWith("/")) {
-    href = `/${language}${href}`;
-  } else if (typeof href === "object" && href !== null) {
-    const pathname = href.pathname
-      ? `/${language}${href.pathname}`
-      : href.pathname;
-    href = {
-      ...href,
-      pathname,
-    };
-  }
+  const href = resolveHref(props.href, language);
 
   return (
     <NextLink
