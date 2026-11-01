@@ -1,0 +1,61 @@
+{
+  "menu": "Region",
+  "title": "Region",
+  "subtitle": "Data referensi wilayah administrasi Indonesia",
+  "actions": {
+    "create_province": "Add Province",
+    "create_regency": "Add Regency",
+    "edit_province": "Edit Province",
+    "edit_regency": "Edit Regency",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "collapse": "Collapse panel",
+    "expand": "Expand panel",
+    "prev_page": "Previous",
+    "next_page": "Next"
+  },
+  "table": {
+    "name": "Name",
+    "isoCode": "Code",
+    "coordinates": "Coordinates",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "loading": "Loading…",
+    "empty": "No provinces yet.",
+    "of": "of",
+    "page": "Page {{page}} of {{total}}"
+  },
+  "detail": {
+    "overview": "Overview",
+    "regencies": "Regencies",
+    "empty": "No data.",
+    "regencies_empty": "No regencies yet."
+  },
+  "confirm": {
+    "delete": {
+      "message": "Delete this item? This action cannot be undone."
+    }
+  },
+  "form": {
+    "field": {
+      "name": "Name",
+      "isoCode": "Code (ISO)",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "province": "Province",
+      "type": "Type",
+      "isActive": "Active"
+    },
+    "placeholder": {
+      "name": "e.g. West Java",
+      "province": "Select province"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "number": "Must be a valid number."
+    }
+  }
+}
