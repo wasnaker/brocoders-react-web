@@ -1,6 +1,12 @@
 "use client";
 
-import { PropsWithChildren, useCallback, useMemo, useState } from "react";
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Cookies from "js-cookie";
 import {
   Language,
@@ -9,29 +15,41 @@ import {
 } from "./store-language-context";
 import { cookieName, fallbackLanguage } from "./config";
 
-function StoreLanguageProvider(props: PropsWithChildren) {
-  const [language, setLanguageRaw] = useState<Language>(
-    () => Cookies.get(cookieName) ?? fallbackLanguage
-  );
+type StoreLanguageProviderProps = PropsWithChildren<{
+  initialLanguage?: string;
+}>;
 
-  const setLanguage = useCallback((language: Language) => {
-    Cookies.set(cookieName, language ?? fallbackLanguage);
-    setLanguageRaw(language ?? fallbackLanguage);
+function StoreLanguageProvider({
+  children,
+  initialLanguage = fallbackLanguage,
+}: StoreLanguageProviderProps) {
+  // The server and first client render receive the same language from proxy
+  // headers. Read/write cookies only after hydration to avoid mismatches.
+  const [language, setLanguageRaw] = useState<Language>(initialLanguage);
+
+  useEffect(() => {
+    const cookieLanguage = Cookies.get(cookieName);
+    if (!cookieLanguage) {
+      Cookies.set(cookieName, initialLanguage);
+    }
+  }, [initialLanguage]);
+
+  const setLanguage = useCallback((nextLanguage: Language) => {
+    const normalizedLanguage = nextLanguage ?? fallbackLanguage;
+    Cookies.set(cookieName, normalizedLanguage);
+    setLanguageRaw(normalizedLanguage);
   }, []);
 
   const contextValue = useMemo(() => ({ language }), [language]);
-
   const contextActionsValue = useMemo(
-    () => ({
-      setLanguage,
-    }),
+    () => ({ setLanguage }),
     [setLanguage]
   );
 
   return (
     <StoreLanguageContext.Provider value={contextValue}>
       <StoreLanguageActionsContext.Provider value={contextActionsValue}>
-        {props.children}
+        {children}
       </StoreLanguageActionsContext.Provider>
     </StoreLanguageContext.Provider>
   );
