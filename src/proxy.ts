@@ -36,6 +36,8 @@ function getPreferredLanguage(req: NextRequest): string {
 
 function continueWithLanguage(req: NextRequest, language: string) {
   const requestHeaders = new Headers(req.headers);
+  // Forward the validated locale to Server Components; do not trust a client
+  // supplied value because this header is overwritten at the request edge.
   requestHeaders.set("x-app-language", language);
 
   return NextResponse.next({
