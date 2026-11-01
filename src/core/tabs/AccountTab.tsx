@@ -23,7 +23,7 @@ import useStoreLanguageActions from "@/services/i18n/use-store-language-actions"
 type EditProfileBasicInfoFormData = {
   firstName: string;
   lastName: string;
-  language?: string | null;
+  language: string;
   photo?: FileEntity;
 };
 
