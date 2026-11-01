@@ -8,7 +8,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "analyze": "next experimental-analyze",
-    "build:e2e": "[ -f .env.local ] || cp example.env.local .env.local && next build",
+    "build:e2e": "node scripts/generate-module-registry.mjs && ([ -f .env.local ] || cp example.env.local .env.local) && next build",
     "start": "next start",
     "lint": "eslint .",
     "prepare": "is-ci || husky",
