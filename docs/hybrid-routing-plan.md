@@ -77,6 +77,11 @@ The following changes have been implemented on the draft branch and are not yet 
 
 **Important backend dependency:** the frontend `User` type has an optional `language` property, but the inspected `brocoders/nestjs-boilerplate` default-branch user entity and profile-update DTO do not currently persist that property. Therefore, this frontend branch can use the validated `i18next` preference cookie and update the in-memory authenticated user, but it cannot guarantee cross-device persistence of an admin language preference as a backend profile setting. If durable `user.language` storage is a product requirement, that needs a separately reviewed backend schema/API change; this frontend PR does not silently change the backend contract.
 
+
+- The Region module was missing from the host repository even though its admin route and generated manifest expected it. The branch now includes the module manifest, API services, hooks, UI components, types, and all five configured locale dictionaries from the companion `wasnaker/bc-region` module. Its canonical menu URL is `/admin/region`.
+- The first lint run caught strict-equality violations, an unused hook import, and use of native `window.confirm` in the integrated Region module. These have been corrected; deletion now uses the application's accessible `ConfirmDialogProvider`. The E2E workflow lint step has been restored to a non-mutating `npm run lint` (it no longer runs ESLint with `--fix`).
+- The current branch head is `60204efb61dc0aa30c14394a63cf1dcbcfaf1f04`. New E2E and generator workflow runs have started for this head; their results are still pending. Earlier runs were cancelled as newer commits arrived, and an earlier run failed on the Region lint errors that are now addressed.
+
 **CI status:** an initial generator run exposed two lint errors in the branch (an unused import and an obsolete dashboard placeholder), which have been fixed. The initial Playwright run also exposed that the current `ubuntu-latest` runner image was newer than Playwright 1.60 supports; both workflows are now pinned to Ubuntu 24.04. Re-run CI on the latest branch head and require lint, build, generator, and E2E checks to pass before merge. A pending workflow is not a passing check.
 
 The branch remains a draft. No changes have been merged into `main`.
