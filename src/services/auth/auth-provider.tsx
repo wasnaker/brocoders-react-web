@@ -23,6 +23,8 @@ import {
 } from "./auth-tokens-info";
 import { emitAuthEvent, onAuthEvent } from "./auth-events";
 import queryClient from "@/services/react-query/query-client";
+import Cookies from "js-cookie";
+import { cookieName, languages } from "@/services/i18n/config";
 
 function AuthProvider(props: PropsWithChildren) {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -82,6 +84,15 @@ function AuthProvider(props: PropsWithChildren) {
 
         const data = await response.json();
         setUser(data);
+
+        // Keep locale-free admin SSR in sync with the persisted account
+        // preference after authentication is restored on this device.
+        if (
+          typeof data.language === "string" &&
+          languages.includes(data.language)
+        ) {
+          Cookies.set(cookieName, data.language);
+        }
       }
     } finally {
       setIsLoaded(true);
