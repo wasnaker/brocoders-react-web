@@ -30,7 +30,7 @@ export default function AppProviders({
 }: AppProvidersProps) {
   return (
     <DirectionProvider dir={dir(language)}>
-      <StoreLanguageProvider>
+      <StoreLanguageProvider initialLanguage={language}>
         <AuthProvider>
           <GoogleAuthProvider>
             <FacebookAuthProvider>
