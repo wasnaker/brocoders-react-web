@@ -146,14 +146,14 @@ function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="mb-1" />
             <DropdownMenuItem asChild data-testid="user-profile">
-              <Link href="/profile">
+              <Link href="/admin/profile">
                 <CircleUser />
                 {t("common:navigation.profile")}
               </Link>
             </DropdownMenuItem>
             {isAdmin && (
               <DropdownMenuItem asChild data-testid="settings-menu-item">
-                <Link href="/settings">
+                <Link href="/admin/settings">
                   <Settings />
                   {t("common:navigation.settings")}
                 </Link>

@@ -55,7 +55,10 @@ export function useGetProvinceService() {
   );
 }
 
-export type ProvincePostRequest = Pick<Province, "name" | "isoCode" | "latitude" | "longitude">;
+export type ProvincePostRequest = Pick<
+  Province,
+  "name" | "isoCode" | "latitude" | "longitude"
+>;
 export type ProvincePostResponse = Province;
 
 export function useCreateProvinceService() {
@@ -156,7 +159,10 @@ export function useGetRegencyService() {
   );
 }
 
-export type RegencyPostRequest = Pick<Regency, "provinceId" | "name" | "type" | "isActive">;
+export type RegencyPostRequest = Pick<
+  Regency,
+  "provinceId" | "name" | "type" | "isActive"
+>;
 export type RegencyPostResponse = Regency;
 
 export function useCreateRegencyService() {
@@ -216,11 +222,16 @@ export function useDeleteRegencyService() {
 export function fetchRegenciesByProvince(
   provinceId: Province["id"],
   limit = 100,
-  fetch: ReturnType<typeof import("@/services/api/use-fetch").default> | null = null
+  fetch: ReturnType<
+    typeof import("@/services/api/use-fetch").default
+  > | null = null
 ): Promise<Response> {
   const url = new URL(`${API_URL}/v1/region/regencies`);
   url.searchParams.append("page", "1");
   url.searchParams.append("limit", String(limit));
-  url.searchParams.append("filters", JSON.stringify({ provinceId: String(provinceId) }));
+  url.searchParams.append(
+    "filters",
+    JSON.stringify({ provinceId: String(provinceId) })
+  );
   return (fetch ?? globalThis.fetch)(url, { method: "GET" });
 }

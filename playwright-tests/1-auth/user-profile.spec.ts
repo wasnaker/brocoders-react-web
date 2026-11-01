@@ -28,21 +28,19 @@ test.describe("User Profile", () => {
   }) => {
     await page.getByTestId("profile-menu-item").click();
     await page.getByTestId("user-profile").click();
-    await page.waitForURL(/\/profile/);
+    await page.waitForURL(/\/admin\/profile/);
     await expect(page.getByTestId("user-name")).toHaveText(
       `${firstName} ${lastName}`
     );
     await expect(page.getByTestId("user-email")).toHaveText(email, {
       ignoreCase: true,
     });
-    await page.getByTestId("edit-profile").click();
-    await page.waitForURL(/\/profile\/edit/);
     await expect(page.getByTestId("first-name")).toHaveValue(firstName);
     await expect(page.getByTestId("last-name")).toHaveValue(lastName);
   });
 
   test("should be successful update user data", async ({ page }) => {
-    await page.goto("/profile/edit");
+    await page.goto("/admin/profile/edit");
     await page.getByTestId("first-name").fill("James");
     await expect(page.getByTestId("first-name")).toHaveValue("James");
     await page.getByTestId("last-name").fill("Bond");
@@ -53,19 +51,17 @@ test.describe("User Profile", () => {
     await page.goto("/");
     await page.getByTestId("profile-menu-item").click();
     await page.getByTestId("user-profile").click();
-    await page.waitForURL(/\/profile/);
+    await page.waitForURL(/\/admin\/profile/);
     await expect(page.getByTestId("user-name")).toHaveText("James Bond");
     await expect(page.getByTestId("user-email")).toHaveText(email, {
       ignoreCase: true,
     });
-    await page.getByTestId("edit-profile").click();
-    await page.waitForURL(/\/profile\/edit/);
     await expect(page.getByTestId("first-name")).toHaveValue("James");
     await expect(page.getByTestId("last-name")).toHaveValue("Bond");
   });
 
   test("should be successful upload avatar", async ({ page }) => {
-    await page.goto("/profile/edit");
+    await page.goto("/admin/profile/edit");
     const apiImageUpload = page.waitForResponse(
       (response) =>
         response.url().endsWith("/files/upload") && response.status() === 201
@@ -92,20 +88,20 @@ test.describe("User Profile", () => {
   test("should be successful show leave page modal on unsaved changes", async ({
     page,
   }) => {
-    await page.goto("/profile/edit");
+    await page.goto("/admin/profile/edit");
     await page.getByTestId("first-name").fill("James");
     await page.getByTestId("cancel-edit-profile").click();
     await expect(page.getByTestId("want-to-leave-modal")).toBeVisible();
     await page.getByTestId("stay").click();
 
     await expect(page.getByTestId("want-to-leave-modal")).not.toBeVisible();
-    await expect(page).toHaveURL(/\/profile\/edit/);
+    await expect(page).toHaveURL(/\/admin\/profile\/edit/);
     await expect(page.getByTestId("first-name")).toHaveValue("James");
 
     await page.getByTestId("cancel-edit-profile").click();
     await expect(page.getByTestId("want-to-leave-modal")).toBeVisible();
     await page.getByTestId("leave").click();
-    await expect(page).toHaveURL(/\/profile/);
+    await expect(page).toHaveURL(/\/admin\/profile/);
     await expect(page.getByTestId("user-name")).toHaveText(
       `${firstName} ${lastName}`
     );
@@ -113,7 +109,7 @@ test.describe("User Profile", () => {
 
   test("should be successful change user password", async ({ page }) => {
     newPassword = "password1";
-    await page.goto("/profile/edit");
+    await page.goto("/admin/profile/edit");
     await page.getByTestId("old-password").fill(password);
     await page.getByTestId("new-password").fill(newPassword);
     await page.getByTestId("password-confirmation").fill(newPassword);
@@ -142,7 +138,7 @@ test.describe("User Profile", () => {
     page,
   }) => {
     newPassword = "password1";
-    await page.goto("/profile/edit");
+    await page.goto("/admin/profile/edit");
     await page.getByTestId("save-password").click();
     await expect(page.getByTestId("old-password-error")).toBeVisible();
     await expect(page.getByTestId("new-password-error")).toBeVisible();

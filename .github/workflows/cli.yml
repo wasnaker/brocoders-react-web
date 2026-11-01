@@ -35,11 +35,11 @@ jobs:
     steps:
       - name: Check out frontend
         uses: actions/checkout@v6
-      - name: Check out backend
+      - name: Check out PostgreSQL API
         uses: actions/checkout@v6
         with:
-          repository: brocoders/nestjs-boilerplate
-          path: nestjs-boilerplate
+          repository: wasnaker/brocoders-api
+          path: brocoders-api
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -47,7 +47,7 @@ jobs:
         run: npm ci
       - name: Install backend dependencies
         run: npm ci
-        working-directory: nestjs-boilerplate
+        working-directory: brocoders-api
       - name: Set up env
         run: cp example.env.local .env.local
       - name: Resolve Playwright version
@@ -67,7 +67,7 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run CRUD generator suite
         env:
-          NESTJS_DIR: ${{ github.workspace }}/nestjs-boilerplate
+          NESTJS_DIR: ${{ github.workspace }}/brocoders-api
         run: npm run test:e2e:generators:crud
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

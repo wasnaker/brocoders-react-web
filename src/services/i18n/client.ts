@@ -81,10 +81,7 @@ function wrapTWithNamespaceLoading(
   return wrapped as TFunction;
 }
 
-export function useTranslation(
-  namespace: string | string[],
-  options?: object
-) {
+export function useTranslation(namespace: string | string[], options?: object) {
   const namespaces = Array.isArray(namespace) ? namespace : [namespace];
   const primary = namespaces[0] ?? "common";
   const language = useLanguage();

@@ -11,8 +11,28 @@ This audit supersedes the historical branch-status statements and earlier source
 - The proxy normalizes legacy `/admin-panel/*`, `/{language}/admin-panel/*`, and `/{language}/admin/*` paths to locale-free `/admin/*`, preserving query strings.
 - Host route entries exist under `src/app/admin`; localized `src/app/[language]/admin` content files remain as reusable page-content/auth-guard implementations and legacy redirect targets.
 - CI on the merged commit did **not** pass: E2E lint failed with 67 Prettier errors (plus warnings); generator CRUD/static runs failed on `eqeqeq` in `src/modules/region/pages/region-page.tsx`. These are post-merge failures and must be resolved before declaring the migration verified.
-- The companion `bc-region` repository still had a stale `/admin-panel/region` manifest and integration guide at the time of this audit. Follow-up changes are isolated on `fix/admin-route-contract`; they are not yet merged.
-- Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. The backend already exposes `PATCH /v1/auth/me` and stores `user.language` in the relational schema, but the document-database schema and mapper omit the field. The frontend follow-up now persists admin language changes through that endpoint and synchronizes the cookie; full support in document-database mode remains blocked on the backend repository fix.
+- The companion `bc-region` repository now uses `/admin/region` consistently in its module manifest, integration guide, and README on `main`.
+- Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. The backend is PostgreSQL-only and persists `user.language` through `PATCH /v1/auth/me`; the frontend persists admin language changes through that endpoint and synchronizes the preference cookie.
+
+## Follow-up correction — 2026-11-02
+
+The post-merge navigation audit found that the account dropdown still linked to
+locale-prefixed public routes for Profile and Settings. The canonical route
+contract now also applies to these authenticated account pages:
+
+- Profile: `/admin/profile`
+- Profile editing: `/admin/profile/edit`
+- Settings: `/admin/settings`
+
+The dropdown and Profile tab cancel links target these canonical paths. The
+corresponding route entries reuse the existing authenticated page-content
+components under the shared admin providers. Existing localized URLs
+(`/{language}/profile`, `/{language}/profile/edit`, and
+`/{language}/settings`) permanently redirect to their canonical admin
+equivalents. Regression coverage asserts the menu hrefs and legacy redirects.
+
+The API repository has no frontend navigation paths to migrate. The
+`bc-region` manifest and integration guide already use `/admin/region`.
 
 The original sections below preserve the design rationale and historical review notes. Re-check each item against current source and CI before marking an acceptance gate complete.
 

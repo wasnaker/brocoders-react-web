@@ -2,7 +2,7 @@
 #
 # Full e2e orchestrator for the generator suite (Phase 2).
 #
-# 1. Generates a matching `Tag` entity on the sister nestjs-boilerplate side
+# 1. Generates a matching `Tag` entity on the PostgreSQL API backend
 #    and boots its Docker test stack with the API exposed on host:3001.
 # 2. Generates `Tag` on the React side.
 # 3. Runs the Playwright CRUD spec (which boots Next.js via its webServer
@@ -10,7 +10,7 @@
 #    admin UI against the real backend).
 # 4. Tears everything down on EXIT — bounded by path on both repos.
 #
-# Defaults: NESTJS_DIR=../nestjs-boilerplate (override via env if elsewhere),
+# Defaults: NESTJS_DIR=../brocoders-api (override via env if elsewhere),
 # BACKEND_LOG_PATH=test-results/backend.log (container logs, always written).
 #
 # Usage: bash playwright-tests/generators/run-crud.sh
@@ -20,7 +20,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$REPO_ROOT"
 
-NESTJS_DIR="${NESTJS_DIR:-$(cd "$REPO_ROOT/../nestjs-boilerplate" 2>/dev/null && pwd || echo "")}"
+NESTJS_DIR="${NESTJS_DIR:-$(cd "$REPO_ROOT/../brocoders-api" 2>/dev/null && pwd || echo "")}"
 COMPOSE_FILE="docker-compose.generators-relational.test.yaml"
 COMPOSE_PROJECT="tests-gen-frontend"
 HOST_API_PORT="${HOST_API_PORT:-3001}"
@@ -31,7 +31,7 @@ BACKEND_LOG_PATH="${BACKEND_LOG_PATH:-$REPO_ROOT/test-results/backend.log}"
 # ── Pre-flight ───────────────────────────────────────────────────────────────
 
 if [[ -z "$NESTJS_DIR" || ! -d "$NESTJS_DIR" ]]; then
-  echo "✗ NESTJS_DIR not found. Set NESTJS_DIR=/path/to/nestjs-boilerplate or check out the sister repo at ../nestjs-boilerplate." >&2
+  echo "✗ NESTJS_DIR not found. Set NESTJS_DIR=/path/to/brocoders-api or check out the backend repo at ../brocoders-api." >&2
   exit 1
 fi
 

@@ -9,19 +9,22 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out backend
+      - name: Check out PostgreSQL backend
         uses: actions/checkout@v6
         with:
-          repository: brocoders/nestjs-boilerplate
-          # Use token for private repository
-          # token: ${{ secrets.CI_PAT }}
+          repository: wasnaker/brocoders-api
+          ref: main
           path: backend
-      - run: cd backend && cp env-example-document .env
-      - name: Run backend
-        # print output of the command to file and store it as artifact
-        run: cd backend && docker compose -f docker-compose.document.yaml up > ${{ runner.temp }}/backend.log 2>&1 &
-      - run: cd backend && sed -i 's/\r//g' wait-for-it.sh
-      - run: cd backend && ./wait-for-it.sh localhost:3001 -t 600 --strict -- echo "Backend is up"
+
+      - name: Start PostgreSQL, MailDev, and API
+        run: |
+          cd backend
+          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational up -d postgres
+          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational run --detach --no-deps --publish 1080:1080 --publish 1025:1025 --name e2e-maildev maildev
+          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational run --detach --no-deps --publish 3001:3001 --name e2e-api api
+
+      - name: Wait for PostgreSQL API
+        run: cd backend && ./wait-for-it.sh localhost:3001 -t 600 --strict -- echo "PostgreSQL API is up"
 
       - name: Check out frontend
         uses: actions/checkout@v6
@@ -49,6 +52,11 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run: npx playwright test
+      - name: Capture backend logs
+        if: failure()
+        run: |
+          docker logs e2e-api > ${{ runner.temp }}/backend.log 2>&1 || true
+          docker logs e2e-maildev >> ${{ runner.temp }}/backend.log 2>&1 || true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -61,3 +69,9 @@ jobs:
           name: backend-log
           path: ${{ runner.temp }}/backend.log
           retention-days: 30
+      - name: Stop PostgreSQL test stack
+        if: always()
+        run: |
+          docker rm -f e2e-api e2e-maildev 2>/dev/null || true
+          cd backend
+          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational down -v --remove-orphans

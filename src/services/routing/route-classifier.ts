@@ -30,9 +30,7 @@ export function getRouteType(pathname: string): RouteType {
   if (segments[0] === "admin") return "admin";
 
   const routeSegments =
-    segments.length > 0 && isLocale(segments[0])
-      ? segments.slice(1)
-      : segments;
+    segments.length > 0 && isLocale(segments[0]) ? segments.slice(1) : segments;
 
   if (routeSegments.length > 0 && PUBLIC_SEGMENTS.has(routeSegments[0])) {
     return "public";

@@ -29,9 +29,5 @@ export default async function LocaleLayout(props: {
 }) {
   const { language } = await props.params;
 
-  return (
-    <AppProviders language={language}>
-      {props.children}
-    </AppProviders>
-  );
+  return <AppProviders language={language}>{props.children}</AppProviders>;
 }

@@ -50,7 +50,7 @@ function SelectInput<T extends object>(
   // selectedKey selalu string (nilai Select)
   const selectedKey = isPrimitive
     ? String(props.value ?? "")
-    : (props.value as T)?.[props.keyValue]?.toString() ?? "";
+    : ((props.value as T)?.[props.keyValue]?.toString() ?? "");
 
   // selectedOption untuk render trigger — cari dari options
   const selectedOption = props.options.find(

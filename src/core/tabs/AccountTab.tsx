@@ -37,7 +37,10 @@ const useValidationBasicInfoSchema = () => {
     lastName: yup
       .string()
       .required(t("profile:inputs.lastName.validation.required")),
-    language: yup.string().oneOf([...languages]).required(),
+    language: yup
+      .string()
+      .oneOf([...languages])
+      .required(),
   });
 };
 
@@ -167,7 +170,9 @@ export function AccountTab() {
                   variant="secondary"
                   data-testid="cancel-edit-profile"
                 >
-                  <Link href="/profile">{t("profile:actions.cancel")}</Link>
+                  <Link href="/admin/profile">
+                    {t("profile:actions.cancel")}
+                  </Link>
                 </Button>
               </span>
             </div>

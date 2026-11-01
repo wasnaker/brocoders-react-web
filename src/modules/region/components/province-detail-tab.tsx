@@ -44,7 +44,9 @@ export function ProvinceOverviewTab({ item }: ProvinceOverviewTabProps) {
   );
 }
 
-export function ProvinceRegenciesTab({ item: province }: ProvinceRegenciesTabProps) {
+export function ProvinceRegenciesTab({
+  item: province,
+}: ProvinceRegenciesTabProps) {
   const { t } = useTranslation("module-region");
   const { data, isLoading } = useRegencies(String(province.id), 1, 100);
 
@@ -52,10 +54,7 @@ export function ProvinceRegenciesTab({ item: province }: ProvinceRegenciesTabPro
     return (
       <div className="space-y-2">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="h-8 w-full animate-pulse rounded bg-muted"
-          />
+          <div key={i} className="h-8 w-full animate-pulse rounded bg-muted" />
         ))}
       </div>
     );
@@ -74,10 +73,7 @@ export function ProvinceRegenciesTab({ item: province }: ProvinceRegenciesTabPro
   return (
     <ul className="space-y-1.5">
       {regencies.map((reg) => (
-        <li
-          key={String(reg.id)}
-          className="flex items-center gap-2 text-sm"
-        >
+        <li key={String(reg.id)} className="flex items-center gap-2 text-sm">
           <span className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
             {reg.type === "kabupaten" ? "Kab." : "Kota"}
           </span>
