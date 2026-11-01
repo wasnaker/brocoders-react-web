@@ -68,9 +68,9 @@ test("resolveLocale: public route uses URL locale", () => {
   assert(res === "id", `Expected id, got ${res}`);
 });
 
-test("resolveLocale: public route falls back to user language", () => {
+test("resolveLocale: public route without URL locale uses app fallback", () => {
   const res = resolveLocale({ urlLocale: null, userLanguage: "ja", isPublicRoute: true });
-  assert(res === "ja", `Expected ja, got ${res}`);
+  assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: admin route uses user language", () => {
@@ -78,9 +78,9 @@ test("resolveLocale: admin route uses user language", () => {
   assert(res === "ko", `Expected ko, got ${res}`);
 });
 
-test("resolveLocale: admin route falls back to URL locale", () => {
+test("resolveLocale: admin route without user preference uses app fallback", () => {
   const res = resolveLocale({ urlLocale: "zh", userLanguage: null, isPublicRoute: false });
-  assert(res === "zh", `Expected zh, got ${res}`);
+  assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: both invalid falls back to default", () => {
