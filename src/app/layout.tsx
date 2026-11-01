@@ -1,14 +1,9 @@
-"use client";
-
 import { Roboto } from "next/font/google";
-import "./globals.css";
+import { headers } from "next/headers";
 import { dir } from "i18next";
-import { DirectionProvider } from "@radix-ui/react-direction";
-import ThemeProvider from "@/components/theme/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import QueryClientProvider from "@/services/react-query/query-client-provider";
-import queryClient from "@/services/react-query/query-client";
-import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
+import "./globals.css";
+import RootProviders from "@/components/root-providers";
+import { fallbackLanguage, languages } from "@/services/i18n/config";
 
 const roboto = Roboto({
   subsets: ["latin", "cyrillic"],
@@ -16,28 +11,28 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const requestHeaders = await headers();
+  const requestedLanguage = requestHeaders.get("x-app-language");
+  const language = languages.includes(
+    requestedLanguage as (typeof languages)[number]
+  )
+    ? requestedLanguage!
+    : fallbackLanguage;
+
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={language}
+      dir={dir(language)}
       suppressHydrationWarning
       className={roboto.variable}
     >
       <body suppressHydrationWarning className="font-sans antialiased">
-        <DirectionProvider dir="ltr">
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <ThemeProvider>
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </QueryClientProvider>
-        </DirectionProvider>
+        <RootProviders>{children}</RootProviders>
       </body>
     </html>
   );
