@@ -10,7 +10,7 @@ concurrency:
 jobs:
   static:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v5
@@ -31,7 +31,7 @@ jobs:
 
   crud:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out frontend
         uses: actions/checkout@v6
