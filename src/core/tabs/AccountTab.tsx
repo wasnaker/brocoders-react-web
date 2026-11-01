@@ -18,6 +18,7 @@ import { useTranslation } from "@/services/i18n/client";
 import { languages, fallbackLanguage } from "@/services/i18n/config";
 import { FileEntity } from "@/services/api/types/file-entity";
 import FormSelectInput from "@/components/form/select/form-select";
+import useStoreLanguageActions from "@/services/i18n/use-store-language-actions";
 
 type EditProfileBasicInfoFormData = {
   firstName: string;
@@ -54,6 +55,7 @@ function BasicInfoFormActions() {
 
 export function AccountTab() {
   const { setUser } = useAuthActions();
+  const { setLanguage } = useStoreLanguageActions();
   const { user } = useAuth();
   const fetchAuthPatchMe = useAuthPatchMeService();
   const { t } = useTranslation("profile");
@@ -92,6 +94,7 @@ export function AccountTab() {
 
     if (status === HTTP_CODES_ENUM.OK) {
       setUser(data);
+      setLanguage(data.language ?? fallbackLanguage);
 
       enqueueSnackbar(t("profile:alerts.profile.success"), {
         variant: "success",
