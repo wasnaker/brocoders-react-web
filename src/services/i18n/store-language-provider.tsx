@@ -28,10 +28,9 @@ function StoreLanguageProvider({
   const [language, setLanguageRaw] = useState<Language>(initialLanguage);
 
   useEffect(() => {
-    const cookieLanguage = Cookies.get(cookieName);
-    if (!cookieLanguage) {
-      Cookies.set(cookieName, initialLanguage);
-    }
+    // URL locale (public) or proxy-resolved preference (admin) is the
+    // authoritative value for this render; normalize stale/invalid cookies.
+    Cookies.set(cookieName, initialLanguage);
   }, [initialLanguage]);
 
   const setLanguage = useCallback((nextLanguage: Language) => {
