@@ -11,7 +11,7 @@ This audit supersedes the historical branch-status statements and earlier source
 - The proxy normalizes legacy `/admin-panel/*`, `/{language}/admin-panel/*`, and `/{language}/admin/*` paths to locale-free `/admin/*`, preserving query strings.
 - Host route entries exist under `src/app/admin`; localized `src/app/[language]/admin` content files remain as reusable page-content/auth-guard implementations and legacy redirect targets.
 - CI on the merged commit did **not** pass: E2E lint failed with 67 Prettier errors (plus warnings); generator CRUD/static runs failed on `eqeqeq` in `src/modules/region/pages/region-page.tsx`. These are post-merge failures and must be resolved before declaring the migration verified.
-- The companion `bc-region` repository still had a stale `/admin-panel/region` manifest and integration guide at the time of this audit. Follow-up changes are isolated on `fix/admin-route-contract`; they are not yet merged.
+- The companion `bc-region` repository now uses `/admin/region` consistently in its module manifest, integration guide, and README on `main`.
 - Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. The backend is PostgreSQL-only and persists `user.language` through `PATCH /v1/auth/me`; the frontend persists admin language changes through that endpoint and synchronizes the preference cookie.
 
 ## Follow-up correction — 2026-11-02
