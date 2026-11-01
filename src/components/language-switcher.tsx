@@ -8,44 +8,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useLanguage from "@/services/i18n/use-language";
+import useAuth from "@/services/auth/use-auth";
+import useAuthActions from "@/services/auth/use-auth-actions";
+import useStoreLanguageActions from "@/services/i18n/use-store-language-actions";
+import { languages } from "@/services/i18n/config";
+import { isAdminRoute } from "@/services/routing/locale-precedence";
 
-const languages = [
-  { code: "en", label: "English" },
-  { code: "ar", label: "العربية" },
-  { code: "es", label: "Español" },
-  { code: "fr", label: "Français" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "uk", label: "Українська" },
-  { code: "zh", label: "中文" },
-];
+const LANGUAGE_LABELS: Record<(typeof languages)[number], string> = {
+  en: "English",
+  id: "Bahasa Indonesia",
+  ko: "한국어",
+  ja: "日本語",
+  zh: "中文",
+};
 
 export default function LanguageSwitcher() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/";
+  const currentLanguage = useLanguage();
+  const { user } = useAuth();
+  const { setUser } = useAuthActions();
+  const { setLanguage } = useStoreLanguageActions();
 
-  const currentLang = pathname.split("/")[1] || "en";
-
-  const handleChange = (newLang: string) => {
-    if (!pathname) {
-      window.location.assign(`/${newLang}`);
+  const handleChange = (newLanguage: string) => {
+    if (!languages.includes(newLanguage as (typeof languages)[number])) {
       return;
     }
 
-    const pathSegments = pathname.split("/");
-    pathSegments[1] = newLang;
-    const newPath = pathSegments.join("/");
+    setLanguage(newLanguage);
 
-    window.location.assign(newPath);
+    if (isAdminRoute(pathname)) {
+      // Admin URLs stay locale-free. Update the in-memory profile language so
+      // useLanguage and translations switch immediately; the cookie preserves
+      // the choice for the next request.
+      if (user) {
+        setUser({ ...user, language: newLanguage });
+      }
+      return;
+    }
+
+    // Public pages encode the selected locale in the URL. Preserve query and
+    // hash so filters, returnTo values, and in-page navigation survive.
+    const segments = pathname.split("/");
+    segments[1] = newLanguage;
+    window.location.assign(
+      `${segments.join("/")}${window.location.search}${window.location.hash}`
+    );
   };
 
   return (
-    <Select value={currentLang} onValueChange={handleChange}>
+    <Select value={currentLanguage} onValueChange={handleChange}>
       <SelectTrigger size="sm" className="language-switcher">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {languages.map((lang) => (
-          <SelectItem key={lang.code} value={lang.code}>
-            {lang.label}
+        {languages.map((language) => (
+          <SelectItem key={language} value={language}>
+            {LANGUAGE_LABELS[language]}
           </SelectItem>
         ))}
       </SelectContent>
