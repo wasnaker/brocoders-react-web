@@ -167,7 +167,7 @@ export function AccountTab() {
                   variant="secondary"
                   data-testid="cancel-edit-profile"
                 >
-                  <Link href="/profile">{t("profile:actions.cancel")}</Link>
+                  <Link href="/admin/profile">{t("profile:actions.cancel")}</Link>
                 </Button>
               </span>
             </div>
