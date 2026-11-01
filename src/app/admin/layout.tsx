@@ -1,21 +1,23 @@
-"use client";
+import AppProviders from "@/components/app-providers";
+import { fallbackLanguage, languages } from "@/services/i18n/config";
+import { headers } from "next/headers";
 
-import useLanguage from "@/services/i18n/use-language";
-import { useTranslation } from "@/services/i18n/client";
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { t } = useTranslation("common");
-  const language = useLanguage();
+  const requestHeaders = await headers();
+  const requestedLanguage = requestHeaders.get("x-app-language");
+  const language = languages.includes(
+    requestedLanguage as (typeof languages)[number]
+  )
+    ? requestedLanguage!
+    : fallbackLanguage;
 
   return (
-    <html lang={language} dir={language === "ar" ? "rtl" : "ltr"}>
-      <body>
-        {children}
-      </body>
-    </html>
+    <AppProviders language={language}>
+      {children}
+    </AppProviders>
   );
 }
