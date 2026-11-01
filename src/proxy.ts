@@ -15,7 +15,9 @@ function getFirstPathSegment(pathname: string): string {
   return pathname.split("/").filter(Boolean)[0] ?? "";
 }
 
-function isSupportedLanguage(value: string | undefined): value is (typeof languages)[number] {
+function isSupportedLanguage(
+  value: string | undefined
+): value is (typeof languages)[number] {
   return !!value && languages.includes(value as (typeof languages)[number]);
 }
 
@@ -78,7 +80,9 @@ export function proxy(req: NextRequest) {
     const segments = pathname.split("/").filter(Boolean);
     if (segments[1] === "admin" || segments[1] === "admin-panel") {
       const canonicalSegments = segments.slice(1);
-      if (canonicalSegments[0] === "admin-panel") canonicalSegments[0] = "admin";
+      if (canonicalSegments[0] === "admin-panel") {
+        canonicalSegments[0] = "admin";
+      }
       const canonicalPath = `/${canonicalSegments.join("/")}`;
       return NextResponse.redirect(
         new URL(`${canonicalPath}${req.nextUrl.search}`, req.url),
