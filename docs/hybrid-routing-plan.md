@@ -1,6 +1,21 @@
 # Hybrid Routing Strategy — Architecture & Migration Plan
 
-> Status: Proposed — architecture decisions and implementation gates required.
+## Post-merge audit — 2026-11-01
+
+This audit supersedes the historical branch-status statements and earlier source snapshots below.
+
+- PR #1 (`fix/hybrid-routing-foundation`) was merged into `main`; its merge commit is `3b38a960ed0b067229284125621eac1cb7fe71cf`.
+- The canonical authenticated route prefix is `/admin`. Public pages remain locale-prefixed. The root layout is a Server Component, the admin layout no longer owns nested document elements, and both route trees compose the shared application providers.
+- The proxy normalizes legacy `/admin-panel/*`, `/{language}/admin-panel/*`, and `/{language}/admin/*` paths to locale-free `/admin/*`, preserving query strings.
+- Host route entries exist under `src/app/admin`; localized `src/app/[language]/admin` content files remain as reusable page-content/auth-guard implementations and legacy redirect targets.
+- CI on the merged commit did **not** pass: E2E lint failed with 67 Prettier errors (plus warnings); generator CRUD/static runs failed on `eqeqeq` in `src/modules/region/pages/region-page.tsx`. These are post-merge failures and must be resolved before declaring the migration verified.
+- The companion `bc-region` repository still had a stale `/admin-panel/region` manifest and integration guide at the time of this audit. Follow-up changes are isolated on `fix/admin-route-contract`; they are not yet merged.
+- Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. Durable cross-device persistence from an authenticated profile remains dependent on backend support for `user.language`; do not describe that behavior as implemented until the backend contract exists.
+
+The original sections below preserve the design rationale and historical review notes. Re-check each item against current source and CI before marking an acceptance gate complete.
+
+
+ > Status: Implemented on main; post-merge verification and follow-up corrections remain open.
 > Scope: routing, root layouts, authentication bootstrap, language resolution, navigation, module registry, SEO, and regression coverage.
 > Related issue: #185 (hydration mismatch on authenticated pages).
 > Baseline reviewed: Next.js 16.2.0 / React 19.2.4 on the repository default branch at the time of revision.
