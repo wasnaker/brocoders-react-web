@@ -59,6 +59,27 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Profile and Settings are authenticated application pages too. Normalize
+  // both old localized and unlocalized URLs before public-locale handling.
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const accountSegments = isSupportedLanguage(pathSegments[0])
+    ? pathSegments.slice(1)
+    : pathSegments;
+  const accountPath = accountSegments.join("/");
+  const accountRedirects: Record<string, string> = {
+    profile: "/admin/profile",
+    "profile/edit": "/admin/profile/edit",
+    settings: "/admin/settings",
+  };
+  const accountRedirect = accountRedirects[accountPath];
+
+  if (accountRedirect) {
+    return NextResponse.redirect(
+      new URL(`${accountRedirect}${req.nextUrl.search}`, req.url),
+      308
+    );
+  }
+
   // Legacy unlocalized admin-panel URLs are permanently redirected to /admin.
   if (pathname === "/admin-panel" || pathname.startsWith("/admin-panel/")) {
     const canonicalPath = pathname.replace(/^\/admin-panel(?=\/|$)/, "/admin");
