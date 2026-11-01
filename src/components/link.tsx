@@ -10,29 +10,27 @@ import {
 import NextLink from "next/link";
 import { ComponentProps, Ref, useContext } from "react";
 import { languages } from "@/services/i18n/config";
+import { buildUrl } from "@/services/routing/url-builder";
 
 type LinkProps = ComponentProps<typeof NextLink> & {
   ref?: Ref<HTMLAnchorElement>;
 };
 
-function hasLocalePrefix(pathname: string): boolean {
-  const firstSegment = pathname.split("/").filter(Boolean)[0];
-  return languages.some((locale) => locale === firstSegment);
+function isAdminDestination(pathname: string): boolean {
+  const segments = pathname.split(/[/?#]/)[0].split("/").filter(Boolean);
+  if (segments[0] === "admin") return true;
+  return (
+    segments.length > 1 &&
+    languages.some((language) => language === segments[0]) &&
+    segments[1] === "admin"
+  );
 }
 
 function resolveInternalPath(pathname: string, language: string): string {
-  // Every admin destination is canonical and locale-free.
-  if (
-    pathname === "/admin" ||
-    pathname.startsWith("/admin/") ||
-    pathname.startsWith("/admin?") ||
-    pathname.startsWith("/admin#")
-  ) return pathname;
-
-  // Do not double-prefix an already localized public URL.
-  if (hasLocalePrefix(pathname)) return pathname;
-
-  return `/${language}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+  return buildUrl(pathname, {
+    locale: language,
+    isPublic: !isAdminDestination(pathname),
+  });
 }
 
 function resolveHref(
@@ -46,7 +44,11 @@ function resolveHref(
 
   if (href && typeof href === "object" && "pathname" in href) {
     const pathname = href.pathname;
-    if (typeof pathname !== "string" || !pathname.startsWith("/") || pathname.startsWith("//")) {
+    if (
+      typeof pathname !== "string" ||
+      !pathname.startsWith("/") ||
+      pathname.startsWith("//")
+    ) {
       return href;
     }
 
