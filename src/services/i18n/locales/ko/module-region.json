@@ -1,0 +1,61 @@
+{
+  "menu": "지역",
+  "title": "지역",
+  "subtitle": "인도네시아 행정 구역 참조 데이터",
+  "actions": {
+    "create_province": "주 추가",
+    "create_regency": "군/시 추가",
+    "edit_province": "주 편집",
+    "edit_regency": "군/시 편집",
+    "edit": "편집",
+    "delete": "삭제",
+    "save": "저장",
+    "saving": "저장 중…",
+    "cancel": "취소",
+    "collapse": "패널 닫기",
+    "expand": "패널 열기",
+    "prev_page": "이전",
+    "next_page": "다음"
+  },
+  "table": {
+    "name": "이름",
+    "isoCode": "코드",
+    "coordinates": "좌표",
+    "latitude": "위도",
+    "longitude": "경도",
+    "loading": "불러오는 중…",
+    "empty": "아직 주가 없습니다.",
+    "of": "/",
+    "page": "{{total}} 페이지 중 {{page}} 페이지"
+  },
+  "detail": {
+    "overview": "개요",
+    "regencies": "군/시",
+    "empty": "데이터가 없습니다.",
+    "regencies_empty": "아직 군/시가 없습니다."
+  },
+  "confirm": {
+    "delete": {
+      "message": "이 항목을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+    }
+  },
+  "form": {
+    "field": {
+      "name": "이름",
+      "isoCode": "코드 (ISO)",
+      "latitude": "위도",
+      "longitude": "경도",
+      "province": "주",
+      "type": "유형",
+      "isActive": "활성"
+    },
+    "placeholder": {
+      "name": "예: 서자바",
+      "province": "주 선택"
+    },
+    "validation": {
+      "required": "이 필드는 필수입니다.",
+      "number": "유효한 숫자를 입력하세요."
+    }
+  }
+}
