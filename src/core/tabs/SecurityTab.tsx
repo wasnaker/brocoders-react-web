@@ -179,7 +179,7 @@ function FormChangeEmail() {
                   variant="secondary"
                   data-testid="cancel-edit-email"
                 >
-                  <Link href="/profile">{t("profile:actions.cancel")}</Link>
+                  <Link href="/admin/profile">{t("profile:actions.cancel")}</Link>
                 </Button>
               </span>
             </div>
@@ -282,7 +282,7 @@ function FormChangePassword() {
                   variant="secondary"
                   data-testid="cancel-edit-password"
                 >
-                  <Link href="/profile">{t("profile:actions.cancel")}</Link>
+                  <Link href="/admin/profile">{t("profile:actions.cancel")}</Link>
                 </Button>
               </span>
             </div>
