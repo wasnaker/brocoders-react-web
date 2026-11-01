@@ -63,9 +63,9 @@ export function ProvinceFormDialog({
       setForm({
         name: editItem?.name ?? "",
         isoCode: editItem?.isoCode ?? "",
-        latitude: editItem?.latitude != null ? String(editItem.latitude) : "",
+        latitude: editItem?.latitude !== null && editItem?.latitude !== undefined ? String(editItem.latitude) : "",
         longitude:
-          editItem?.longitude != null ? String(editItem.longitude) : "",
+          editItem?.longitude !== null && editItem?.longitude !== undefined ? String(editItem.longitude) : "",
       });
       setErrors({});
     }
@@ -108,7 +108,7 @@ export function ProvinceFormDialog({
     }
 
     onOpenChange(false);
-    if (savedId != null) onSuccess(savedId);
+    if (savedId !== undefined && savedId !== null) onSuccess(savedId);
   }
 
   function setField(key: keyof FormState, value: string) {
