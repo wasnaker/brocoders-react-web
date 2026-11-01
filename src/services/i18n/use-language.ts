@@ -1,89 +1,44 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { fallbackLanguage, languages } from "./config";
 import useAuth from "@/services/auth/use-auth";
+import useStoreLanguage from "./use-store-language";
 import { isAdminRoute } from "@/services/routing/locale-precedence";
 
-/**
- * Tentukan language aktif.
- *
- * Prioritas:
- * - Halaman PUBLIK (sign-in, sign-up, forgot-password, dll): URL param > user.language > fallback
- * - Halaman ADMIN (admin/dashboard, admin/profile, dll): user.language > URL param > fallback
- *
- * Daftar halaman publik yang memakai URL param:
- */
-const PUBLIC_PATHS = [
-  "sign-in",
-  "sign-up",
-  "forgot-password",
-  "password-change",
-  "confirm-email",
-  "confirm-new-email",
-  "privacy-policy",
-];
-
-function isPublicPath(pathname: string): boolean {
-  // Cek apakah path adalah halaman publik
-  if (isAdminRoute(pathname)) return false;
-  
-  // Cek apakah path adalah halaman publik non-locale
-  if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`))) {
-    return true;
-  }
-  
-  // Cek apakah path adalah halaman publik dengan locale
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length > 1 && languages.includes(segments[0] as (typeof languages)[number])) {
-    const rest = `/${segments.slice(1).join("/")}`;
-    return PUBLIC_PATHS.some(p => rest === p || rest.startsWith(`${p}/`));
-  }
-  
-  return false;
+function isSupportedLanguage(value: unknown): value is (typeof languages)[number] {
+  return typeof value === "string" &&
+    languages.includes(value as (typeof languages)[number]);
 }
 
 function useLanguage() {
-  const params = useParams();
+  const params = useParams<{ language?: string | string[] }>();
+  const pathname = usePathname() ?? "";
   const { user, isLoaded } = useAuth();
-  
-  // Gunakan pathname dari URL (tersedia di client)
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-  const isPublic = isPublicPath(pathname);
+  const { language: initialLanguage } = useStoreLanguage();
 
-  if (isPublic) {
-    // Halaman publik: prioritas URL param
+  // Public routes are URL-addressed. The proxy guarantees that the first
+  // segment is a supported locale before a page is rendered.
+  if (!isAdminRoute(pathname)) {
     const urlLanguage = Array.isArray(params.language)
       ? params.language[0]
       : params.language;
 
-    if (urlLanguage && languages.includes(urlLanguage as (typeof languages)[number])) {
-      return urlLanguage;
-    }
-
-    // Fallback ke user.language (kalau user login di halaman publik)
-    if (isLoaded && user?.language && languages.includes(user.language as (typeof languages)[number])) {
-      return user.language;
-    }
-
-    return fallbackLanguage;
+    return isSupportedLanguage(urlLanguage)
+      ? urlLanguage
+      : fallbackLanguage;
   }
 
-  // Halaman admin: prioritas user.language
-  if (isLoaded && user?.language && languages.includes(user.language as (typeof languages)[number])) {
+  // Locale-free admin routes use the authenticated profile preference.
+  if (isLoaded && isSupportedLanguage(user?.language)) {
     return user.language;
   }
 
-  // Fallback ke URL param (kalau user belum login tapi ada di halaman login)
-  const urlLanguage = Array.isArray(params.language)
-    ? params.language[0]
-    : params.language;
-
-  if (urlLanguage && languages.includes(urlLanguage as (typeof languages)[number])) {
-    return urlLanguage;
-  }
-
-  return fallbackLanguage;
+  // During auth bootstrap, use the same server-resolved language that was
+  // used for the initial HTML. This avoids rendering English then switching.
+  return isSupportedLanguage(initialLanguage)
+    ? initialLanguage
+    : fallbackLanguage;
 }
 
 export default useLanguage;
