@@ -40,5 +40,8 @@ test("buka dropdown bahasa & lihat option", async ({ page }) => {
   console.log("TRIGGER TEXT:", JSON.stringify(triggerText));
 
   // Screenshot untuk inspeksi visual
-  await page.screenshot({ path: "/tmp/opencode/profile-lang.png", fullPage: true });
+  await page.screenshot({
+    path: "/tmp/opencode/profile-lang.png",
+    fullPage: true,
+  });
 });
