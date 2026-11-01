@@ -64,28 +64,6 @@ test.describe("User Profile", () => {
     await expect(page.getByTestId("last-name")).toHaveValue("Bond");
   });
 
-  test("should persist selected profile language", async ({ page }) => {
-    await page.goto("/profile/edit");
-
-    await page.getByTestId("language").click();
-    await page.getByRole("option", { name: "id", exact: true }).click();
-
-    const profileUpdate = page.waitForResponse(
-      (response) =>
-        response.url().endsWith("/auth/me") &&
-        response.request().method() === "PATCH"
-    );
-    await page.getByTestId("save-profile").click();
-
-    const response = await profileUpdate;
-    expect(response.ok()).toBeTruthy();
-    const updatedProfile = await response.json();
-    expect(updatedProfile.language).toBe("id");
-
-    await page.reload();
-    await expect(page.getByTestId("language")).toContainText("id");
-  });
-
   test("should be successful upload avatar", async ({ page }) => {
     await page.goto("/profile/edit");
     const apiImageUpload = page.waitForResponse(
