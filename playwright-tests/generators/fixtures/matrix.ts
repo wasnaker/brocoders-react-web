@@ -83,9 +83,9 @@ export const entityPaths = (
     editPage: resolve(adminDir, "edit", "[id]", "page.tsx"),
     editPageContent: resolve(adminDir, "edit", "[id]", "page-content.tsx"),
     queries: resolve(adminDir, "queries", "queries.ts"),
-    i18nList: resolve(i18nDir, `admin-panel-${route}.json`),
-    i18nCreate: resolve(i18nDir, `admin-panel-${route}-create.json`),
-    i18nEdit: resolve(i18nDir, `admin-panel-${route}-edit.json`),
+    i18nList: resolve(i18nDir, `admin-${route}.json`),
+    i18nCreate: resolve(i18nDir, `admin-${route}-create.json`),
+    i18nEdit: resolve(i18nDir, `admin-${route}-edit.json`),
   };
 };
 
