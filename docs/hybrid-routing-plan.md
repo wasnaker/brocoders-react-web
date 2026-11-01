@@ -12,25 +12,55 @@ Introduce two explicit URL policies:
 1. **Public pages** retain the locale segment: /[language]/... (for example, /id/sign-in and /en/privacy-policy). The URL is authoritative for these pages.
 2. **Authenticated application pages** use locale-free URLs: /admin/... (for example, /admin/dashboard). The authenticated user's validated language preference is authoritative.
 
-This is an architectural migration, not a directory rename. The current locale layout owns the only root layout and wraps the application in major providers. The custom Link component prepends the locale to every internal absolute path. Authentication initializes in a client provider by reading browser token storage and then calling GET /auth/me; therefore the server cannot currently know user.language during the first HTML render. A naïve move risks broken navigation, fallback-language flash, hydration mismatches, missing providers, and changed URLs.
+This is an architectural migration, not a directory rename. Work has already started: routing utilities were added, a new src/app/layout.tsx and src/app/admin/layout.tsx were introduced, several admin-panel folders were renamed to admin, and a locale-free dashboard route was added. However, source review at commit c1e4878 shows that the hybrid migration is not yet complete: most module pages remain under src/app/[language]/admin, the custom Link still prefixes every internal absolute path, the new admin layout renders nested html/body, and language resolution still depends on client auth state. These are material correctness gaps, not documentation-only details.
 
 **No route should be moved until the root-layout design, server/client language bootstrap, URL contract, and authentication behavior have been proven with a small vertical-slice prototype.**
 
-## 2. Current-state findings (verified against repository source)
+## 2. Current-state findings (verified against main at commit c1e4878123ec0d324e2c05a4ed7aa678ba0d4e20)
 
-- src/app/[language]/layout.tsx is currently the root layout: it renders html and body, declares generateMetadata and generateStaticParams, and owns global providers and shell components.
-- There is currently no src/app/layout.tsx. Moving pages outside [language] requires creating a root layout at src/app/layout.tsx. Next.js requires every route tree to be covered by a root layout that supplies document elements. Route groups can organize files but do not remove this requirement.
-- The locale layout includes DirectionProvider, QueryClientProvider, ReactQueryDevtools, ThemeProvider, StoreLanguageProvider, ConfirmDialogProvider, AuthProvider, AuthStateClass, social-auth providers, LeavePageProvider, SidebarProvider, ResponsiveAppBar, SystemBannerProvider, AppShell, and Toaster. Their intended scope and ordering must be preserved deliberately.
-- src/services/i18n/use-language.ts distinguishes public pages by route params. Public routes prioritize URL locale; authenticated pages prioritize user.language, then URL locale, then fallback. This hook depends on client auth state.
-- src/services/auth/auth-provider.tsx initializes auth in the browser, reads tokens using getTokensInfo(), and loads the user through GET /auth/me. The first server render cannot rely on that browser-only state.
-- src/services/i18n/store-language-provider.tsx initializes state from the i18next cookie using js-cookie. This is a client-side cookie read and must not be treated as a server bootstrap contract without making initial server and client values deterministic.
-- src/components/link.tsx currently prefixes every internal absolute string href and object href with a locale segment. It will incorrectly turn an admin href into a locale-prefixed URL unless its policy changes. It also needs protection against double-prefixing and careful handling of object hrefs.
-- src/services/i18n/config.ts supports en, id, ko, ja, and zh, with en as fallback.
-- The package uses Next.js 16.2.0 and React 19.2.4. Middleware/Proxy APIs and route behavior must be checked against this installed Next.js version before choosing an implementation.
-- The existing route tree uses admin-panel in its directory naming, while the initial proposal uses /admin as its public URL. The canonical URL decision must be explicit; do not assume filesystem names and public URL names are interchangeable.
-- The current language preference cookie is named i18next. Its relationship to user.language, login, logout, profile updates, and server rendering is not specified by the initial plan.
+The following snapshot is based on the repository's main branch at the latest commit inspected for this revision. Revalidate it before the next implementation batch.
 
-Revalidate these observations at implementation start because the default branch may change.
+### 2.1 What has been implemented
+
+- Phase 0 and Phase 1 are marked complete in this document by subsequent repository commits.
+- Routing utilities now exist under src/services/routing/: route-classifier.ts, locale-precedence.ts, and url-builder.ts, with verification scripts and tests.
+- src/app/layout.tsx now exists and renders the document shell, fonts, global CSS, DirectionProvider, QueryClientProvider, ThemeProvider, and Toaster.
+- src/app/[language]/layout.tsx has been converted from a document root into a nested locale layout and continues to own AuthProvider, StoreLanguageProvider, social-auth providers, ConfirmDialogProvider, LeavePageProvider, sidebar, app bar, system banner, and AppShell.
+- src/app/admin/layout.tsx and src/app/admin/dashboard/page.tsx have been added.
+- The former src/app/[language]/admin-panel/... route directories have been renamed to src/app/[language]/admin/... in the inspected changes. The generated module manifest and many Hygen templates now emit /admin/... URLs.
+- The latest commit message reports a successful build and service restart. Treat that as reported evidence, not a substitute for reviewing the actual test output and runtime behavior.
+
+### 2.2 Gaps and risks found in the current source
+
+- **Root layout client boundary:** src/app/layout.tsx currently begins with "use client". Keep the root layout as a Server Component and move interactive providers into a dedicated client wrapper component. Verify this against the installed Next.js version and build/runtime behavior.
+- **Nested document elements:** src/app/admin/layout.tsx currently returns html and body even though it is nested under src/app/layout.tsx. Only a root layout should own the document elements. The admin layout should return route content/providers, not another html/body pair.
+- **Admin providers are not clearly mounted:** AuthProvider and the authenticated application shell are currently mounted in src/app/[language]/layout.tsx, not in src/app/admin/layout.tsx. The new locale-free /admin tree therefore needs an explicit provider/guard composition. Do not assume it inherits providers from the [language] segment.
+- **Document language is hard-coded:** src/app/layout.tsx currently renders html lang="en" and dir="ltr". A nested DirectionProvider does not itself update the document's lang/dir attributes. Define a supported architecture that makes document attributes correct for both localized public routes and locale-free admin routes.
+- **Most admin module routes are still localized:** the inspected tree contains src/app/[language]/admin/... pages for users, roles, permissions, modules, region, and related screens. The new src/app/admin tree contains a dashboard page, but this is not yet a complete migration of all authenticated routes. Avoid claiming all admin URLs are locale-free.
+- **Custom Link remains incompatible:** src/components/link.tsx still prepends the active language to every internal absolute string href and object href. It does not use the new routing/url-builder utility and will continue to produce locale-prefixed URLs for admin destinations.
+- **Language bootstrap remains client-dependent:** src/services/auth/auth-provider.tsx reads token data from browser storage and fetches GET /auth/me after hydration. src/services/i18n/use-language.ts still resolves the admin language from client auth state and falls back to URL params/fallback language. There is no demonstrated server-verifiable user-language bootstrap yet.
+- **Cookie initialization remains client-only:** StoreLanguageProvider initializes from js-cookie. The server cannot read that browser-only value through this provider initializer, so it is not a deterministic SSR bootstrap contract.
+- **Routing utility semantics need tightening:** locale-precedence.ts currently treats any path whose first segment is a supported locale as a locale-prefixed public route, even if the remainder is not one of the explicitly public pages. The public-route resolver also falls back to userLanguage when URL locale is absent/invalid, which conflicts with the stated rule that a localized public URL is authoritative and must have a deterministic invalid/missing-locale policy.
+- **Route classifier coverage needs review:** route-classifier.ts uses exact public-segment matching in its current version; nested public paths and path-boundary behavior need explicit tests. Ensure locale-prefixed admin legacy paths are not accidentally classified as public.
+- **URL builder is not yet the complete navigation layer:** url-builder.ts currently builds a locale prefix for a caller-supplied isPublic flag, but it does not itself establish route classification, validate the locale, prevent an existing locale prefix, or preserve a typed UrlObject contract. It also is not yet integrated into the custom Link component.
+- **Phase 2 verification is not the same as acceptance:** scripts/verify-phase2-layouts.ts checks utility behavior, but does not by itself prove correct Next.js root-layout ownership, provider availability, document attributes, auth guards, server/client hydration agreement, or that every module route has moved.
+- **Legacy routes and redirects:** the reviewed changes rename routes inside [language] but do not demonstrate a complete explicit old-to-new redirect map for every former admin URL. Define and test compatibility behavior before removing old entry points.
+
+### 2.3 Current progress assessment
+
+| Workstream | Repository status at inspected commit | Assessment |
+|---|---|---|
+| Phase 0 — discovery | Checklist marked complete | Reconcile the ADR-2 server language-bootstrap decision with the actual implementation; it is not yet evidenced in code |
+| Phase 1 — pure utilities | Utilities and tests added; checklist marked complete | Implemented baseline; tighten edge cases and integrate with navigation |
+| Phase 2 — root layout/providers | New root and admin layout files exist | In progress; root/client boundary, nested html/body, provider coverage, and document lang/dir need correction |
+| Phase 3 — deterministic language bootstrap | No server-verifiable user-language bootstrap found | Not complete |
+| Phase 4 — navigation compatibility | Custom Link still adds locale to every internal path | Not complete |
+| Phase 5 — admin route migration | Some folders renamed under [language]; one locale-free dashboard added | Partial; module routes are not all locale-free |
+| Phase 6 — SEO/integration regression | No complete evidence reviewed | Not complete |
+| Phase 7 — rollout/cleanup | No complete evidence reviewed | Not complete |
+
+**Important:** do not mark Phase 2 complete solely because the build succeeds or the two layout files exist. Its exit gate requires valid document ownership, correct providers for both route classes, correct document language/direction, direct-load and refresh coverage, and no public-route regression.
+
 
 ## 3. Goals and non-goals
 
@@ -276,17 +306,24 @@ The repository has a generated module registry and a generate:module-registry sc
 
 ### Phase 2 — Root layout and provider architecture
 
-- [ ] Create the new root layout with one document shell.
-- [ ] Move document-level concerns (fonts, global CSS, html/body) deliberately.
+**Status at c1e4878: in progress.** Root and admin layout files have been introduced, but the exit gate is not met. The following implementation tasks remain:
+
+- [x] Add src/app/layout.tsx as the document-shell location.
+- [ ] Keep the root layout a Server Component; move interactive providers into a dedicated client-side provider wrapper.
+- [ ] Ensure exactly one html/body pair is rendered for each route tree; remove html/body from nested src/app/admin/layout.tsx.
+- [ ] Make document lang and dir correct for both localized public routes and locale-free admin routes rather than hard-coding en/ltr at the root.
+- [ ] Mount the required auth, locale, shell, and navigation providers for locale-free admin routes without depending on the [language] layout.
 - [ ] Split locale-specific and authenticated-shell responsibilities into nested layouts or approved route groups.
 - [ ] Preserve provider ordering and route coverage using the provider ownership matrix.
 - [ ] Ensure public pages do not unintentionally render authenticated-only shell elements.
 - [ ] Verify error, loading, not-found, and metadata behavior for both route trees.
-- [ ] Prototype a localized public route and a locale-free protected route before migrating all routes.
+- [ ] Add integration/e2e coverage for a localized public route and a locale-free protected route, including direct load and refresh.
 
 **Exit gate:** both route classes render with correct providers and document attributes; no nested html/body; no public route regression.
 
 ### Phase 3 — Deterministic language bootstrap
+
+**Status at c1e4878: not complete.** The current AuthProvider and StoreLanguageProvider still initialize from browser-side state; no server-verifiable user-language bootstrap was found.
 
 - [ ] Implement the selected server-readable bootstrap mechanism.
 - [ ] Align server and client initial locale values.
@@ -299,6 +336,8 @@ The repository has a generated module registry and a generate:module-registry sc
 
 ### Phase 4 — Navigation compatibility layer
 
+**Status at c1e4878: not complete.** src/components/link.tsx still prefixes every internal absolute href with the active language and does not call url-builder.ts.
+
 - [ ] Update custom Link to use the centralized URL policy.
 - [ ] Update router actions, redirects, active route checks, and auth return URLs.
 - [ ] Preserve leave-page confirmation semantics.
@@ -308,6 +347,8 @@ The repository has a generated module registry and a generate:module-registry sc
 **Exit gate:** every navigation source produces expected canonical URL; no double-prefixing or broken back/forward navigation.
 
 ### Phase 5 — Admin route migration (incremental vertical slices)
+
+**Status at c1e4878: partial.** Several old admin-panel folders were renamed to admin under [language], while a locale-free /admin/dashboard route was added. The module pages are therefore not yet all on locale-free URLs.
 
 - [ ] Move one low-risk authenticated route to the new tree.
 - [ ] Verify direct load, refresh, client navigation, auth guard, permission guard, language, shell, and data fetching.
