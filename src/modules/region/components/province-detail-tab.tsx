@@ -27,13 +27,13 @@ export function ProvinceOverviewTab({ item }: ProvinceOverviewTabProps) {
       <div>
         <dt className="text-muted-foreground">{t("table.latitude")}</dt>
         <dd className="font-mono text-foreground">
-          {item.latitude != null ? item.latitude.toFixed(6) : "—"}
+          {item.latitude !== null ? item.latitude.toFixed(6) : "—"}
         </dd>
       </div>
       <div>
         <dt className="text-muted-foreground">{t("table.longitude")}</dt>
         <dd className="font-mono text-foreground">
-          {item.longitude != null ? item.longitude.toFixed(6) : "—"}
+          {item.longitude !== null ? item.longitude.toFixed(6) : "—"}
         </dd>
       </div>
       <div>
