@@ -24,6 +24,18 @@ async function login(page: Page) {
 test("buka dropdown bahasa & lihat option", async ({ page }) => {
   await login(page);
   await page.goto(`${SITE}/admin/profile`);
+  await expect(page).toHaveURL(`${SITE}/admin/profile`);
+
+  await page.getByTestId("profile-menu-item").click();
+  await expect(page.getByTestId("user-profile")).toHaveAttribute(
+    "href",
+    "/admin/profile"
+  );
+  await expect(page.getByTestId("settings-menu-item")).toHaveAttribute(
+    "href",
+    "/admin/settings"
+  );
+  await page.keyboard.press("Escape");
   await page.waitForTimeout(2500);
 
   const langTrigger = page.locator('[data-testid="language"]').first();
@@ -44,4 +56,19 @@ test("buka dropdown bahasa & lihat option", async ({ page }) => {
     path: "/tmp/opencode/profile-lang.png",
     fullPage: true,
   });
+});
+
+test("legacy profile and settings URLs redirect to canonical admin routes", async ({
+  page,
+}) => {
+  await login(page);
+
+  await page.goto(`${SITE}/id/profile`);
+  await expect(page).toHaveURL(`${SITE}/admin/profile`);
+
+  await page.goto(`${SITE}/id/profile/edit`);
+  await expect(page).toHaveURL(`${SITE}/admin/profile/edit`);
+
+  await page.goto(`${SITE}/id/settings`);
+  await expect(page).toHaveURL(`${SITE}/admin/settings`);
 });
