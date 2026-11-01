@@ -79,9 +79,8 @@ test.describe("User Profile", () => {
 
     const response = await profileUpdate;
     expect(response.ok()).toBeTruthy();
-    await expect
-      .poll(async () => (await response.json()).language)
-      .toBe("id");
+    const updatedProfile = await response.json();
+    expect(updatedProfile.language).toBe("id");
 
     await page.reload();
     await expect(page.getByTestId("language")).toContainText("id");
