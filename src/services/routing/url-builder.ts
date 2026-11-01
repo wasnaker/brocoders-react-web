@@ -2,7 +2,7 @@
  * URL builder utility for consistent link handling.
  */
 
-import { languages, fallbackLanguage } from "@/services/i18n/config";
+import { fallbackLanguage } from "../i18n/config";
 
 export interface UrlOptions {
   locale?: string;

@@ -9,7 +9,7 @@
  * This function is deterministic: same inputs → same output.
  */
 
-import { languages, fallbackLanguage } from "@/services/i18n/config";
+import { languages, fallbackLanguage } from "../i18n/config";
 
 export interface LocaleResolutionInput {
   /** Explicit locale from URL param or caller */

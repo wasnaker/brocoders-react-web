@@ -1,11 +1,16 @@
 /**
  * Manual verification script for routing utilities.
- * Run with: npx ts-node scripts/verify-routing-utils.ts
+ * Run with: npx tsx scripts/verify-routing-utils.ts
  */
 
 import { getRouteType } from "../src/services/routing/route-classifier";
 import { buildUrl } from "../src/services/routing/url-builder";
-import { resolveLocale, validateLocale, isAdminRoute, isPublicRoute } from "../src/services/routing/locale-precedence";
+import {
+  resolveLocale,
+  validateLocale,
+  isAdminRoute,
+  isPublicRoute,
+} from "../src/services/routing/locale-precedence";
 
 let passed = 0;
 let failed = 0;
@@ -32,31 +37,51 @@ console.log("🧪 Verifying Routing Utilities...\n");
 test("getRouteType: admin routes", () => {
   assert(getRouteType("/admin/dashboard") === "admin", "Expected admin");
   assert(getRouteType("/admin/users/123") === "admin", "Expected admin");
+  assert(getRouteType("/admin") === "admin", "Expected admin for bare /admin");
 });
 
-test("getRouteType: public routes", () => {
-  assert(getRouteType("/sign-in") === "public", "Expected public");
+test("getRouteType: public routes (locale-prefixed)", () => {
   assert(getRouteType("/id/sign-in") === "public", "Expected public");
+  assert(getRouteType("/en/privacy-policy") === "public", "Expected public");
+  assert(getRouteType("/ko/sign-up") === "public", "Expected public");
+});
+
+test("getRouteType: public routes (non-locale)", () => {
+  assert(getRouteType("/sign-in") === "public", "Expected public");
+  assert(getRouteType("/sign-up") === "public", "Expected public");
 });
 
 test("getRouteType: other routes", () => {
   assert(getRouteType("/") === "other", "Expected other");
   assert(getRouteType("/unknown") === "other", "Expected other");
+  assert(getRouteType("/api/v1/users") === "other", "Expected other");
 });
 
 // --- URL Builder Tests ---
 test("buildUrl: public with locale", () => {
-  assert(buildUrl("/sign-in", { isPublic: true, locale: "id" }) === "/id/sign-in", "Expected /id/sign-in");
-  assert(buildUrl("sign-in", { isPublic: true, locale: "ko" }) === "/ko/sign-in", "Expected /ko/sign-in");
+  assert(
+    buildUrl("/sign-in", { isPublic: true, locale: "id" }) === "/id/sign-in",
+    "Expected /id/sign-in"
+  );
+  assert(
+    buildUrl("sign-in", { isPublic: true, locale: "ko" }) === "/ko/sign-in",
+    "Expected /ko/sign-in"
+  );
 });
 
 test("buildUrl: public default locale", () => {
-  assert(buildUrl("/sign-in", { isPublic: true }) === "/en/sign-in", "Expected /en/sign-in (default)");
+  assert(
+    buildUrl("/sign-in", { isPublic: true }) === "/en/sign-in",
+    "Expected /en/sign-in (default)"
+  );
 });
 
 test("buildUrl: admin routes (locale-free)", () => {
   assert(buildUrl("/admin/dashboard") === "/admin/dashboard", "Expected /admin/dashboard");
-  assert(buildUrl("admin/profile", { locale: "id" }) === "/admin/profile", "Expected /admin/profile (ignores locale)");
+  assert(
+    buildUrl("admin/profile", { locale: "id" }) === "/admin/profile",
+    "Expected /admin/profile (ignores locale)"
+  );
 });
 
 // --- Locale Precedence Tests ---
@@ -80,6 +105,11 @@ test("resolveLocale: admin route falls back to URL locale", () => {
   assert(res === "zh", `Expected zh, got ${res}`);
 });
 
+test("resolveLocale: both invalid falls back to default", () => {
+  const res = resolveLocale({ urlLocale: "xx", userLanguage: "yy", isPublicRoute: false });
+  assert(res === "en", `Expected en, got ${res}`);
+});
+
 test("validateLocale: valid and invalid", () => {
   assert(validateLocale("id") === "id", "Expected id");
   assert(validateLocale("xx") === null, "Expected null for invalid");
@@ -89,7 +119,7 @@ test("validateLocale: valid and invalid", () => {
 test("isAdminRoute & isPublicRoute helpers", () => {
   assert(isAdminRoute("/admin/dashboard") === true, "Expected true");
   assert(isAdminRoute("/id/admin") === false, "Expected false");
-  
+
   assert(isPublicRoute("/id/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");
 });
