@@ -1,8 +1,6 @@
 ---
 to: src/app/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/page.tsx
 ---
-"use server";
-
 import type { Metadata } from "next";
 import { getServerTranslation } from "@/services/i18n";
 import { getRequestLanguage } from "@/services/i18n/get-request-language";
