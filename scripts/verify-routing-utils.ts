@@ -82,6 +82,8 @@ test("buildUrl: admin routes (locale-free)", () => {
     buildUrl("admin/profile", { locale: "id" }) === "/admin/profile",
     "Expected /admin/profile (ignores locale)"
   );
+  assert(buildUrl("/id/admin/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy admin path should become locale-free");
+  assert(buildUrl("/id/sign-in?next=%2Fadmin", { isPublic: true, locale: "en" }) === "/id/sign-in?next=%2Fadmin", "Existing public locale and query should be preserved");
 });
 
 // --- Locale Precedence Tests ---
@@ -90,9 +92,9 @@ test("resolveLocale: public route uses URL locale", () => {
   assert(res === "id", `Expected id, got ${res}`);
 });
 
-test("resolveLocale: public route falls back to user language", () => {
+test("resolveLocale: public route without URL locale uses app fallback", () => {
   const res = resolveLocale({ urlLocale: null, userLanguage: "ja", isPublicRoute: true });
-  assert(res === "ja", `Expected ja, got ${res}`);
+  assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: admin route uses user language", () => {
@@ -100,9 +102,9 @@ test("resolveLocale: admin route uses user language", () => {
   assert(res === "ko", `Expected ko, got ${res}`);
 });
 
-test("resolveLocale: admin route falls back to URL locale", () => {
+test("resolveLocale: admin route without user preference uses app fallback", () => {
   const res = resolveLocale({ urlLocale: "zh", userLanguage: null, isPublicRoute: false });
-  assert(res === "zh", `Expected zh, got ${res}`);
+  assert(res === "en", `Expected en, got ${res}`);
 });
 
 test("resolveLocale: both invalid falls back to default", () => {
@@ -119,6 +121,7 @@ test("validateLocale: valid and invalid", () => {
 test("isAdminRoute & isPublicRoute helpers", () => {
   assert(isAdminRoute("/admin/dashboard") === true, "Expected true");
   assert(isAdminRoute("/id/admin") === false, "Expected false");
+  assert(isPublicRoute("/id/admin") === false, "Legacy admin URL is not public");
 
   assert(isPublicRoute("/id/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");
