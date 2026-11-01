@@ -18,11 +18,11 @@ type LinkProps = ComponentProps<typeof NextLink> & {
 
 function isAdminDestination(pathname: string): boolean {
   const segments = pathname.split(/[/?#]/)[0].split("/").filter(Boolean);
-  if (segments[0] === "admin") return true;
+  if (segments[0] === "admin" || segments[0] === "admin-panel") return true;
   return (
     segments.length > 1 &&
     languages.some((language) => language === segments[0]) &&
-    segments[1] === "admin"
+    (segments[1] === "admin" || segments[1] === "admin-panel")
   );
 }
 
