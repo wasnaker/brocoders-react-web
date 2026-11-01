@@ -63,8 +63,19 @@ export function proxy(req: NextRequest) {
 
   const firstSegment = getFirstPathSegment(pathname);
 
-  // Public URL locale is authoritative and must match a complete path segment.
+  // Legacy admin URLs were /{language}/admin/*; redirect them to the
+  // canonical locale-free route while preserving query strings.
   if (isSupportedLanguage(firstSegment)) {
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments[1] === "admin") {
+      const canonicalPath = `/${segments.slice(1).join("/")}`;
+      return NextResponse.redirect(
+        new URL(`${canonicalPath}${req.nextUrl.search}`, req.url),
+        308
+      );
+    }
+
+    // Public URL locale is authoritative and must match a complete segment.
     return continueWithLanguage(req, firstSegment);
   }
 
