@@ -6,7 +6,6 @@
 import { getRouteType } from "../src/services/routing/route-classifier";
 import {
   resolveLocale,
-  validateLocale,
   isAdminRoute,
   isPublicRoute as isPublicRouteOld,
   isLocalePrefixedPublicRoute,
