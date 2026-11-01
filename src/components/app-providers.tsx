@@ -3,6 +3,7 @@
 import type { PropsWithChildren } from "react";
 import ResponsiveAppBar from "@/components/app-bar";
 import AppShell from "@/components/app-shell";
+import DocumentLanguageSync from "@/components/document-language-sync";
 import AuthStateClass from "@/components/auth-state-class";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SystemBannerProvider } from "@/components/system-banner";
@@ -32,6 +33,7 @@ export default function AppProviders({
     <DirectionProvider dir={dir(language)}>
       <StoreLanguageProvider initialLanguage={language}>
         <AuthProvider>
+          <DocumentLanguageSync />
           <GoogleAuthProvider>
             <FacebookAuthProvider>
               <ConfirmDialogProvider>
