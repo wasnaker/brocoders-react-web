@@ -45,7 +45,7 @@ export function useProvince(id: Province["id"] | null) {
       }
       return res.data;
     },
-    enabled: id != null,
+    enabled: id !== null,
   });
 }
 
@@ -127,14 +127,14 @@ export function useRegencies(
         page,
         limit,
         filters:
-          provinceId != null ? { provinceId: String(provinceId) } : undefined,
+          provinceId !== null ? { provinceId: String(provinceId) } : undefined,
       });
       if (res.status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
         throw new Error(Object.values(res.data.errors).join(", "));
       }
       return res.data;
     },
-    enabled: provinceId != null,
+    enabled: provinceId !== null,
   });
 }
 
@@ -149,7 +149,7 @@ export function useRegency(id: Regency["id"] | null) {
       }
       return res.data;
     },
-    enabled: id != null,
+    enabled: id !== null,
   });
 }
 
