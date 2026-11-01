@@ -35,8 +35,6 @@ test.describe("User Profile", () => {
     await expect(page.getByTestId("user-email")).toHaveText(email, {
       ignoreCase: true,
     });
-    await page.getByTestId("edit-profile").click();
-    await page.waitForURL(/\/admin\/profile\/edit/);
     await expect(page.getByTestId("first-name")).toHaveValue(firstName);
     await expect(page.getByTestId("last-name")).toHaveValue(lastName);
   });
@@ -58,8 +56,6 @@ test.describe("User Profile", () => {
     await expect(page.getByTestId("user-email")).toHaveText(email, {
       ignoreCase: true,
     });
-    await page.getByTestId("edit-profile").click();
-    await page.waitForURL(/\/admin\/profile\/edit/);
     await expect(page.getByTestId("first-name")).toHaveValue("James");
     await expect(page.getByTestId("last-name")).toHaveValue("Bond");
   });
