@@ -1,5 +1,5 @@
 ---
-to: src/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/queries/queries.ts
+to: src/app/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/queries/queries.ts
 ---
 "use client";
 
