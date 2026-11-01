@@ -15,14 +15,32 @@ function getFirstPathSegment(pathname: string): string {
   return pathname.split("/").filter(Boolean)[0] ?? "";
 }
 
-function hasSupportedLocalePrefix(pathname: string): boolean {
-  return languages.includes(
-    getFirstPathSegment(pathname) as (typeof languages)[number]
-  );
+function isSupportedLanguage(value: string | undefined): value is (typeof languages)[number] {
+  return !!value && languages.includes(value as (typeof languages)[number]);
 }
 
 function isAdminPath(pathname: string): boolean {
   return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
+function getPreferredLanguage(req: NextRequest): string {
+  const cookieLanguage = req.cookies.get(cookieName)?.value;
+  return (
+    (cookieLanguage && acceptLanguage.get(cookieLanguage)) ||
+    acceptLanguage.get(req.headers.get("Accept-Language")) ||
+    fallbackLanguage
+  );
+}
+
+function continueWithLanguage(req: NextRequest, language: string) {
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-app-language", language);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export function proxy(req: NextRequest) {
@@ -30,47 +48,32 @@ export function proxy(req: NextRequest) {
 
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/") ||
     pathname === "/api" ||
+    pathname.startsWith("/api/") ||
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
   }
 
-  // Admin routes are intentionally locale-free. Do this before the public
-  // locale redirect so /admin/* can never become /{locale}/admin/*.
+  // Admin URLs are locale-free. Their interface language is selected from
+  // the user's language cookie / Accept-Language, never from the URL.
   if (isAdminPath(pathname)) {
-    return NextResponse.next();
+    return continueWithLanguage(req, getPreferredLanguage(req));
   }
 
-  let language;
-  const cookieLanguage = req.cookies.get(cookieName)?.value;
-  if (cookieLanguage) language = acceptLanguage.get(cookieLanguage);
-  if (!language) language = acceptLanguage.get(req.headers.get("Accept-Language"));
-  if (!language) language = fallbackLanguage;
+  const firstSegment = getFirstPathSegment(pathname);
 
-  // Public routes use an exact first-segment locale match. startsWith() would
-  // incorrectly treat paths such as /idaho as already localized.
-  if (!hasSupportedLocalePrefix(pathname)) {
-    return NextResponse.redirect(
-      new URL(`/${language}${pathname}${req.nextUrl.search}`, req.url)
-    );
+  // Public URL locale is authoritative and must match a complete path segment.
+  if (isSupportedLanguage(firstSegment)) {
+    return continueWithLanguage(req, firstSegment);
   }
 
-  const referer = req.headers.get("referer");
-  if (referer) {
-    try {
-      const refererUrl = new URL(referer);
-      const refererLocale = getFirstPathSegment(refererUrl.pathname);
-      if (languages.includes(refererLocale as (typeof languages)[number])) {
-        const response = NextResponse.next();
-        response.cookies.set(cookieName, refererLocale);
-        return response;
-      }
-    } catch {
-      // Ignore malformed Referer headers; they must not break navigation.
-    }
-  }
-
-  return NextResponse.next();
+  const language = getPreferredLanguage(req);
+  return NextResponse.redirect(
+    new URL(`/${language}${pathname}${req.nextUrl.search}`, req.url)
+  );
 }
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
