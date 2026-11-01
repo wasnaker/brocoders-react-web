@@ -75,7 +75,7 @@ export function RegencyFormDialog({
       setForm({
         provinceId: editItem
           ? String(editItem.provinceId)
-          : defaultProvinceId != null
+          : defaultProvinceId !== null
             ? String(defaultProvinceId)
             : "",
         name: editItem?.name ?? "",
@@ -118,7 +118,7 @@ export function RegencyFormDialog({
     }
 
     onOpenChange(false);
-    if (savedId != null) onSuccess(savedId);
+    if (savedId !== undefined && savedId !== null) onSuccess(savedId);
   }
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
