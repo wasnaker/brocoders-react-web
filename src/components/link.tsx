@@ -9,27 +9,18 @@ import {
 // eslint-disable-next-line no-restricted-imports
 import NextLink from "next/link";
 import { ComponentProps, Ref, useContext } from "react";
-import { languages } from "@/services/i18n/config";
 import { buildUrl } from "@/services/routing/url-builder";
 
 type LinkProps = ComponentProps<typeof NextLink> & {
   ref?: Ref<HTMLAnchorElement>;
 };
 
-function isAdminDestination(pathname: string): boolean {
-  const segments = pathname.split(/[/?#]/)[0].split("/").filter(Boolean);
-  if (segments[0] === "admin" || segments[0] === "admin-panel") return true;
-  return (
-    segments.length > 1 &&
-    languages.some((language) => language === segments[0]) &&
-    (segments[1] === "admin" || segments[1] === "admin-panel")
-  );
-}
-
 function resolveInternalPath(pathname: string, language: string): string {
+  // buildUrl itself recognizes both canonical admin routes and legacy
+  // /{language}/admin-panel routes, so every internal link shares one policy.
   return buildUrl(pathname, {
     locale: language,
-    isPublic: !isAdminDestination(pathname),
+    isPublic: true,
   });
 }
 
