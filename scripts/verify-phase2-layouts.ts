@@ -36,8 +36,7 @@ function assert(condition: boolean, msg: string) {
   if (!condition) throw new Error(msg);
 }
 
-console.log("🧪 Verifying Phase 2 Layouts...
-");
+console.log("🧪 Verifying Phase 2 Layouts...\\n");
 
 // --- Route Classification Tests ---
 test("getRouteType: admin routes", () => {
