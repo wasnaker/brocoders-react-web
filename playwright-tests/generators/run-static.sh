@@ -25,18 +25,18 @@ cleanup() {
   local exit_code=$?
   echo ""
   echo "▶ Cleanup: removing generated resource files and reverting tracked src/ changes…"
-  rm -rf "src/app/[language]/admin-panel/tags" 2>/dev/null || true
-  rm -rf "src/app/[language]/admin-panel/blog-comments" 2>/dev/null || true
-  rm -rf "src/app/[language]/admin-panel/articles" 2>/dev/null || true
+  rm -rf "src/app/admin/tags" 2>/dev/null || true
+  rm -rf "src/app/admin/blog-comments" 2>/dev/null || true
+  rm -rf "src/app/admin/articles" 2>/dev/null || true
   rm -f src/services/api/types/tag.ts 2>/dev/null || true
   rm -f src/services/api/types/blog-comment.ts 2>/dev/null || true
   rm -f src/services/api/types/article.ts 2>/dev/null || true
   rm -f src/services/api/services/tags.ts 2>/dev/null || true
   rm -f src/services/api/services/blog-comments.ts 2>/dev/null || true
   rm -f src/services/api/services/articles.ts 2>/dev/null || true
-  rm -f src/services/i18n/locales/en/admin-panel-tags*.json 2>/dev/null || true
-  rm -f src/services/i18n/locales/en/admin-panel-blog-comments*.json 2>/dev/null || true
-  rm -f src/services/i18n/locales/en/admin-panel-articles*.json 2>/dev/null || true
+  rm -f src/services/i18n/locales/en/admin-tags*.json 2>/dev/null || true
+  rm -f src/services/i18n/locales/en/admin-blog-comments*.json 2>/dev/null || true
+  rm -f src/services/i18n/locales/en/admin-articles*.json 2>/dev/null || true
   git checkout -- src 2>/dev/null || true
   exit "$exit_code"
 }
