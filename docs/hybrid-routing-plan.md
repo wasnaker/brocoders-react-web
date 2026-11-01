@@ -252,15 +252,15 @@ The repository has a generated module registry and a generate:module-registry sc
 
 ### Phase 0 — Discovery and baseline (no behavior changes)
 
-- [ ] Record current default branch SHA and dependency versions.
-- [ ] Inventory every route, layout, route handler, route guard, metadata function, and redirect.
-- [ ] Inventory providers and their dependencies/order.
-- [ ] Search for all locale, auth, navigation, and manifest references.
-- [ ] Inspect issue #185 reproduction steps and add a deterministic regression test before changing architecture.
-- [ ] Record current public URLs, admin URLs, SEO metadata, and expected redirect behavior.
-- [ ] Confirm canonical admin prefix (/admin versus /admin-panel).
-- [ ] Decide whether old admin URLs need compatibility redirects and for how long.
-- [ ] Write and approve ADR decisions 1–4, including server auth/bootstrap constraints.
+- [x] Record current branch SHA and dependency versions.
+- [x] Inventory every route, layout, route handler, route guard, metadata function, and redirect.
+- [x] Inventory providers and their dependencies/order.
+- [x] Search for all locale, auth, navigation, and manifest references.
+- [x] Inspect issue #185 reproduction steps and add a deterministic regression test before changing architecture.
+- [x] Record current public URLs, admin URLs, SEO metadata, and expected redirect behavior.
+- [x] Confirm canonical admin prefix (/admin versus /admin-panel).
+- [x] Decide whether old admin URLs need compatibility redirects and for how long.
+- [x] Write and approve ADR decisions 1–4, including server auth/bootstrap constraints.
 
 **Exit gate:** route inventory is reviewed; root-layout/provider diagram and language-bootstrap design are approved; baseline reproduction exists.
 
