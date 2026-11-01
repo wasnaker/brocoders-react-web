@@ -15,10 +15,6 @@ type LinkProps = ComponentProps<typeof NextLink> & {
   ref?: Ref<HTMLAnchorElement>;
 };
 
-function isAdminPath(pathname: string): boolean {
-  return pathname === "/admin" || pathname.startsWith("/admin/");
-}
-
 function hasLocalePrefix(pathname: string): boolean {
   const firstSegment = pathname.split("/").filter(Boolean)[0];
   return languages.some((locale) => locale === firstSegment);
