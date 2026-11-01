@@ -21,10 +21,13 @@ function hasLocalePrefix(pathname: string): boolean {
 }
 
 function resolveInternalPath(pathname: string, language: string): string {
-  // Only the dashboard currently exists in the locale-free /admin tree.
-  // Keep the remaining admin modules under /[language]/admin until each
-  // module route has been migrated; otherwise these links would 404.
-  if (pathname === "/admin/dashboard") return pathname;
+  // Every admin destination is canonical and locale-free.
+  if (
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname.startsWith("/admin?") ||
+    pathname.startsWith("/admin#")
+  ) return pathname;
 
   // Do not double-prefix an already localized public URL.
   if (hasLocalePrefix(pathname)) return pathname;
