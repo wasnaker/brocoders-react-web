@@ -9,7 +9,7 @@ import {
 
 acceptLanguage.languages([...languages]);
 
-const PUBLIC_FILE = /\.(.*)$/;
+const PUBLIC_FILE = /(?:^|\/)[^/]+\.[^/]+$/;
 
 function getFirstPathSegment(pathname: string): string {
   return pathname.split("/").filter(Boolean)[0] ?? "";
