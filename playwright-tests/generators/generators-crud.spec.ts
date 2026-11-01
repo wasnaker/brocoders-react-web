@@ -36,7 +36,7 @@ test.describe("Generators CRUD — Tag", () => {
     await page.goto("/admin/tags");
     await page.getByTestId("add-button").click();
 
-    await expect(page).toHaveURL(/\/admin-panel\/tags\/create$/);
+    await expect(page).toHaveURL(/\/admin\/tags\/create$/);
     await page.getByTestId("name").fill(createdName);
 
     const apiCreated = page.waitForResponse(
@@ -48,7 +48,7 @@ test.describe("Generators CRUD — Tag", () => {
     await page.getByTestId("submit-button").click();
     await apiCreated;
 
-    await expect(page).toHaveURL(/\/admin-panel\/tags$/);
+    await expect(page).toHaveURL(/\/admin\/tags$/);
     await expect(page.getByText(createdName).first()).toBeVisible();
   });
 
@@ -60,7 +60,7 @@ test.describe("Generators CRUD — Tag", () => {
     const row = page.getByRole("row").filter({ hasText: createdName }).first();
     await row.getByTestId("edit-button").click();
 
-    await expect(page).toHaveURL(/\/admin-panel\/tags\/edit\//);
+    await expect(page).toHaveURL(/\/admin\/tags\/edit\//);
     const input = page.getByTestId("name");
     await input.fill("");
     await input.fill(updatedName);
@@ -74,7 +74,7 @@ test.describe("Generators CRUD — Tag", () => {
     await page.getByTestId("submit-button").click();
     await apiEdited;
 
-    await expect(page).toHaveURL(/\/admin-panel\/tags$/);
+    await expect(page).toHaveURL(/\/admin\/tags$/);
     await expect(page.getByText(updatedName).first()).toBeVisible();
   });
 
