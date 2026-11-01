@@ -92,7 +92,7 @@ test("isAdminRoute", () => {
   assert(isAdminRoute("/admin/dashboard") === true, "Expected true");
   assert(isAdminRoute("/admin") === true, "Expected true");
   assert(isAdminRoute("/id/admin") === false, "Expected false");
-  assert(isAdminRoute("/admin-panel") === false, "Expected false");
+  assert(isAdminRoute("/admin-panel") === false, "Expected false");\n  assert(isAdminRoute("/administrator") === false, "Expected false");
 });
 
 test("isPublicRoute", () => {
@@ -100,7 +100,7 @@ test("isPublicRoute", () => {
   assert(isPublicRoute("/en/privacy-policy") === true, "Expected true");
   assert(isPublicRoute("/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");
-  assert(isPublicRoute("/unknown") === false, "Expected false");
+  assert(isPublicRoute("/unknown") === false, "Expected false");\n  assert(isPublicRoute("/id/admin/dashboard") === false, "Admin route must not be public");\n  assert(isPublicRoute("/id/unknown") === false, "Unknown locale route must not be public");
   assert(isPublicRoute("/") === false, "Expected false");
 });
 
