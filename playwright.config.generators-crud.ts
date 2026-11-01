@@ -4,7 +4,7 @@ dotenv.config({ path: ".env.local" });
 
 /**
  * Phase 2 config for the generator e2e suite: drives the admin panel through
- * real CRUD against the sister nestjs-boilerplate API.
+ * real CRUD against the PostgreSQL brocoders-api backend.
  *
  * The orchestrator (run-crud.sh) is responsible for booting the NestJS Docker
  * stack on host:3001 BEFORE running this config. Playwright's `webServer` here
