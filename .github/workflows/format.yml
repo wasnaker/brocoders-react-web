@@ -1,6 +1,8 @@
 name: Format frontend sources
 
 on:
+  push:
+    branches: [fix/admin-profile-settings-routes]
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
