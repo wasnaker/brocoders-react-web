@@ -238,10 +238,11 @@
   .page-content--narrow {
     @apply mx-auto w-full max-w-3xl px-4 xl:max-w-5xl 2xl:max-w-screen-xl;
   }
-  /* Konten lebar penuh untuk tabel admin. Berbeda dari `--narrow`: tabel
-     butuh lebar penuh, bukan kolom baca. */
+  /* Konten lebar penuh untuk tabel admin. Tanpa max-width cap: di 1920px
+     (viewport − sidebar 16rem ≈ 1664px) konten memakai seluruh lebar tanpa
+     margin kosong; padding tetap dari px-4. */
   .page-content--wide {
-    @apply mx-auto w-full max-w-screen-xl px-4;
+    @apply w-full px-4;
   }
   /* Tampilan sementara / spinner konfirmasi (confirm-email, dll) */
   .page-content--centered {

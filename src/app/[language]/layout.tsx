@@ -1,5 +1,6 @@
 import ResponsiveAppBar from "@/components/app-bar";
-import AppSidebar from "@/components/app-sidebar";
+import AppShell from "@/components/app-shell";
+import AuthStateClass from "@/components/auth-state-class";
 import { SystemBannerProvider } from "@/components/system-banner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AuthProvider from "@/services/auth/auth-provider";
@@ -82,6 +83,9 @@ export default async function RootLayout(props: {
               <StoreLanguageProvider>
                 <ConfirmDialogProvider>
                   <AuthProvider>
+                    {/* Penanda state auth pada <body>: auth--loading /
+                        auth--in / auth--out — semantic hook untuk CSS & e2e */}
+                    <AuthStateClass />
                     <GoogleAuthProvider>
                       <FacebookAuthProvider>
                         <LeavePageProvider>
@@ -97,8 +101,9 @@ export default async function RootLayout(props: {
                               <SystemBannerProvider />
                             </div>
                             <div className="app-shell">
-                              <AppSidebar />
-                              <SidebarInset>{children}</SidebarInset>
+                              {/* Sidebar hanya untuk user terautentikasi —
+                                  tamu tidak mendapat sidebar sama sekali */}
+                              <AppShell>{children}</AppShell>
                             </div>
                           </SidebarProvider>
                           <Toaster />
