@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "@/services/i18n/client";
-import { useProvinces, useProvince, useDeleteProvince } from "../hooks/use-regions";
+import { useProvinces, useDeleteProvince } from "../hooks/use-regions";
 import { SmallTable, type SmallTableColumn, type DetailTab } from "../components/small-table";
 import { ProvinceFormDialog } from "../components/province-form-dialog";
 import { ProvinceOverviewTab, ProvinceRegenciesTab } from "../components/province-detail-tab";
 import { Button } from "@/components/ui/button";
+import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
 import PencilIcon from "lucide-react/dist/esm/icons/pencil";
 import TrashIcon from "lucide-react/dist/esm/icons/trash";
 import ArrowLeftIcon from "lucide-react/dist/esm/icons/arrow-left";
@@ -21,6 +22,7 @@ const PER_PAGE = 20;
 function PageInner() {
   const { t } = useTranslation("module-region");
   const qc = useQueryClient();
+  const { confirmDialog } = useConfirmDialog();
 
   // ── URL hash state (SSR-safe via Suspense) ──────────────────────────────
   const [selectedId, setSelectedId] = useState<number | string | null>(null);
@@ -70,7 +72,13 @@ function PageInner() {
   const deleteMutation = useDeleteProvince();
 
   async function handleDelete(id: Province["id"]) {
-    if (!window.confirm(t("confirm.delete.message"))) return;
+    const confirmed = await confirmDialog({
+      title: t("actions.delete"),
+      message: t("confirm.delete.message"),
+      successButtonText: t("actions.delete"),
+      cancelButtonText: t("actions.cancel"),
+    });
+    if (!confirmed) return;
     await deleteMutation.mutateAsync({ id });
     // Clear selection if deleting the selected row
     if (String(selectedId) === String(id)) {
@@ -120,7 +128,12 @@ function PageInner() {
         key: "coordinates",
         label: t("table.coordinates"),
         render: (item) => {
-          if (item.latitude == null || item.longitude == null) return "—";
+          if (
+            item.latitude === null ||
+            item.latitude === undefined ||
+            item.longitude === null ||
+            item.longitude === undefined
+          ) return "—";
           return (
             <span className="font-mono text-xs text-muted-foreground">
               {item.latitude.toFixed(4)}, {item.longitude.toFixed(4)}
