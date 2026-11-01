@@ -26,11 +26,11 @@ function hasLocalePrefix(pathname: string): boolean {
 
 function isAdminPath(pathname: string): boolean {
   const segments = pathname.split("/").filter(Boolean);
-  if (segments[0] === "admin") return true;
+  if (segments[0] === "admin" || segments[0] === "admin-panel") return true;
   return (
     segments.length > 1 &&
     languages.some((language) => language === segments[0]) &&
-    segments[1] === "admin"
+    (segments[1] === "admin" || segments[1] === "admin-panel")
   );
 }
 
@@ -49,6 +49,7 @@ export function buildUrl(pathname: string, options: UrlOptions = {}): string {
       languages.some((language) => language === segments[0])
         ? segments.slice(1)
         : segments;
+    if (canonicalSegments[0] === "admin-panel") canonicalSegments[0] = "admin";
     return `/${canonicalSegments.join("/")}${suffix}`;
   }
 
