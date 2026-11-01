@@ -23,7 +23,7 @@ async function login(page: Page) {
 
 test("buka dropdown bahasa & lihat option", async ({ page }) => {
   await login(page);
-  await page.goto(`${SITE}/id/profile`);
+  await page.goto(`${SITE}/admin/profile`);
   await page.waitForTimeout(2500);
 
   const langTrigger = page.locator('[data-testid="language"]').first();
