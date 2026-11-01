@@ -70,7 +70,7 @@ test.describe("User Profile", () => {
     await page.getByTestId("photo").click();
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(
-      path.join(__dirname, "../helpers/admin/profileImage.jpg")
+      path.join(__dirname, "../helpers/profileImage.jpg")
     );
     await apiImageUpload;
     await page.getByTestId("save-profile").click();
