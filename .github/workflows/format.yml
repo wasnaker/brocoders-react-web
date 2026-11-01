@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: frontend-format-${{ github.ref }}
+  group: frontend-format-${{ github.event.pull_request.head.ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
