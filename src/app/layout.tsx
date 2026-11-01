@@ -1,6 +1,6 @@
 import { Roboto } from "next/font/google";
 import { headers } from "next/headers";
-import { dir } from "i18next";
+import i18next from "i18next";
 import "./globals.css";
 import RootProviders from "@/components/root-providers";
 import { fallbackLanguage, languages } from "@/services/i18n/config";
@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <html
       lang={language}
-      dir={dir(language)}
+      dir={i18next.dir(language)}
       suppressHydrationWarning
       className={roboto.variable}
     >
