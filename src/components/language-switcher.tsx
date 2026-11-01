@@ -14,6 +14,10 @@ import useAuthActions from "@/services/auth/use-auth-actions";
 import useStoreLanguageActions from "@/services/i18n/use-store-language-actions";
 import { languages } from "@/services/i18n/config";
 import { isAdminRoute } from "@/services/routing/locale-precedence";
+import { useAuthPatchMeService } from "@/services/api/services/auth";
+import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
+import { useSnackbar } from "@/hooks/use-snackbar";
+import { useState } from "react";
 
 const LANGUAGE_LABELS: Record<(typeof languages)[number], string> = {
   en: "English",
@@ -29,23 +33,43 @@ export default function LanguageSwitcher() {
   const { user } = useAuth();
   const { setUser } = useAuthActions();
   const { setLanguage } = useStoreLanguageActions();
+  const patchMe = useAuthPatchMeService();
+  const { enqueueSnackbar } = useSnackbar();
+  const [isSavingLanguage, setIsSavingLanguage] = useState(false);
 
-  const handleChange = (newLanguage: string) => {
+  const handleChange = async (newLanguage: string) => {
     if (!languages.includes(newLanguage as (typeof languages)[number])) {
       return;
     }
 
-    setLanguage(newLanguage);
-
     if (isAdminRoute(pathname)) {
-      // Admin URLs stay locale-free. Update the in-memory profile language so
-      // useLanguage and translations switch immediately; the cookie preserves
-      // the choice for the next request.
-      if (user) {
-        setUser({ ...user, language: newLanguage });
+      // Admin URLs stay locale-free. Persist the preference first so the
+      // server proxy can restore it on the next request and on other devices.
+      if (!user || isSavingLanguage) return;
+
+      setIsSavingLanguage(true);
+      try {
+        const { data, status } = await patchMe({ language: newLanguage });
+        if (status !== HTTP_CODES_ENUM.OK) {
+          enqueueSnackbar("Unable to save language preference. Please try again.", {
+            variant: "error",
+          });
+          return;
+        }
+
+        setUser(data);
+        setLanguage(newLanguage);
+      } catch {
+        enqueueSnackbar("Unable to save language preference. Please try again.", {
+          variant: "error",
+        });
+      } finally {
+        setIsSavingLanguage(false);
       }
       return;
     }
+
+    setLanguage(newLanguage);
 
     // Public pages encode the selected locale in the URL. Preserve query and
     // hash so filters, returnTo values, and in-page navigation survive.
@@ -57,7 +81,7 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <Select value={currentLanguage} onValueChange={handleChange}>
+    <Select value={currentLanguage} onValueChange={handleChange} disabled={isSavingLanguage}>
       <SelectTrigger size="sm" className="language-switcher">
         <SelectValue />
       </SelectTrigger>
