@@ -82,7 +82,9 @@ test("buildUrl: admin routes (locale-free)", () => {
     buildUrl("admin/profile", { locale: "id" }) === "/admin/profile",
     "Expected /admin/profile (ignores locale)"
   );
-  assert(buildUrl("/id/admin/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy admin path should become locale-free");
+  assert(buildUrl("/id/admin/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy localized admin path should become locale-free");
+  assert(buildUrl("/id/admin-panel/users", { isPublic: true, locale: "en" }) === "/admin/users", "Legacy admin-panel path should become canonical /admin");
+  assert(buildUrl("/admin-panel/users") === "/admin/users", "Unlocalized admin-panel path should become canonical /admin");
   assert(buildUrl("/id/sign-in?next=%2Fadmin", { isPublic: true, locale: "en" }) === "/id/sign-in?next=%2Fadmin", "Existing public locale and query should be preserved");
 });
 
