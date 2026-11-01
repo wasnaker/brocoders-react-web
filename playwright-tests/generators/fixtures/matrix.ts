@@ -70,7 +70,7 @@ export const entityPaths = (
 ): EntityPaths => {
   const file = entityFileName(entityName);
   const route = entityRouteSegment(entityName);
-  const adminDir = resolve(srcRoot, "app", "[language]", "admin-panel", route);
+  const adminDir = resolve(srcRoot, "app", "admin", route);
   const i18nDir = resolve(srcRoot, "services", "i18n", "locales", "en");
 
   return {
