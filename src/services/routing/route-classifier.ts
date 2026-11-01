@@ -1,10 +1,10 @@
-/*
- * Route classification utility.
+/**
+ * Classify application routes using path-segment boundaries.
  */
 
-const ADMIN_PREFIX = "/admin";
-const SUPPORTED_LOCALES = ["en", "id", "ko", "ja", "zh"];
-const PUBLIC_SEGMENTS = [
+import { languages } from "../i18n/config";
+
+const PUBLIC_SEGMENTS = new Set([
   "sign-in",
   "sign-up",
   "forgot-password",
@@ -12,27 +12,29 @@ const PUBLIC_SEGMENTS = [
   "confirm-email",
   "confirm-new-email",
   "privacy-policy",
-];
+]);
 
 export type RouteType = "public" | "admin" | "other";
 
+function getSegments(pathname: string): string[] {
+  return pathname.split("/").filter(Boolean);
+}
+
+function isLocale(value: string | undefined): boolean {
+  return !!value && languages.includes(value as (typeof languages)[number]);
+}
+
 export function getRouteType(pathname: string): RouteType {
-  // Check if it's an admin route
-  if (pathname.startsWith(`${ADMIN_PREFIX}/`) || pathname === ADMIN_PREFIX) {
-    return "admin";
-  }
+  const segments = getSegments(pathname);
 
-  // Check if it's a locale-prefixed public route
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length > 1 && SUPPORTED_LOCALES.includes(segments[0])) {
-    const rest = segments.slice(1).join("/");
-    if (PUBLIC_SEGMENTS.includes(rest)) {
-      return "public";
-    }
-  }
+  if (segments[0] === "admin") return "admin";
 
-  // Check if it's a non-locale public route
-  if (PUBLIC_SEGMENTS.some(p => pathname === p)) {
+  const routeSegments =
+    segments.length > 0 && isLocale(segments[0])
+      ? segments.slice(1)
+      : segments;
+
+  if (routeSegments.length > 0 && PUBLIC_SEGMENTS.has(routeSegments[0])) {
     return "public";
   }
 
