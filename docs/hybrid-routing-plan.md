@@ -266,11 +266,11 @@ The repository has a generated module registry and a generate:module-registry sc
 
 ### Phase 1 — Pure utilities and contract tests
 
-- [ ] Add route classification and locale validation utilities with unit tests.
-- [ ] Add URL builder/normalizer with exhaustive string and object href tests.
-- [ ] Define locale precedence as a pure function with tests.
-- [ ] Add tests for supported/unsupported locale, admin path boundaries, already-prefixed URLs, query/hash, encoded paths, and external URLs.
-- [ ] Keep production route behavior unchanged in this phase.
+- [x] Add route classification and locale validation utilities with unit tests.
+- [x] Add URL builder/normalizer with exhaustive string and object href tests.
+- [x] Define locale precedence as a pure function with tests.
+- [x] Add tests for supported/unsupported locale, admin path boundaries, already-prefixed URLs, query/hash, encoded paths, and external URLs.
+- [x] Keep production route behavior unchanged in this phase.
 
 **Exit gate:** utilities pass tests and do not alter existing navigation.
 
