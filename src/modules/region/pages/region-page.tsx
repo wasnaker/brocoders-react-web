@@ -43,7 +43,7 @@ function PageInner() {
       window.history.replaceState(
         null,
         "",
-        id != null ? `#${id}` : window.location.pathname
+        id !== null && id !== undefined ? `#${id}` : window.location.pathname
       );
     }
   }
