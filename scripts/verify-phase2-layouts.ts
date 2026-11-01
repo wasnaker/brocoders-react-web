@@ -36,7 +36,8 @@ function assert(condition: boolean, msg: string) {
   if (!condition) throw new Error(msg);
 }
 
-console.log("🧪 Verifying Phase 2 Layouts...\n");
+console.log("🧪 Verifying Phase 2 Layouts...
+");
 
 // --- Route Classification Tests ---
 test("getRouteType: admin routes", () => {
@@ -92,7 +93,8 @@ test("isAdminRoute", () => {
   assert(isAdminRoute("/admin/dashboard") === true, "Expected true");
   assert(isAdminRoute("/admin") === true, "Expected true");
   assert(isAdminRoute("/id/admin") === false, "Expected false");
-  assert(isAdminRoute("/admin-panel") === false, "Expected false");\n  assert(isAdminRoute("/administrator") === false, "Expected false");
+  assert(isAdminRoute("/admin-panel") === false, "Expected false");
+  assert(isAdminRoute("/administrator") === false, "Expected false");
 });
 
 test("isPublicRoute", () => {
@@ -100,11 +102,14 @@ test("isPublicRoute", () => {
   assert(isPublicRoute("/en/privacy-policy") === true, "Expected true");
   assert(isPublicRoute("/sign-in") === true, "Expected true");
   assert(isPublicRoute("/admin/dashboard") === false, "Expected false");
-  assert(isPublicRoute("/unknown") === false, "Expected false");\n  assert(isPublicRoute("/id/admin/dashboard") === false, "Admin route must not be public");\n  assert(isPublicRoute("/id/unknown") === false, "Unknown locale route must not be public");
+  assert(isPublicRoute("/unknown") === false, "Expected false");
+  assert(isPublicRoute("/id/admin/dashboard") === false, "Admin route must not be public");
+  assert(isPublicRoute("/id/unknown") === false, "Unknown locale route must not be public");
   assert(isPublicRoute("/") === false, "Expected false");
 });
 
-console.log(`\n📊 Results: ${passed} passed, ${failed} failed`);
+console.log(`
+📊 Results: ${passed} passed, ${failed} failed`);
 
 if (failed > 0) {
   process.exit(1);
