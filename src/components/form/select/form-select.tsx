@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+// Tipe untuk option object (mis. {value: string, label: string})
 export type SelectInputProps<T extends object> = {
   label: string;
   type?: string;
@@ -30,17 +31,31 @@ export type SelectInputProps<T extends object> = {
   renderOption: (option: T) => React.ReactNode;
 };
 
+// Internal: SelectInput menerima value T|string (primitif) dan onChange (T|string)
 function SelectInput<T extends object>(
   props: SelectInputProps<T> & {
     name: string;
-    value: T | undefined | null;
-    onChange: (value: T) => void;
+    value: T | string | undefined | null;
+    onChange: (value: T | string) => void;
     onBlur: () => void;
     ref?: Ref<HTMLButtonElement | null>;
   }
 ) {
   const selectId = `select-${props.name}`;
-  const selectedKey = props.value?.[props.keyValue]?.toString() ?? "";
+  // Nilai form bisa berupa primitif (string, mis. "id") atau object option
+  // ({value, label}). Komponen ini menghandle keduanya — jangan ubah type
+  // field-nya, PATCH ke backend harus tetap mengirim string.
+  const isPrimitive = typeof props.value === "string";
+
+  // selectedKey selalu string (nilai Select)
+  const selectedKey = isPrimitive
+    ? String(props.value ?? "")
+    : (props.value as T)?.[props.keyValue]?.toString() ?? "";
+
+  // selectedOption untuk render trigger — cari dari options
+  const selectedOption = props.options.find(
+    (option) => option[props.keyValue]?.toString() === selectedKey
+  );
 
   return (
     <div className="form-field form-field--full">
@@ -49,12 +64,14 @@ function SelectInput<T extends object>(
         value={selectedKey}
         disabled={props.disabled || props.readOnly}
         onValueChange={(newKey) => {
-          const newValue = props.options.find(
-            (option) => option[props.keyValue]?.toString() === newKey
-          );
-          if (!newValue) return;
+          const newValue = isPrimitive
+            ? newKey
+            : props.options.find(
+                (option) => option[props.keyValue]?.toString() === newKey
+              );
+          if (newValue === undefined) return;
 
-          props.onChange(newValue);
+          props.onChange(newValue as T | string);
         }}
       >
         <SelectTrigger
@@ -66,12 +83,12 @@ function SelectInput<T extends object>(
           aria-invalid={!!props.error}
           className={cn("w-full", props.error && "border-destructive")}
         >
-          {props.value ? props.renderOption(props.value) : null}
+          {selectedOption ? props.renderOption(selectedOption) : null}
         </SelectTrigger>
         <SelectContent>
           {props.options.map((option) => (
             <SelectItem
-              key={option[props.keyValue]?.toString()}
+              key={String(option[props.keyValue])}
               value={option[props.keyValue]?.toString() ?? ""}
             >
               {props.renderOption(option)}
