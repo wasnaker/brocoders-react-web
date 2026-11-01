@@ -12,7 +12,7 @@ This audit supersedes the historical branch-status statements and earlier source
 - Host route entries exist under `src/app/admin`; localized `src/app/[language]/admin` content files remain as reusable page-content/auth-guard implementations and legacy redirect targets.
 - CI on the merged commit did **not** pass: E2E lint failed with 67 Prettier errors (plus warnings); generator CRUD/static runs failed on `eqeqeq` in `src/modules/region/pages/region-page.tsx`. These are post-merge failures and must be resolved before declaring the migration verified.
 - The companion `bc-region` repository still had a stale `/admin-panel/region` manifest and integration guide at the time of this audit. Follow-up changes are isolated on `fix/admin-route-contract`; they are not yet merged.
-- Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. Durable cross-device persistence from an authenticated profile remains dependent on backend support for `user.language`; do not describe that behavior as implemented until the backend contract exists.
+- Admin language is bootstrapped server-side from the validated preference cookie / `Accept-Language`. The backend already exposes `PATCH /v1/auth/me` and stores `user.language` in the relational schema, but the document-database schema and mapper omit the field. The frontend follow-up now persists admin language changes through that endpoint and synchronizes the cookie; full support in document-database mode remains blocked on the backend repository fix.
 
 The original sections below preserve the design rationale and historical review notes. Re-check each item against current source and CI before marking an acceptance gate complete.
 
