@@ -13,6 +13,7 @@ import useStoreLanguage from "./use-store-language";
 import useStoreLanguageActions from "./use-store-language-actions";
 import useLanguage from "./use-language";
 import { runsOnServerSide } from "../runs-on-server-side/runs-on-server-side";
+import { moduleLocaleResources } from "@/generated/module-locales";
 
 i18next
   .use(initReactI18next)
@@ -30,6 +31,17 @@ i18next
       order: ["path", "htmlTag", "cookie", "navigator"],
     },
     preload: runsOnServerSide ? languages : [],
+  })
+  .then(() => {
+    for (const { language, namespace, resource } of moduleLocaleResources) {
+      i18next.addResourceBundle(
+        language,
+        namespace,
+        resource,
+        true,
+        true
+      );
+    }
   });
 
 let hasHydrated = false;
