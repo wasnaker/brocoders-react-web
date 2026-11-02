@@ -20,8 +20,14 @@ i18next
   .use(LanguageDetector)
   .use(
     resourcesToBackend(
-      (language: string, namespace: string) =>
-        import(`./locales/${language}/${namespace}.json`)
+      (language: string, namespace: string) => {
+        const moduleResource = moduleLocaleResources.find(
+          (item) => item.language === language && item.namespace === namespace
+        );
+        return moduleResource
+          ? Promise.resolve(moduleResource.resource)
+          : import(`./locales/${language}/${namespace}.json`);
+      }
     )
   )
   .init({
