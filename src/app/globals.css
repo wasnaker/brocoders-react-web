@@ -1,14 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* src/modules/ di-gitignore (isinya milik repo modul) sehingga dilewati
-   oleh auto content detection Tailwind v4 — tanpa ini, class yang hanya
-   dipakai di dalam modul (mis. lg:flex-row di region) tidak ter-generate. */
-@source "../modules";
-@source "../components";
-/* Modul region dipasang via npm (@wasnaker/module-region), bukan di src/modules,
-   sehingga Tailwind v4 tidak auto-scan. Tambahkan source-nya agar class layout
-   (lg:flex-row, lg:w-5/12, lg:w-7/12) pada small-table ter-generate. */
 @source "../../node_modules/@wasnaker/module-region/web/src";
 /* Safelist kelas layout small-table yang tidak ter-generate karena source
    modul tidak ter-scan Tailwind (modul dipasang via npm). */
