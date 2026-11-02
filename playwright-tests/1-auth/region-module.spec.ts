@@ -2,8 +2,9 @@ import { test, expect, type Page } from "@playwright/test";
 
 // Kredensial seed admin (lihat user-seed.service.ts)
 const ADMIN = { email: "admin@example.com", password: "secret" };
-const API = "http://brocoders-api.lan/api";
-const SITE = "http://brocoders-react-web.lan";
+const API =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const SITE = "http://localhost:3000";
 
 async function login(page: Page) {
   const res = await page.request.post(`${API}/v1/auth/email/login`, {
@@ -17,7 +18,7 @@ async function login(page: Page) {
       value: encodeURIComponent(
         JSON.stringify({ token, refreshToken, tokenExpires })
       ),
-      url: SITE,
+      url: "http://localhost:3000",
     },
   ]);
 }
