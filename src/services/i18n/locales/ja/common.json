@@ -10,8 +10,8 @@
     "profile": "プロフィール",
     "users": "ユーザー",
     "permissions": "権限",
-    "roles": "Roles",
-    "modules": "Modules",
+    "roles": "役割",
+    "modules": "モジュール",
     "settings": "設定",
     "logout": "サインアウト"
   },
