@@ -34,6 +34,12 @@
     "empty": "Tidak ada data.",
     "regencies_empty": "Belum ada kabupaten/kota."
   },
+  "dashboard": {
+    "provinces": "Total Provinsi",
+    "regencies": "Total Kabupaten/Kota",
+    "open_module": "Buka module Wilayah",
+    "load_error": "Data gagal dimuat"
+  },
   "confirm": {
     "delete": {
       "message": "Hapus item ini? Tindakan ini tidak dapat dibatalkan."

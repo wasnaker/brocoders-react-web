@@ -1,61 +1,67 @@
 {
-  "menu": "地区",
-  "title": "地区",
-  "subtitle": "印度尼西亚行政区划参考数据",
+  "menu": "Region",
+  "title": "Region",
+  "subtitle": "Data referensi wilayah administrasi Indonesia",
   "actions": {
-    "create_province": "添加省份",
-    "create_regency": "添加县/市",
-    "edit_province": "编辑省份",
-    "edit_regency": "编辑县/市",
-    "edit": "编辑",
-    "delete": "删除",
-    "save": "保存",
-    "saving": "保存中…",
-    "cancel": "取消",
-    "collapse": "收起面板",
-    "expand": "展开面板",
-    "prev_page": "上一页",
-    "next_page": "下一页"
+    "create_province": "Add Province",
+    "create_regency": "Add Regency",
+    "edit_province": "Edit Province",
+    "edit_regency": "Edit Regency",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "collapse": "Collapse panel",
+    "expand": "Expand panel",
+    "prev_page": "Previous",
+    "next_page": "Next"
   },
   "table": {
-    "name": "名称",
-    "isoCode": "代码",
-    "coordinates": "坐标",
-    "latitude": "纬度",
-    "longitude": "经度",
-    "loading": "加载中…",
-    "empty": "暂无省份。",
-    "of": "/",
-    "page": "第 {{page}} 页，共 {{total}} 页"
+    "name": "Name",
+    "isoCode": "Code",
+    "coordinates": "Coordinates",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "loading": "Loading…",
+    "empty": "No provinces yet.",
+    "of": "of",
+    "page": "Page {{page}} of {{total}}"
   },
   "detail": {
-    "overview": "概览",
-    "regencies": "县/市",
-    "empty": "暂无数据。",
-    "regencies_empty": "暂无县/市。"
+    "overview": "Overview",
+    "regencies": "Regencies",
+    "empty": "No data.",
+    "regencies_empty": "No regencies yet."
+  },
+  "dashboard": {
+    "provinces": "Total Provinces",
+    "regencies": "Total Regencies / Cities",
+    "open_module": "Open Region module",
+    "load_error": "Unable to load data"
   },
   "confirm": {
     "delete": {
-      "message": "删除此项？此操作无法撤销。"
+      "message": "Delete this item? This action cannot be undone."
     }
   },
   "form": {
     "field": {
-      "name": "名称",
-      "isoCode": "代码 (ISO)",
-      "latitude": "纬度",
-      "longitude": "经度",
-      "province": "省份",
-      "type": "类型",
-      "isActive": "启用"
+      "name": "Name",
+      "isoCode": "Code (ISO)",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "province": "Province",
+      "type": "Type",
+      "isActive": "Active"
     },
     "placeholder": {
-      "name": "例如：西爪哇",
-      "province": "选择省份"
+      "name": "e.g. West Java",
+      "province": "Select province"
     },
     "validation": {
-      "required": "此项为必填项。",
-      "number": "必须是有效数字。"
+      "required": "This field is required.",
+      "number": "Must be a valid number."
     }
   }
 }

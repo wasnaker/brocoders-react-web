@@ -34,6 +34,12 @@
     "empty": "No data.",
     "regencies_empty": "No regencies yet."
   },
+  "dashboard": {
+    "provinces": "Total Provinces",
+    "regencies": "Total Regencies / Cities",
+    "open_module": "Open Region module",
+    "load_error": "Unable to load data"
+  },
   "confirm": {
     "delete": {
       "message": "Delete this item? This action cannot be undone."
