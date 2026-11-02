@@ -17,8 +17,13 @@ const PACKAGE_JSON = join(root, "package.json");
 const LANGUAGES = ["en", "id", "ja", "ko", "zh"];
 
 function discoverManifests() {
-  if (existsSync(LEGACY_MODULE_DIR) && readdirSync(LEGACY_MODULE_DIR).length > 0) {
-    console.error("[module-registry] source module tidak boleh disalin ke src/modules; pasang sebagai package dependency.");
+  if (
+    existsSync(LEGACY_MODULE_DIR) &&
+    readdirSync(LEGACY_MODULE_DIR).length > 0
+  ) {
+    console.error(
+      "[module-registry] source module tidak boleh disalin ke src/modules; pasang sebagai package dependency."
+    );
     process.exit(1);
   }
 
@@ -42,7 +47,12 @@ function discoverManifests() {
 
   for (const packageName of dependencies) {
     const moduleAlias = packageName.slice("@wasnaker/module-".length);
-    const packageRoot = join(root, "node_modules", "@wasnaker", `module-${moduleAlias}`);
+    const packageRoot = join(
+      root,
+      "node_modules",
+      "@wasnaker",
+      `module-${moduleAlias}`
+    );
     const packageManifest = join(
       packageRoot,
       "web/src/modules",
@@ -50,7 +60,9 @@ function discoverManifests() {
       "module.manifest.ts"
     );
     if (!existsSync(packageManifest)) {
-      console.error(`[module-registry] ${packageName} tidak memiliki module manifest pada ${packageManifest}`);
+      console.error(
+        `[module-registry] ${packageName} tidak memiliki module manifest pada ${packageManifest}`
+      );
       process.exit(1);
     }
     found.push({

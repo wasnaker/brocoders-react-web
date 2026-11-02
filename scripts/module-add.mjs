@@ -56,7 +56,9 @@ function cmdAdd(alias, { ref, repo }) {
     fail(`alias tidak valid: ${alias}`);
   }
   if (!ref) {
-    fail("ref wajib ditentukan agar dependency dapat dikunci: --ref <tag-atau-commit-sha>");
+    fail(
+      "ref wajib ditentukan agar dependency dapat dikunci: --ref <tag-atau-commit-sha>"
+    );
   }
   const repository = repo ?? `wasnaker/bc-${alias}`;
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)) {
@@ -93,7 +95,10 @@ function cmdList() {
 const { positional, options } = parseArgs(process.argv.slice(2));
 const [command, alias] = positional;
 if (command === "add") {
-  if (!alias) fail("pemakaian: npm run module:add -- <alias> --ref <tag-atau-commit> [--repo owner/repo]");
+  if (!alias)
+    fail(
+      "pemakaian: npm run module:add -- <alias> --ref <tag-atau-commit> [--repo owner/repo]"
+    );
   cmdAdd(alias, options);
 } else if (command === "rm") {
   if (!alias) fail("pemakaian: npm run module:rm -- <alias>");

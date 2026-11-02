@@ -19,16 +19,14 @@ i18next
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(
-    resourcesToBackend(
-      (language: string, namespace: string) => {
-        const moduleResource = moduleLocaleResources.find(
-          (item) => item.language === language && item.namespace === namespace
-        );
-        return moduleResource
-          ? Promise.resolve(moduleResource.resource)
-          : import(`./locales/${language}/${namespace}.json`);
-      }
-    )
+    resourcesToBackend((language: string, namespace: string) => {
+      const moduleResource = moduleLocaleResources.find(
+        (item) => item.language === language && item.namespace === namespace
+      );
+      return moduleResource
+        ? Promise.resolve(moduleResource.resource)
+        : import(`./locales/${language}/${namespace}.json`);
+    })
   )
   .init({
     ...getOptions(),
@@ -40,13 +38,7 @@ i18next
   })
   .then(() => {
     for (const { language, namespace, resource } of moduleLocaleResources) {
-      i18next.addResourceBundle(
-        language,
-        namespace,
-        resource,
-        true,
-        true
-      );
+      i18next.addResourceBundle(language, namespace, resource, true, true);
     }
   });
 

@@ -40,10 +40,7 @@ function resolveCanonicalAdminPath(pathname: string): string | null {
   const legacyAccountPath = legacyAccountRoutes[routeSegments.join("/")];
   if (legacyAccountPath) return legacyAccountPath;
 
-  if (
-    routeSegments[0] !== "admin" &&
-    routeSegments[0] !== "admin-panel"
-  ) {
+  if (routeSegments[0] !== "admin" && routeSegments[0] !== "admin-panel") {
     return null;
   }
 
