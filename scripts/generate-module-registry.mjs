@@ -12,10 +12,16 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const outPath = join(root, "src/generated/module-registry.ts");
 const localeOutPath = join(root, "src/generated/module-locales.ts");
 const CORE_MANIFEST_DIR = join(root, "src/core/manifests");
+const LEGACY_MODULE_DIR = join(root, "src/modules");
 const PACKAGE_JSON = join(root, "package.json");
 const LANGUAGES = ["en", "id", "ja", "ko", "zh"];
 
 function discoverManifests() {
+  if (existsSync(LEGACY_MODULE_DIR) && readdirSync(LEGACY_MODULE_DIR).length > 0) {
+    console.error("[module-registry] source module tidak boleh disalin ke src/modules; pasang sebagai package dependency.");
+    process.exit(1);
+  }
+
   const found = [];
   if (existsSync(CORE_MANIFEST_DIR)) {
     for (const name of readdirSync(CORE_MANIFEST_DIR).sort()) {
