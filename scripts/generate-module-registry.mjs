@@ -203,7 +203,7 @@ const lines = [
         "export const moduleRegistry: ModuleManifest[] = [",
         ...manifests.map(({ alias }) => `  ${ident(alias)},`),
         "];",
-      ].join("\\n"),
+      ].join("\n"),
   "",
 ];
 
@@ -242,8 +242,8 @@ const localeLines = [
 ];
 
 mkdirSync(dirname(outPath), { recursive: true });
-writeFileSync(outPath, lines.join("\\n"));
-writeFileSync(localeOutPath, localeLines.join("\\n"));
+writeFileSync(outPath, lines.join("\n"));
+writeFileSync(localeOutPath, localeLines.join("\n"));
 console.log(
   `[module-registry] ${aliases.length} manifest dan ${localeEntries.length} locale resources dihasilkan`
 );
