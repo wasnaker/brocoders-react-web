@@ -13,15 +13,20 @@ import useStoreLanguage from "./use-store-language";
 import useStoreLanguageActions from "./use-store-language-actions";
 import useLanguage from "./use-language";
 import { runsOnServerSide } from "../runs-on-server-side/runs-on-server-side";
+import { moduleLocaleResources } from "@/generated/module-locales";
 
 i18next
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(
-    resourcesToBackend(
-      (language: string, namespace: string) =>
-        import(`./locales/${language}/${namespace}.json`)
-    )
+    resourcesToBackend((language: string, namespace: string) => {
+      const moduleResource = moduleLocaleResources.find(
+        (item) => item.language === language && item.namespace === namespace
+      );
+      return moduleResource
+        ? Promise.resolve(moduleResource.resource)
+        : import(`./locales/${language}/${namespace}.json`);
+    })
   )
   .init({
     ...getOptions(),
@@ -30,6 +35,11 @@ i18next
       order: ["path", "htmlTag", "cookie", "navigator"],
     },
     preload: runsOnServerSide ? languages : [],
+  })
+  .then(() => {
+    for (const { language, namespace, resource } of moduleLocaleResources) {
+      i18next.addResourceBundle(language, namespace, resource, true, true);
+    }
   });
 
 let hasHydrated = false;

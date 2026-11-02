@@ -2,6 +2,7 @@ import { createInstance } from "i18next";
 import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next/initReactI18next";
 import { getOptions } from "./config";
+import { moduleLocaleResources } from "@/generated/module-locales";
 
 const initI18next = async (language: string, namespace: string) => {
   // On server side we create a new instance for each render, because during
@@ -10,12 +11,26 @@ const initI18next = async (language: string, namespace: string) => {
   await i18nInstance
     .use(initReactI18next)
     .use(
-      resourcesToBackend(
-        (language: string, namespace: string) =>
-          import(`./locales/${language}/${namespace}.json`)
-      )
+      resourcesToBackend((language: string, namespace: string) => {
+        const moduleResource = moduleLocaleResources.find(
+          (item) => item.language === language && item.namespace === namespace
+        );
+        return moduleResource
+          ? Promise.resolve(moduleResource.resource)
+          : import(`./locales/${language}/${namespace}.json`);
+      })
     )
     .init(getOptions(language, namespace));
+
+  for (const resource of moduleLocaleResources) {
+    i18nInstance.addResourceBundle(
+      resource.language,
+      resource.namespace,
+      resource.resource,
+      true,
+      true
+    );
+  }
 
   return i18nInstance;
 };
