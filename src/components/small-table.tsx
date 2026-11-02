@@ -194,6 +194,7 @@ export function SmallTable<T>({
     manualSorting: true,
     pageCount: totalPages,
     enableMultiSort: false,
+    enableSortingRemoval: false,
     state: { pagination, sorting },
     onPaginationChange: (updater) => {
       const next = functionalUpdate(updater, pagination);
