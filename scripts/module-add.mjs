@@ -63,7 +63,7 @@ function cmdAdd(alias, { ref, repo }) {
     fail(`nama repository tidak valid: ${repository}`);
   }
 
-  const spec = `github:${repository}#${ref}`;
+  const spec = `git+https://github.com/${repository}.git#${ref}`;
   console.log(`[module:add] memasang ${packageName(alias)} dari ${spec}`);
   runNpm(["install", "--save-exact", spec]);
   regenerateRegistry();
