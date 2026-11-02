@@ -7,6 +7,6 @@ skip_if: import { useGet<%= h.inflection.transform(type, ['pluralize']) %>ListQu
 
 <% if (kind === 'reference' || kind === 'denormalized') { -%>
   <% if (type !== 'File') { -%>
-    import { useGet<%= h.inflection.transform(type, ['pluralize']) %>ListQuery } from "@/app/[language]/admin/<%= h.inflection.transform(type, ['pluralize', 'underscore', 'dasherize']) %>/queries/queries";
+    import { useGet<%= h.inflection.transform(type, ['pluralize']) %>ListQuery } from "@/app/admin/<%= h.inflection.transform(type, ['pluralize', 'underscore', 'dasherize']) %>/queries/queries";
   <% } -%>
 <% } -%>
