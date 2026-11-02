@@ -10,59 +10,50 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const outPath = join(root, "src/generated/module-registry.ts");
-
-// Manifest discovery memindai DISK, bukan file index. Alasannya: `src/modules/`
-// ada di .gitignore (isi modul datang dari repo terpisah lewat
-// `scripts/module-add.mjs`), jadi tidak boleh ada file core yang mendaftarkan
-// modul eksternal — file itu akan menunjuk folder yang hilang di fresh clone.
-//
-// Dua sumber, dibedakan letak foldernya:
-//   core        src/core/manifests/*.manifest.ts   — tracked, selalu ikut
-//   eksternal   src/modules/<alias>/module.manifest.ts — hasil module-add
+const localeOutPath = join(root, "src/generated/module-locales.ts");
 const CORE_MANIFEST_DIR = join(root, "src/core/manifests");
-const EXTERNAL_MODULES_DIR = join(root, "src/modules");
+const PACKAGE_JSON = join(root, "package.json");
+const LANGUAGES = ["en", "id", "ja", "ko", "zh"];
 
-/**
- * Kembalikan daftar manifest yang harus di-import, sebagai alias path '@/…'.
- * Nama file sudah diurutkan supaya output stabil antar-run — tanpa itu registry
- * bisa bergeser urutan tiap build dan menghasilkan diff palsu.
- */
 function discoverManifests() {
   const found = [];
-
-  // Core: hanya file *.manifest.ts langsung di folder, bukan subfolder.
   if (existsSync(CORE_MANIFEST_DIR)) {
     for (const name of readdirSync(CORE_MANIFEST_DIR).sort()) {
       if (name.endsWith(".manifest.ts")) {
         found.push({
           alias: `@/core/manifests/${basename(name, ".ts")}`,
           file: join(CORE_MANIFEST_DIR, name),
+          packageName: null,
         });
       }
     }
   }
 
-  // Eksternal: satu folder per alias, manifest HARUS bernama module.manifest.ts.
-  // Folder tanpa manifest adalah kesalahan (module:add yang gagal di tengah),
-  // bukan "modul yang belumJadi" — diamkan saja akan menghasilkan modul hilang
-  // tanpa jejak saat runtime.
-  if (existsSync(EXTERNAL_MODULES_DIR)) {
-    for (const alias of readdirSync(EXTERNAL_MODULES_DIR, {
-      withFileTypes: true,
-    })) {
-      if (!alias.isDirectory()) continue;
-      const file = join(EXTERNAL_MODULES_DIR, alias.name, "module.manifest.ts");
-      if (!existsSync(file)) {
-        console.error(
-          `[module-registry] src/modules/${alias.name}/ tidak punya module.manifest.ts — ` +
-            `folder dibuang. Jalankan ulang 'npm run module:add ${alias.name}'.`
-        );
-        process.exit(1);
-      }
-      found.push({ alias: `@/modules/${alias.name}/module.manifest`, file });
-    }
-  }
+  const packageJson = JSON.parse(readFileSync(PACKAGE_JSON, "utf8"));
+  const dependencies = Object.keys(packageJson.dependencies ?? {})
+    .filter((name) => name.startsWith("@wasnaker/module-"))
+    .sort();
 
+  for (const packageName of dependencies) {
+    const moduleAlias = packageName.slice("@wasnaker/module-".length);
+    const packageRoot = join(root, "node_modules", "@wasnaker", `module-${moduleAlias}`);
+    const packageManifest = join(
+      packageRoot,
+      "web/src/modules",
+      moduleAlias,
+      "module.manifest.ts"
+    );
+    if (!existsSync(packageManifest)) {
+      console.error(`[module-registry] ${packageName} tidak memiliki module manifest pada ${packageManifest}`);
+      process.exit(1);
+    }
+    found.push({
+      alias: `${packageName}/manifest`,
+      file: packageManifest,
+      packageName,
+      moduleAlias,
+    });
+  }
   return found;
 }
 
@@ -202,8 +193,7 @@ const aliases = manifests.map((m) => m.alias);
 
 const lines = [
   "// AUTO-GENERATED oleh scripts/generate-module-registry.mjs",
-  "// Jangan edit manual. Sumber kebenaran: src/core/manifests/*.manifest.ts",
-  "// (core) dan src/modules/*/module.manifest.ts (modul eksternal).",
+  "// Jangan edit manual. Sumber module: package dependencies @wasnaker/module-*.",
   'import type { ModuleManifest } from "@/core/modules/types";',
   ...manifests.map(({ alias }) => `import ${ident(alias)} from "${alias}";`),
   "",
@@ -213,13 +203,47 @@ const lines = [
         "export const moduleRegistry: ModuleManifest[] = [",
         ...manifests.map(({ alias }) => `  ${ident(alias)},`),
         "];",
-      ].join("\n"),
+      ].join("\\n"),
+  "",
+];
+
+const localeImports = [];
+const localeEntries = [];
+for (const manifest of manifests.filter((item) => item.packageName)) {
+  const moduleAlias = manifest.moduleAlias;
+  const packageJsonPath = join(
+    root,
+    "node_modules",
+    "@wasnaker",
+    `module-${moduleAlias}`,
+    "package.json"
+  );
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+  for (const language of LANGUAGES) {
+    const exportPath = `./locales/${language}`;
+    if (!packageJson.exports?.[exportPath]) continue;
+    const localIdent = ident(`${moduleAlias}_${language}`);
+    const importPath = `${manifest.packageName}/locales/${language}`;
+    localeImports.push(`import ${localIdent} from "${importPath}";`);
+    localeEntries.push(
+      `  { namespace: "module-${moduleAlias}", language: "${language}", resource: ${localIdent} },`
+    );
+  }
+}
+
+const localeLines = [
+  "// AUTO-GENERATED oleh scripts/generate-module-registry.mjs",
+  ...localeImports,
+  "",
+  "export const moduleLocaleResources = [",
+  ...localeEntries,
+  "] as const;",
   "",
 ];
 
 mkdirSync(dirname(outPath), { recursive: true });
-writeFileSync(outPath, lines.join("\n"));
+writeFileSync(outPath, lines.join("\\n"));
+writeFileSync(localeOutPath, localeLines.join("\\n"));
 console.log(
-  `[module-registry] ${aliases.length} manifest ditulis ke ${outPath} ` +
-    `(${slugs.size} slug)`
+  `[module-registry] ${aliases.length} manifest dan ${localeEntries.length} locale resources dihasilkan`
 );
