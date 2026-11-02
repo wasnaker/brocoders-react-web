@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 /**
  * State master-detail untuk halaman tipe "list + panel kanan".
@@ -9,10 +10,14 @@ import { useCallback, useEffect, useState } from "react";
  * - `select(id)`  → klik baris, panel terbuka.
  * - `close()`     → tutup panel, hapus hash.
  * - `toggle()`    → lipat/buka panel tanpa mengubah pilihan.
- * - `afterSave(id)` → SETELAH create/update: pilih id hasil simpan dan buka
- *   panel. Panel detail WAJIB merender entitas dari endpoint detail
- *   (`GET /:id`), bukan dari baris list, supaya item baru / item yang pindah
- *   halaman tetap tampil.
+ * - `afterSave(id)` → SETELAH create/update: invalidasi cache, pilih id hasil
+ *   simpan, buka panel. Panel detail WAJIB merender entitas dari endpoint
+ *   detail (`GET /:id`), bukan dari baris list, supaya item baru / item yang
+ *   pindah halaman tetap tampil.
+ *
+ * Invalidasi cache ada di sini, bukan di modul: query list dan query detail
+ * punya cache terpisah, jadi modul yang hanya meng-invalidasi list akan
+ * menampilkan nilai lama di panel saat item yang sedang tampil diedit.
  *
  * Id disimpan sebagai string di hash URL (#<id>) agar bisa di-bookmark dan
  * bertahan saat refresh.
@@ -23,6 +28,12 @@ export type MasterDetailId = number | string;
 export interface UseMasterDetailOptions {
   /** Sinkronkan id terpilih ke URL hash. Default: true. */
   syncHash?: boolean;
+  /**
+   * Prefix query key milik modul (mis. `["region"]`) yang di-invalidasi
+   * setelah simpan. Default: seluruh query aktif, sehingga panel detail dan
+   * list selalu segar walau modul lupa menambahkan invalidasi.
+   */
+  invalidateKey?: readonly unknown[];
 }
 
 export interface MasterDetailState {
@@ -36,8 +47,9 @@ export interface MasterDetailState {
 }
 
 export function useMasterDetail(
-  { syncHash = true }: UseMasterDetailOptions = {},
+  { syncHash = true, invalidateKey }: UseMasterDetailOptions = {},
 ): MasterDetailState {
+  const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<MasterDetailId | null>(null);
   const [showDetail, setShowDetailState] = useState(false);
 
@@ -76,10 +88,17 @@ export function useMasterDetail(
     [openWith],
   );
 
-  // Semantik eksplisit untuk alur simpan: panel menampilkan hasil simpan.
+  // Semantik eksplisit untuk alur simpan: segarkan cache lalu tampilkan
+  // entitas hasil simpan. Query detail dan list punya key berbeda, jadi
+  // keduanya harus di-invalidasi di sini (bukan hanya list di modul).
   const afterSave = useCallback(
-    (id: MasterDetailId) => openWith(id),
-    [openWith],
+    (id: MasterDetailId) => {
+      void queryClient.invalidateQueries(
+        invalidateKey ? { queryKey: invalidateKey } : undefined,
+      );
+      openWith(id);
+    },
+    [openWith, queryClient, invalidateKey],
   );
 
   const close = useCallback(() => {

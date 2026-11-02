@@ -29,7 +29,7 @@ const { selectedId, showDetail, select, close, toggle, afterSave } =
 | `select(id)` | klik baris → pilih + buka panel + tulis hash |
 | `close()` | tutup panel + hapus pilihan + hapus hash |
 | `toggle()` | lipat/buka panel tanpa mengubah pilihan |
-| `afterSave(id)` | **wajib dipanggil setelah create/update** → pilih id hasil simpan dan buka panel |
+| `afterSave(id)` | **wajib dipanggil setelah create/update** → invalidasi cache, pilih id hasil simpan, buka panel |
 
 ### `SmallTable` — `@/components/small-table`
 
@@ -68,14 +68,15 @@ benar setelah refetch.
 1. Pakai `useMasterDetail()` — jangan buat state seleksi sendiri.
 2. Ambil detail dengan hook `useX(id)` saat `selectedId != null`.
 3. Teruskan `detailItem` + `detailLoading` ke `SmallTable`.
-4. Di `onSuccess` form: invalidate query list, lalu `afterSave(savedId)`.
+4. Di `onSuccess` form: cukup `afterSave(savedId)` — invalidasi cache milik core
+   (default: semua query aktif; bisa dipersempit lewat opsi `invalidateKey`).
 5. Jangan menulis hash URL atau menyembunyikan panel secara manual.
 
 Contoh:
 
 ```tsx
 const { selectedId, showDetail, select, close, toggle, afterSave } =
-  useMasterDetail();
+  useMasterDetail({ invalidateKey: ["x"] });
 const detailId = selectedId != null ? Number(selectedId) : null;
 const { data: item, isLoading } = useX(detailId);
 
@@ -90,10 +91,5 @@ const { data: item, isLoading } = useX(detailId);
   /* columns, tabs, customTabBody, toolbar */
 />;
 
-<XFormDialog
-  onSuccess={(savedId) => {
-    qc.invalidateQueries({ queryKey: ["x", "list"] });
-    afterSave(savedId);
-  }}
-/>;
+<XFormDialog onSuccess={(savedId) => afterSave(savedId)} />;
 ```
