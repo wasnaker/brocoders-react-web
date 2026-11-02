@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SortConfig, TableFilters, TableResponse } from "./types";
 
@@ -99,24 +99,18 @@ export function useTable<T>({
   const [search, setSearchState] = useState("");
   const [sort, setSortState] = useState<SortConfig | undefined>();
 
-  // Debounced search — update state setelah user berhenti mengetik
+  // Debounce hanya nilai yang dikirim ke server. Timer dikelola oleh effect
+  // agar setiap perubahan query membersihkan timer sebelumnya dan tidak ada
+  // request tertunda setelah komponen unmount.
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debounceTimer = useMemo(
-    () =>
-      setTimeout(() => {
-        setDebouncedSearch(search);
-        setPageState(1);
-      }, searchDebounce),
-    [search, searchDebounce]
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, searchDebounce);
 
-  // Cleanup timer saat unmount atau search berubah
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemo(() => {
-    return () => clearTimeout(debounceTimer);
-  }, [debounceTimer]);
+    return () => clearTimeout(timer);
+  }, [search, searchDebounce]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: [...queryKey, page, limit, debouncedSearch, sort],
@@ -151,7 +145,8 @@ export function useTable<T>({
 
   const setSearch = useCallback((q: string) => {
     setSearchState(q);
-    // Page reset dilakukan di debounce timer
+    // Reset langsung supaya hasil pencarian selalu dimulai dari halaman 1.
+    setPageState(1);
   }, []);
 
   const setSort = useCallback((newSort: SortConfig | undefined) => {
