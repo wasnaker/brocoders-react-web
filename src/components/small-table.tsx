@@ -159,7 +159,8 @@ export function SmallTable<T>({
   const setQ = onSearchChange ?? setInternalSearch;
 
   // Selection — detailItem diprioritaskan untuk konsistensi
-  const listSelected = items.find((it) => String(getItemId(it)) === String(selectedId)) ?? null;
+  const listSelected =
+    items.find((it) => String(getItemId(it)) === String(selectedId)) ?? null;
   const selected = detailItem ?? listSelected;
   const hasSelection = selectedId !== null && selectedId !== undefined;
   const showDetailPanel = hasSelection && showDetail;
@@ -173,16 +174,22 @@ export function SmallTable<T>({
     return columns;
   }, [columns, smallMode]);
 
-  const pagination: PaginationState = { pageIndex: currentPage - 1, pageSize: perPage };
-  const sorting: SortingState = sort ? [{ id: sort.field, desc: sort.order === "DESC" }] : [];
+  const pagination: PaginationState = {
+    pageIndex: currentPage - 1,
+    pageSize: perPage,
+  };
+  const sorting: SortingState = sort
+    ? [{ id: sort.field, desc: sort.order === "DESC" }]
+    : [];
   const tableColumns = useMemo<ColumnDef<T>[]>(
-    () => visibleCols.map((column) => ({
-      id: column.key,
-      accessorFn: (item) => item,
-      header: column.label,
-      cell: (context) => column.render(context.row.original),
-      enableSorting: Boolean(onSortChange),
-    })),
+    () =>
+      visibleCols.map((column) => ({
+        id: column.key,
+        accessorFn: (item) => item,
+        header: column.label,
+        cell: (context) => column.render(context.row.original),
+        enableSorting: Boolean(onSortChange),
+      })),
     [visibleCols, onSortChange]
   );
   const table = useReactTable({
@@ -204,7 +211,12 @@ export function SmallTable<T>({
       if (!onSortChange) return;
       const next = functionalUpdate(updater, sorting);
       const first = next[0];
-      if (first) onSortChange({ field: first.id, order: first.desc ? "DESC" : "ASC" });
+      if (first) {
+        onSortChange({
+          field: first.id,
+          order: first.desc ? "DESC" : "ASC",
+        });
+      }
     },
   });
 
@@ -240,11 +252,26 @@ export function SmallTable<T>({
               <TableRow>
                 {table.getHeaderGroups().map((headerGroup) =>
                   headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="px-4 py-2.5 text-xs font-semibold text-muted-foreground">
+                    <TableHead
+                      key={header.id}
+                      className="px-4 py-2.5 text-xs font-semibold text-muted-foreground"
+                    >
                       {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={header.column.getToggleSortingHandler()}>
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 hover:text-foreground"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          <span aria-label={header.column.getIsSorted() === "asc" ? "Ascending" : header.column.getIsSorted() === "desc" ? "Descending" : "Unsorted"}>
+                          <span
+                            aria-label={
+                              header.column.getIsSorted() === "asc"
+                                ? "Ascending"
+                                : header.column.getIsSorted() === "desc"
+                                  ? "Descending"
+                                  : "Unsorted"
+                            }
+                          >
                             {header.column.getIsSorted() === "asc" ? "↑" : header.column.getIsSorted() === "desc" ? "↓" : "↕"}
                           </span>
                         </button>
