@@ -1,6 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  flexRender,
+  functionalUpdate,
+  getCoreRowModel,
+  useReactTable,
+  type ColumnDef,
+  type PaginationState,
+  type SortingState,
+} from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import SearchIcon from "lucide-react/dist/esm/icons/search";
 import {
@@ -23,8 +32,8 @@ import { Input } from "@/components/ui/input";
  * agar auto-expand. Tombol toggle ◀/▶ juga ada di parent (di toolbar prop atau
  * samping SmallTable), bukan di dalam SmallTable.
  *
- * Host TIDAK memiliki @tanstack/react-table — pagination & filtering dilakukan
- * secara client-side dengan state React biasa.
+ * TanStack Table menjadi headless engine untuk row model, sorting state, dan
+ * pagination state. Data tetap diproses server-side; UI tetap memakai shadcn.
  *
  * SEMANTIC CLASS NAMES (bahasa diskusi UI):
  *   small-table / small-table-list / small-table-detail
@@ -145,13 +154,9 @@ export function SmallTable<T>({
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const currentPage = pageProp ?? 1;
 
-  // Search controlled — untuk mode server, ini hanya display value
+  // Search dikendalikan parent; server menerima query dan mengembalikan page data.
   const [internalSearch, setInternalSearch] = useState("");
-  const q = (searchValue ?? internalSearch).trim();
   const setQ = onSearchChange ?? setInternalSearch;
-
-  // Items langsung dari server (sudah dipaginasi)
-  const pagedItems = items;
 
   // Selection — detailItem diprioritaskan untuk konsistensi
   const listSelected = items.find((it) => String(getItemId(it)) === String(selectedId)) ?? null;
@@ -168,27 +173,39 @@ export function SmallTable<T>({
     return columns;
   }, [columns, smallMode]);
 
-  // Handler pagination
-  const handlePrev = useCallback(() => {
-    if (onPageChange && currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
-  }, [onPageChange, currentPage]);
-
-  const handleNext = useCallback(() => {
-    if (onPageChange && currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
-  }, [onPageChange, currentPage, totalPages]);
-
-  // Handler sort — klik header kolom
-  const handleSort = useCallback((field: string) => {
-    if (!onSortChange) return;
-    onSortChange({
-      field,
-      order: sort?.field === field && sort.order === 'ASC' ? 'DESC' : 'ASC',
-    });
-  }, [onSortChange, sort]);
+  const pagination: PaginationState = { pageIndex: currentPage - 1, pageSize: perPage };
+  const sorting: SortingState = sort ? [{ id: sort.field, desc: sort.order === "DESC" }] : [];
+  const tableColumns = useMemo<ColumnDef<T>[]>(
+    () => visibleCols.map((column) => ({
+      id: column.key,
+      accessorFn: (item) => item,
+      header: column.label,
+      cell: (context) => column.render(context.row.original),
+      enableSorting: Boolean(onSortChange),
+    })),
+    [visibleCols, onSortChange]
+  );
+  const table = useReactTable({
+    data: items,
+    columns: tableColumns,
+    getRowId: (item) => String(getItemId(item)),
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    manualSorting: true,
+    pageCount: totalPages,
+    enableMultiSort: false,
+    state: { pagination, sorting },
+    onPaginationChange: (updater) => {
+      const next = functionalUpdate(updater, pagination);
+      onPageChange?.(next.pageIndex + 1);
+    },
+    onSortingChange: (updater) => {
+      if (!onSortChange) return;
+      const next = functionalUpdate(updater, sorting);
+      const first = next[0];
+      if (first) onSortChange({ field: first.id, order: first.desc ? "DESC" : "ASC" });
+    },
+  });
 
   return (
     <div className="small-table flex flex-col gap-4 lg:flex-row">
@@ -220,34 +237,35 @@ export function SmallTable<T>({
           <Table>
             <TableHeader>
               <TableRow>
-                {visibleCols.map((c) => (
-                  <TableHead
-                    key={c.key}
-                    className="px-4 py-2.5 text-xs font-semibold text-muted-foreground"
-                  >
-                    {c.label}
-                  </TableHead>
-                ))}
-                {/* Sort indicator header — optional, modul bisa tambah sendiri */}
-                {onSortChange && (
-                  <TableHead className="px-4 py-2.5 text-xs font-semibold text-muted-foreground w-[40px]">
-                    {/* Reserved for sort indicator */}
-                  </TableHead>
+                {table.getHeaderGroups().map((headerGroup) =>
+                  headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="px-4 py-2.5 text-xs font-semibold text-muted-foreground">
+                      {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                        <button type="button" className="inline-flex items-center gap-1 hover:text-foreground" onClick={header.column.getToggleSortingHandler()}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <span aria-label={header.column.getIsSorted() === "asc" ? "Ascending" : header.column.getIsSorted() === "desc" ? "Descending" : "Unsorted"}>
+                            {header.column.getIsSorted() === "asc" ? "↑" : header.column.getIsSorted() === "desc" ? "↓" : "↕"}
+                          </span>
+                        </button>
+                      ) : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))
                 )}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagedItems.length === 0 ? (
+              {table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={visibleCols.length + (onSortChange ? 1 : 0)}
+                    colSpan={Math.max(1, visibleCols.length)}
                     className="px-4 py-10 text-center text-sm text-muted-foreground"
                   >
                     {emptyText}
                   </TableCell>
                 </TableRow>
               ) : (
-                pagedItems.map((item) => {
+                table.getRowModel().rows.map((row) => {
+                  const item = row.original;
                   const id = getItemId(item);
                   const active = String(id) === String(selectedId);
                   return (
@@ -259,27 +277,22 @@ export function SmallTable<T>({
                         active ? "small-table-list-row--selected bg-muted" : ""
                       )}
                     >
-                      {visibleCols.map((col) => {
-                        const isPrimary = col.primary;
+                      {row.getVisibleCells().map((cell) => {
+                        const col = visibleCols.find((candidate) => candidate.key === cell.column.id);
                         return (
                           <TableCell
-                            key={col.key}
+                            key={cell.id}
                             className={cn(
                               "small-table-list-col px-4 py-3 text-sm",
-                              isPrimary
+                              col?.primary
                                 ? "small-table-list-col--primary font-medium text-foreground"
                                 : "text-muted-foreground"
                             )}
                           >
-                            {col.render(item)}
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         );
                       })}
-                      {onSortChange && (
-                        <TableCell className="px-4 py-3 text-sm text-muted-foreground">
-                          {/* Sort indicator placeholder */}
-                        </TableCell>
-                      )}
                     </TableRow>
                   );
                 })
