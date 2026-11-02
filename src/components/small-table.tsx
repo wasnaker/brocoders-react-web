@@ -316,8 +316,8 @@ export function SmallTable<T>({
                 <Button
                   variant="outline"
                   size="xs"
-                  onClick={() => onPageChange?.(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
                 >
                   ‹ Prev
                 </Button>
@@ -327,8 +327,8 @@ export function SmallTable<T>({
                 <Button
                   variant="outline"
                   size="xs"
-                  onClick={() => onPageChange?.(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage >= totalPages}
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
                 >
                   Next ›
                 </Button>
