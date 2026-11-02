@@ -10,8 +10,8 @@
     "profile": "프로필",
     "users": "사용자",
     "permissions": "권한",
-    "roles": "Roles",
-    "modules": "Modules",
+    "roles": "역할",
+    "modules": "모듈",
     "settings": "설정",
     "logout": "로그아웃"
   },
