@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import SearchIcon from "lucide-react/dist/esm/icons/search";
 import {
@@ -50,7 +50,11 @@ export interface DetailTab {
 }
 
 export interface SmallTableProps<T> {
+  /** Mode tabel — saat ini hanya 'server' (client-side dihapus untuk konsistensi). */
+  mode?: 'server';
   items: T[];
+  /** Total record di server (wajib untuk mode server — untuk hitung totalPages). */
+  total?: number;
   tabs?: DetailTab[];
   columns: SmallTableColumn<T>[];
   selectedId: number | string | null;
@@ -74,11 +78,20 @@ export interface SmallTableProps<T> {
   refreshKey?: number;
   /** Renderer khusus per-tab (slug tab → komponen). Default: render inline data. */
   customTabBody?: Record<string, (item: T, tab: DetailTab) => React.ReactNode>;
-  searchableKeys?: string[];
-  getSearchText?: (item: T) => string;
+  /** Search query saat ini (controlled oleh parent via useTable). */
   searchValue?: string;
+  /** Handler saat search berubah (controlled oleh parent via useTable). */
   onSearchChange?: (v: string) => void;
+  /** Halaman aktif (1-based, controlled oleh parent). */
+  page?: number;
+  /** Handler saat halaman berubah (controlled oleh parent). */
+  onPageChange?: (page: number) => void;
+  /** Baris per halaman (default: 20). */
   perPage?: number;
+  /** Sort config saat ini (controlled oleh parent). */
+  sort?: { field: string; order: 'ASC' | 'DESC' };
+  /** Handler saat sort berubah (controlled oleh parent). */
+  onSortChange?: (sort: { field: string; order: 'ASC' | 'DESC' }) => void;
   emptyText?: string;
   tabEmptyText?: string;
   /** Label untuk pagination, misal "dari N" / "of N". */
@@ -89,7 +102,9 @@ export interface SmallTableProps<T> {
 }
 
 export function SmallTable<T>({
+  mode = 'server',
   items,
+  total: totalProp,
   tabs = [],
   columns,
   selectedId,
@@ -103,11 +118,13 @@ export function SmallTable<T>({
   detailLoading = false,
   refreshKey: _refreshKey = 0,
   customTabBody,
-  searchableKeys = [],
-  getSearchText,
   searchValue,
   onSearchChange,
-  perPage = 10,
+  page: pageProp = 1,
+  onPageChange,
+  perPage = 20,
+  sort,
+  onSortChange,
   emptyText = "Tidak ada item.",
   tabEmptyText = "Tidak ada data.",
   paginationOfLabel = "dari",
@@ -123,56 +140,21 @@ export function SmallTable<T>({
   const activeTabDef =
     sortedTabs.find((tab) => tab.slug === activeTab) ?? sortedTabs[0] ?? null;
 
-  // Search
+  // Server-side mode: items sudah difilter & dipaginasi dari server
+  const total = totalProp ?? items.length;
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const currentPage = pageProp ?? 1;
+
+  // Search controlled — untuk mode server, ini hanya display value
   const [internalSearch, setInternalSearch] = useState("");
-  const q = (searchValue ?? internalSearch).trim().toLowerCase();
+  const q = (searchValue ?? internalSearch).trim();
   const setQ = onSearchChange ?? setInternalSearch;
 
-  // Client-side filter
-  const filteredItems = useMemo(() => {
-    if (!q) return items;
-    return items.filter((it) => {
-      if (getSearchText) return getSearchText(it).toLowerCase().includes(q);
-      return searchableKeys.some((key) =>
-        String((it as Record<string, unknown>)[key] ?? "")
-          .toLowerCase()
-          .includes(q)
-      );
-    });
-  }, [items, q, getSearchText, searchableKeys]);
+  // Items langsung dari server (sudah dipaginasi)
+  const pagedItems = items;
 
-  // Pagination state
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(perPage);
-
-  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
-  const safePage = Math.min(pageIndex, totalPages - 1);
-
-  const pagedItems = useMemo(() => {
-    return filteredItems.slice(safePage * pageSize, (safePage + 1) * pageSize);
-  }, [filteredItems, safePage, pageSize]);
-
-  // Reset to page 0 when search changes
-  useEffect(() => {
-    setPageIndex(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q]);
-
-  // Sync pageSize from prop
-  useEffect(() => {
-    setPageSize(perPage);
-  }, [perPage]);
-
-  // Clamp page when data shrinks
-  useEffect(() => {
-    if (pageIndex >= totalPages) setPageIndex(Math.max(0, totalPages - 1));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredItems.length, totalPages]);
-
-  const listSelected =
-    filteredItems.find((it) => getItemId(it) === selectedId) ?? null;
-  // Detail diprioritaskan dari `detailItem` (hasil GET /:id) supaya tetap
-  // tampil ketika baris tidak ada di halaman list yang sedang aktif.
+  // Selection — detailItem diprioritaskan untuk konsistensi
+  const listSelected = items.find((it) => String(getItemId(it)) === String(selectedId)) ?? null;
   const selected = detailItem ?? listSelected;
   const hasSelection = selectedId !== null && selectedId !== undefined;
   const showDetailPanel = hasSelection && showDetail;
@@ -186,6 +168,28 @@ export function SmallTable<T>({
     return columns;
   }, [columns, smallMode]);
 
+  // Handler pagination
+  const handlePrev = useCallback(() => {
+    if (onPageChange && currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  }, [onPageChange, currentPage]);
+
+  const handleNext = useCallback(() => {
+    if (onPageChange && currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  }, [onPageChange, currentPage, totalPages]);
+
+  // Handler sort — klik header kolom
+  const handleSort = useCallback((field: string) => {
+    if (!onSortChange) return;
+    onSortChange({
+      field,
+      order: sort?.field === field && sort.order === 'ASC' ? 'DESC' : 'ASC',
+    });
+  }, [onSortChange, sort]);
+
   return (
     <div className="small-table flex flex-col gap-4 lg:flex-row">
       {/* ── Kolom kiri: tabel ─────────────────────────────────────────── */}
@@ -197,17 +201,15 @@ export function SmallTable<T>({
       >
         {/* Search + optional list header */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          {(getSearchText || searchableKeys.length > 0) && (
-            <div className="small-table-search relative flex-1">
-              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Cari…"
-                value={searchValue ?? internalSearch}
-                onChange={(e) => setQ(e.target.value)}
-                className="h-9 pl-9 text-sm"
-              />
-            </div>
-          )}
+          <div className="small-table-search relative flex-1">
+            <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Cari…"
+              value={searchValue ?? internalSearch}
+              onChange={(e) => setQ(e.target.value)}
+              className="h-9 pl-9 text-sm"
+            />
+          </div>
           {listHeader && (
             <div className="flex items-center gap-2">{listHeader}</div>
           )}
@@ -226,13 +228,19 @@ export function SmallTable<T>({
                     {c.label}
                   </TableHead>
                 ))}
+                {/* Sort indicator header — optional, modul bisa tambah sendiri */}
+                {onSortChange && (
+                  <TableHead className="px-4 py-2.5 text-xs font-semibold text-muted-foreground w-[40px]">
+                    {/* Reserved for sort indicator */}
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagedItems.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={visibleCols.length}
+                    colSpan={visibleCols.length + (onSortChange ? 1 : 0)}
                     className="px-4 py-10 text-center text-sm text-muted-foreground"
                   >
                     {emptyText}
@@ -267,6 +275,11 @@ export function SmallTable<T>({
                           </TableCell>
                         );
                       })}
+                      {onSortChange && (
+                        <TableCell className="px-4 py-3 text-sm text-muted-foreground">
+                          {/* Sort indicator placeholder */}
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })
@@ -274,37 +287,35 @@ export function SmallTable<T>({
             </TableBody>
           </Table>
 
-          {/* Pagination footer */}
-          {filteredItems.length > pageSize && (
+          {/* Pagination footer — server-side mode */}
+          {totalPages > 1 && (
             <div className="small-table-pagination flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5 text-xs text-muted-foreground">
               <span>
-                {filteredItems.length === 0
+                {total === 0
                   ? "0"
-                  : `${safePage * pageSize + 1}–${Math.min(
-                      (safePage + 1) * pageSize,
-                      filteredItems.length
+                  : `${(currentPage - 1) * perPage + 1}–${Math.min(
+                      currentPage * perPage,
+                      total
                     )}`}{" "}
-                {paginationOfLabel} {filteredItems.length}
+                {paginationOfLabel} {total}
               </span>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="xs"
-                  onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-                  disabled={safePage === 0}
+                  onClick={() => onPageChange?.(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
                 >
                   ‹ Prev
                 </Button>
                 <span className="min-w-[2rem] text-center">
-                  {safePage + 1} / {totalPages}
+                  {currentPage} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="xs"
-                  onClick={() =>
-                    setPageIndex((p) => Math.min(totalPages - 1, p + 1))
-                  }
-                  disabled={safePage >= totalPages - 1}
+                  onClick={() => onPageChange?.(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage >= totalPages}
                 >
                   Next ›
                 </Button>
