@@ -61,6 +61,16 @@ export interface SmallTableProps<T> {
   toolbar?: (item: T) => React.ReactNode;
   /** Kontrol visibilitas panel detail dari parent — KUNCI POLA. */
   showDetail?: boolean;
+  /**
+   * Entitas sumber panel detail (biasanya hasil `GET /:id`).
+   *
+   * Diisi parent agar panel tetap tampil walau baris tidak ada di halaman
+   * list aktif — mis. setelah create (item baru belum tentu ada di page 1)
+   * atau setelah edit (nama berubah sehingga urutan/halaman berpindah).
+   */
+  detailItem?: T | null;
+  /** True saat `detailItem` sedang dimuat. */
+  detailLoading?: boolean;
   refreshKey?: number;
   /** Renderer khusus per-tab (slug tab → komponen). Default: render inline data. */
   customTabBody?: Record<string, (item: T, tab: DetailTab) => React.ReactNode>;
@@ -89,6 +99,8 @@ export function SmallTable<T>({
     String((item as Record<string, unknown>)["name"] ?? getItemId(item)),
   toolbar,
   showDetail = true,
+  detailItem = null,
+  detailLoading = false,
   refreshKey: _refreshKey = 0,
   customTabBody,
   searchableKeys = [],
@@ -157,9 +169,14 @@ export function SmallTable<T>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredItems.length, totalPages]);
 
-  const selected =
+  const listSelected =
     filteredItems.find((it) => getItemId(it) === selectedId) ?? null;
-  const smallMode = selected !== null && showDetail;
+  // Detail diprioritaskan dari `detailItem` (hasil GET /:id) supaya tetap
+  // tampil ketika baris tidak ada di halaman list yang sedang aktif.
+  const selected = detailItem ?? listSelected;
+  const hasSelection = selectedId !== null && selectedId !== undefined;
+  const showDetailPanel = hasSelection && showDetail;
+  const smallMode = showDetailPanel;
 
   // Kolom yang tampil: mode kecil = hanya primary
   const visibleCols = useMemo(() => {
@@ -168,8 +185,6 @@ export function SmallTable<T>({
     }
     return columns;
   }, [columns, smallMode]);
-
-  const showDetailPanel = selected !== null && showDetail;
 
   return (
     <div className="small-table flex flex-col gap-4 lg:flex-row">
@@ -302,63 +317,78 @@ export function SmallTable<T>({
       {/* ── Kolom kanan: panel detail — dikontrol sepenuhnya oleh showDetail prop ── */}
       {showDetailPanel && (
         <div className="small-table-detail min-w-0 flex-1 lg:w-7/12">
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
-            {/* Header */}
-            <div className="small-table-detail-header flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
-              <h2 className="text-sm font-semibold text-foreground">
-                {renderHeader ? (
-                  renderHeader(selected)
-                ) : (
-                  <>
-                    #{String(getItemId(selected))} {getItemTitle(selected)}
-                  </>
+          {selected ? (
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
+              {/* Header */}
+              <div className="small-table-detail-header flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
+                <h2 className="text-sm font-semibold text-foreground">
+                  {renderHeader ? (
+                    renderHeader(selected)
+                  ) : (
+                    <>
+                      #{String(getItemId(selected))} {getItemTitle(selected)}
+                    </>
+                  )}
+                </h2>
+                {toolbar && (
+                  <div className="small-table-toolbar flex items-center gap-2">
+                    {toolbar(selected)}
+                  </div>
                 )}
-              </h2>
-              {toolbar && (
-                <div className="small-table-toolbar flex items-center gap-2">
-                  {toolbar(selected)}
-                </div>
+              </div>
+
+              {/* Tab nav */}
+              {sortedTabs.length > 0 && (
+                <nav className="small-table-tabs flex flex-wrap gap-1 border-b border-border px-3 py-2">
+                  {sortedTabs.map((tab) => {
+                    const isActive = tab.slug === activeTab;
+                    return (
+                      <button
+                        key={tab.slug}
+                        type="button"
+                        onClick={() => setActiveTab(tab.slug)}
+                        className={cn(
+                          "small-table-tab flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors",
+                          isActive
+                            ? "small-table-tab--active bg-primary/10 font-medium text-primary"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        {tab.icon && <span className="text-xs">{tab.icon}</span>}
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </nav>
               )}
-            </div>
 
-            {/* Tab nav */}
-            {sortedTabs.length > 0 && (
-              <nav className="small-table-tabs flex flex-wrap gap-1 border-b border-border px-3 py-2">
-                {sortedTabs.map((tab) => {
-                  const isActive = tab.slug === activeTab;
-                  return (
-                    <button
-                      key={tab.slug}
-                      type="button"
-                      onClick={() => setActiveTab(tab.slug)}
-                      className={cn(
-                        "small-table-tab flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors",
-                        isActive
-                          ? "small-table-tab--active bg-primary/10 font-medium text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                      )}
-                    >
-                      {tab.icon && <span className="text-xs">{tab.icon}</span>}
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </nav>
-            )}
-
-            {/* Tab body */}
-            <div className="small-table-detail-body p-5">
-              {activeTabDef ? (
-                customTabBody?.[activeTabDef.slug] ? (
-                  customTabBody[activeTabDef.slug](selected, activeTabDef)
+              {/* Tab body */}
+              <div className="small-table-detail-body p-5">
+                {activeTabDef ? (
+                  customTabBody?.[activeTabDef.slug] ? (
+                    customTabBody[activeTabDef.slug](selected, activeTabDef)
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
+                  )
                 ) : (
                   <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
-                )
-              ) : (
-                <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-border bg-card p-5">
+              <div className="space-y-3" aria-busy={detailLoading}>
+                <div className="h-5 w-1/3 animate-pulse rounded bg-muted" />
+                <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+                <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
+              </div>
+              {!detailLoading && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {tabEmptyText}
+                </p>
               )}
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
