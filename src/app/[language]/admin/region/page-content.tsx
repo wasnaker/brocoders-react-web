@@ -2,12 +2,12 @@
 
 import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { RegionPage } from "@/modules/region";
+import { RegionPage } from "@wasnaker/module-region";
 
 /**
  * Halaman admin-panel untuk modul Region (bc-region).
- * Seluruh UI hidup di modul (src/modules/region) — file ini hanya
- * pemasang route + gate auth. Ini pola integrasi modul eksternal.
+ * Implementasi UI berasal dari package module; file ini hanya adapter route
+ * host dan authentication gate.
  */
 function Region() {
   return <RegionPage />;
