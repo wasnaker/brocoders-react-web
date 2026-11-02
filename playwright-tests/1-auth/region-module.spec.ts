@@ -2,8 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 // Kredensial seed admin (lihat user-seed.service.ts)
 const ADMIN = { email: "admin@example.com", password: "secret" };
-const API =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
 const SITE = "http://localhost:3000";
 
 async function login(page: Page) {
