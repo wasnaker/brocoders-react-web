@@ -73,5 +73,7 @@ jobs:
         if: always()
         run: |
           docker rm -f e2e-api e2e-maildev 2>/dev/null || true
-          cd backend
-          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational down -v --remove-orphans
+          if [ -d "$GITHUB_WORKSPACE/backend" ]; then
+            docker compose -f "$GITHUB_WORKSPACE/backend/docker-compose.relational.test.yaml" \
+              --env-file "$GITHUB_WORKSPACE/backend/env-example-relational" down -v --remove-orphans
+          fi
