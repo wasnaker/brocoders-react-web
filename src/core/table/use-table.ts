@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SortConfig, TableFilters, TableResponse } from "./types";
 import { useCoreSettings } from "@/core/settings/use-core-settings";
@@ -86,11 +86,9 @@ export function useTable<T>({
     return () => clearTimeout(timer);
   }, [search, searchDebounce]);
 
-  // Query key memakai snapshot filter agar perubahan filter selalu menghasilkan
-  // query baru dan tidak mencampur hasil dari kombinasi filter sebelumnya.
-  const stableFilters = useMemo(() => filters, [filters]);
+  // Filter state merupakan snapshot stabil sampai setFilters dipanggil.
   const query = useQuery({
-    queryKey: [...queryKey, page, limit, debouncedSearch, sort, stableFilters],
+    queryKey: [...queryKey, page, limit, debouncedSearch, sort, filters],
     queryFn: () =>
       fetchFn({
         page,
