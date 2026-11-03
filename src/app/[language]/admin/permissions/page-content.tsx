@@ -243,15 +243,12 @@ function Permissions() {
   return (
     <div className="page-content--wide">
       <div className="page-content--body">
-        <div className="page-header--split">
+        <div className="page-header--split admin-list-page-header">
           <h3 className="page-title">
             {tPermissions("admin-panel-permissions:title")}
           </h3>
           <div className="page-header__actions">
-            <Button
-              asChild
-              className="bg-success text-success-foreground hover:bg-success/90"
-            >
+            <Button asChild>
               <Link href="/admin/permissions/create">
                 {tPermissions("admin-panel-permissions:actions.create")}
               </Link>
