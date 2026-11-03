@@ -402,10 +402,10 @@
       @apply flex-col;
     }
     .tabs-shell__list {
-      @apply max-w-none flex-row overflow-x-auto border-r-0 border-b p-2;
+      @apply max-w-none flex-col border-r-0 border-b p-2;
     }
     .tabs-shell__trigger {
-      @apply w-auto shrink-0 whitespace-nowrap border-b-2 border-transparent;
+      @apply w-full shrink-0 border-r-2 border-transparent;
     }
     .tabs-shell__content {
       @apply p-4;
