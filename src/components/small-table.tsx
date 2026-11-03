@@ -324,7 +324,7 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading && table.getRowModel().rows.length === 0 ? (
+              {(isLoading || isFetching) && table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
