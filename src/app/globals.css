@@ -79,7 +79,7 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.5rem;
 
   /* Neutral scale — hue 270 at very low chroma so greys read as
      part of the same family as the brand, never as flat #808080. */
@@ -104,7 +104,7 @@
   --popover-foreground: var(--neutral-950);
 
   /* Brand & interaction — the 10% */
-  --primary: oklch(0.46 0.2 275);
+  --primary: oklch(0.43 0.13 255);
   --primary-foreground: oklch(1 0 0);
   --secondary: var(--neutral-200);
   --secondary-foreground: var(--neutral-900);
@@ -112,7 +112,7 @@
   --muted-foreground: var(--neutral-600);
 
   /* Accent carries brand chroma at surface scale, for hover/active rows */
-  --accent: oklch(0.945 0.028 275);
+  --accent: oklch(0.945 0.018 250);
   --accent-foreground: var(--neutral-900);
 
   /* Semantic status */
@@ -137,13 +137,13 @@
   --chart-4: oklch(0.44 0.16 240);
   --chart-5: oklch(0.46 0.21 27);
 
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: var(--neutral-950);
+  --sidebar: oklch(0.235 0.035 255);
+  --sidebar-foreground: var(--neutral-50);
   --sidebar-primary: oklch(0.46 0.2 275);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-primary-foreground: var(--neutral-950);
   --sidebar-accent: oklch(0.945 0.028 275);
-  --sidebar-accent-foreground: var(--neutral-900);
-  --sidebar-border: var(--neutral-200);
+  --sidebar-accent-foreground: var(--neutral-50);
+  --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.46 0.2 275);
 
   /* Elevation scale. The app had exactly one shadow value everywhere, which
@@ -165,13 +165,13 @@
   --popover: var(--neutral-900);
   --popover-foreground: var(--neutral-50);
 
-  --primary: oklch(0.72 0.16 275);
+  --primary: oklch(0.72 0.12 250);
   --primary-foreground: var(--neutral-950);
   --secondary: var(--neutral-800);
   --secondary-foreground: var(--neutral-50);
   --muted: var(--neutral-800);
   --muted-foreground: var(--neutral-300);
-  --accent: oklch(0.3 0.055 275);
+  --accent: oklch(0.31 0.045 255);
   --accent-foreground: var(--neutral-50);
 
   --destructive: oklch(0.72 0.14 25);
@@ -193,7 +193,7 @@
   --chart-4: oklch(0.72 0.13 240);
   --chart-5: oklch(0.72 0.14 25);
 
-  --sidebar: var(--neutral-900);
+  --sidebar: oklch(0.19 0.03 255);
   --sidebar-foreground: var(--neutral-50);
   --sidebar-primary: oklch(0.72 0.16 275);
   --sidebar-primary-foreground: var(--neutral-950);
@@ -307,10 +307,10 @@
   }
 
   .app-bar__brand {
-    @apply me-auto min-w-0 truncate font-mono text-lg font-bold;
+    @apply me-auto min-w-0 truncate font-sans text-base font-semibold;
     /* Tracking stepping down on narrow screens. At 0.3em the wordmark
        measured 172px and pushed the row 22px past the 390px viewport. */
-    @apply tracking-[0.15em] sm:tracking-[0.3em];
+    @apply tracking-[0.04em];
   }
 
   .app-bar__actions {
@@ -338,14 +338,14 @@
     @apply text-3xl font-semibold;
   }
   .page-subtitle {
-    @apply text-xl text-muted-foreground;
+    @apply text-sm leading-6 text-muted-foreground;
   }
 
   /* Wadah tabel virtual (TableVirtuoso) — shell yang sama di 4 halaman
      daftar admin, scroll horizontal disembunyikan vertikal supaya header
      fixed tidak ikut ter-scroll. */
   .table-shell {
-    @apply mb-2 overflow-x-auto overflow-y-hidden rounded-md border bg-card;
+    @apply mb-2 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-card shadow-[var(--elevation-1)];
   }
   /* Tombol header tabel yang bisa di-sort: ikon panah muncul saat aktif */
   .table-sort {
@@ -654,7 +654,7 @@
   }
 
   .widget-card {
-    @apply flex flex-col overflow-hidden rounded-xl border border-border bg-card;
+    @apply flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-[var(--elevation-1)];
   }
   .widget-card__header {
     @apply flex items-center gap-2 border-b border-border px-4 py-2.5;
@@ -690,7 +690,7 @@
 
   /* Stat tile — KPI angka: tinggi tetap, angka besar, label kecil. */
   .stat-tile {
-    @apply flex min-h-24 flex-col justify-between gap-1 rounded-xl border border-border bg-card p-4;
+    @apply flex min-h-24 flex-col justify-between gap-1 rounded-lg border border-border bg-card p-4 shadow-[var(--elevation-1)];
   }
   .stat-tile__value {
     /* Tabular nums supaya angka tidak "bergoyang" saat digit berubah. */
@@ -825,4 +825,68 @@
   .small-table { flex-direction: row !important; }
   .small-table:has(.small-table-detail) .small-table-list { width: 41.6667%; flex: 0 0 41.6667%; max-width: 41.6667%; }
   .small-table:has(.small-table-detail) .small-table-detail { flex: 1 1 58.3333%; max-width: 58.3333%; }
+}
+
+
+/* Enterprise visual refinement: restrained geometry, clear hierarchy and
+   consistent elevation across the application shell and data surfaces. */
+@layer components {
+  .app-bar {
+    @apply border-b border-border bg-background px-5;
+  }
+
+  .app-bar__brand {
+    @apply font-sans text-base font-semibold tracking-[0.04em] text-foreground;
+  }
+
+  .page-title {
+    @apply tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply text-sm leading-6 text-muted-foreground;
+  }
+
+  .table-shell,
+  .widget-card,
+  .stat-tile {
+    box-shadow: var(--elevation-1);
+  }
+
+  .widget-card__header {
+    @apply min-h-11 px-4 py-3;
+  }
+
+  .widget-card__body {
+    @apply px-4 py-4;
+  }
+
+  .widget-list__row,
+  .widget-card-link {
+    @apply rounded-md;
+  }
+
+  .dashboard-toolbar {
+    @apply rounded-lg border-border bg-card;
+  }
+
+  [data-slot="sidebar-menu-button"][data-active="true"] {
+    @apply border-s-2 border-sidebar-primary bg-sidebar-accent font-semibold text-sidebar-accent-foreground;
+  }
+
+  [data-slot="sidebar-menu-button"]:focus-visible {
+    @apply outline-2 outline-offset-2 outline-sidebar-ring;
+  }
+}
+
+/* Keep interaction feedback purposeful and respect reduced-motion settings. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
