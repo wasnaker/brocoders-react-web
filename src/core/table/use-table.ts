@@ -152,7 +152,7 @@ export function useTable<T>({
     data,
     total,
     isLoading: query.isLoading,
-    isFetching: query.isFetching,
+    isFetching: query.isFetching || search.trim() !== debouncedSearch,
     error: query.error,
     page,
     limit,
