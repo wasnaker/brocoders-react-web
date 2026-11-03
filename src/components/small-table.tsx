@@ -277,7 +277,7 @@ export function SmallTable<T>({
 
         {/* Table */}
         <div className="table-shell" aria-busy={isLoading || isFetching}>
-          {error && table.getRowModel().rows.length > 0 && (
+          {Boolean(error) && table.getRowModel().rows.length > 0 && (
             <p className="px-1 pb-2 text-xs text-destructive" role="alert">
               {errorText}
             </p>
@@ -334,7 +334,7 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {error && table.getRowModel().rows.length === 0 ? (
+              {Boolean(error) && table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
