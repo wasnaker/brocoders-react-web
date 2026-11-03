@@ -620,6 +620,10 @@
     @apply text-xs text-muted-foreground;
   }
 
+  .dashboard-page-header {
+    @apply mb-6;
+  }
+
   /* Dashboard — grid area + kartu widget */
   .dashboard-grid {
     @apply grid grid-cols-12 gap-4;
@@ -632,16 +636,16 @@
     @apply flex flex-col;
   }
   .dashboard-area__label {
-    @apply px-1 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground;
+    @apply px-1 pb-2 text-xs font-semibold tracking-[0.06em] text-muted-foreground;
   }
   /* Min height supaya area kosong tetap kelihatan sebagai drop zone. */
   .dashboard-area__body {
-    @apply flex min-h-12 flex-col gap-4 rounded-xl p-1;
+    @apply flex min-h-12 flex-col gap-3 rounded-lg p-1;
   }
   /* Area bertipe "row": widget ditata horizontal. Sub-grid, bukan flex —
      2 kolom di layar sempit, 4 kolom saat ruang cukup. */
   .dashboard-area__body--row {
-    @apply grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4;
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4;
   }
   .dashboard-area__body--droppable {
     @apply border-2 border-dashed border-border;
@@ -716,7 +720,7 @@
     @apply ms-auto flex flex-wrap items-center gap-2;
   }
   .dashboard-toolbar__panel {
-    @apply absolute end-0 z-20 mt-2 w-60 rounded-xl border border-border bg-popover p-3;
+    @apply absolute end-0 z-20 mt-2 w-60 rounded-lg border border-border bg-popover p-3 shadow-[var(--elevation-2)];
   }
   .dashboard-toolbar__panel-list {
     @apply flex flex-col gap-1.5;
@@ -725,10 +729,10 @@
     @apply flex cursor-pointer items-center gap-2 text-sm text-muted-foreground;
   }
   .dashboard-toolbar__summary {
-    @apply rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent;
+    @apply rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent;
   }
   .dashboard-toolbar__action {
-    @apply rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent;
+    @apply rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent;
   }
   .dashboard-toolbar__action--active {
     @apply border-primary/40 bg-primary/10 text-primary;
