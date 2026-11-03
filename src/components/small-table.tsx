@@ -87,6 +87,14 @@ export interface SmallTableProps<T> {
   customTabBody?: Record<string, (item: T, tab: DetailTab) => React.ReactNode>;
   /** Search query saat ini (controlled oleh parent via useTable). */
   searchValue?: string;
+  /** Placeholder input pencarian. */
+  searchPlaceholder?: string;
+  /** Accessible label untuk input pencarian. */
+  searchLabel?: string;
+  /** Menampilkan state loading tanpa mengosongkan panel detail. */
+  isLoading?: boolean;
+  /** Teks saat request pertama sedang dimuat. */
+  loadingText?: string;
   /** Handler saat search berubah (controlled oleh parent via useTable). */
   onSearchChange?: (v: string) => void;
   /** Halaman aktif (1-based, controlled oleh parent). */
@@ -125,6 +133,10 @@ export function SmallTable<T>({
   refreshKey: _refreshKey = 0,
   customTabBody,
   searchValue,
+  searchPlaceholder = "Cari…",
+  searchLabel = "Cari data",
+  isLoading = false,
+  loadingText = "Memuat data…",
   onSearchChange,
   page: pageProp = 1,
   onPageChange,
@@ -231,7 +243,8 @@ export function SmallTable<T>({
           <div className="small-table-search relative flex-1">
             <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Cari…"
+              aria-label={searchLabel}
+              placeholder={searchPlaceholder}
               value={searchValue ?? internalSearch}
               onChange={(e) => setQ(e.target.value)}
               className="h-9 pl-9 text-sm"
@@ -243,7 +256,7 @@ export function SmallTable<T>({
         </div>
 
         {/* Table */}
-        <div className="table-shell">
+        <div className="table-shell" aria-busy={isLoading}>
           <Table>
             <TableHeader>
               <TableRow>
@@ -291,7 +304,7 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.length === 0 ? (
+              {isLoading && table.getRowModel().rows.length === 0 ? (\n                <TableRow>\n                  <TableCell\n                    colSpan={Math.max(1, visibleCols.length)}\n                    className="px-4 py-10 text-center text-sm text-muted-foreground"\n                  >\n                    {loadingText}\n                  </TableCell>\n                </TableRow>\n              ) : table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
