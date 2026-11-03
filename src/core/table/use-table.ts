@@ -15,6 +15,7 @@ export interface UseTableOptions<T> {
     search?: string;
     sort?: SortConfig;
     filters?: TableFilters;
+    signal?: AbortSignal;
   }) => Promise<TableResponse<T>>;
   /** Halaman awal (default: 1). */
   defaultPage?: number;
@@ -89,13 +90,15 @@ export function useTable<T>({
   // Filter state merupakan snapshot stabil sampai setFilters dipanggil.
   const query = useQuery({
     queryKey: [...queryKey, page, limit, debouncedSearch, sort, filters],
-    queryFn: () =>
+    enabled: search.trim() === debouncedSearch,
+    queryFn: ({ signal }) =>
       fetchFn({
         page,
         limit,
         search: debouncedSearch || undefined,
         sort,
-        filters: filters,
+        filters,
+        signal,
       }),
     placeholderData: (previous) => previous,
     staleTime: settings.staleTimeSeconds * 1000,
@@ -106,7 +109,8 @@ export function useTable<T>({
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   const setPage = useCallback((newPage: number) => {
-    setPageState((previous) => Math.max(1, Math.min(newPage, totalPages)));
+    if (!Number.isFinite(newPage)) return;
+    setPageState(Math.max(1, Math.min(Math.floor(newPage), totalPages)));
   }, [totalPages]);
 
   const setLimit = useCallback((newLimit: number) => {
