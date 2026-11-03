@@ -87,7 +87,6 @@ function RegionPage() {
 
 | Prop | Tipe | Wajib | Keterangan |
 | --- | --- | --- | --- |
-| `mode` | `'server'` | ✅ | Harus `'server'` (default) |
 | `items` | `T[]` | ✅ | Data dari server (sudah dipaginasi) |
 | `total` | `number` | ✅ | Total record — untuk hitung totalPages |
 | `page` | `number` | ✅ | Halaman aktif (1-based) |
@@ -96,7 +95,24 @@ function RegionPage() {
 | `onSearchChange` | `(q) => void` | ✅ | Handler search |
 | `sort` | `SortConfig` | — | Sort config optional |
 | `onSortChange` | `(s) => void` | — | Handler sort optional |
-| `perPage` | `number` | — | Default: 20 |
+| `perPage` | `number` | — | Default: dari Settings › Misc (defaultPageSize) |
+
+> Catatan: opsi `mode="server"` dan prop `mode` sudah dihapus dari SmallTable —
+> komponen selalu berjalan server-side.
+
+## Settings Global (Settings › Misc)
+
+Beberapa nilai default tabel dikelola **frontend core**, bukan modul, jadi berlaku
+untuk semua modul sekaligus lewat `useCoreSettings()`:
+
+| Setting | Key backend | Diterapkan ke |
+| --- | --- | --- |
+| `defaultPageSize` | `misc.defaultPageSize` | `useTable` (defaultLimit saat modul tidak override) |
+| `maxApiLimit` | `misc.maxApiLimit` | Panduan cap limit API modul |
+| `dashboardWidgetsEnabled` | `misc.dashboardWidgetsEnabled` | `DashboardGrid` (sembunyikan semua widget saat off) |
+| `staleTimeSeconds` | `misc.staleTimeSeconds` | `useTable` (staleTime query React Query) |
+
+Modul **tidak boleh** memanggil settings API langsung — gunakan `useCoreSettings()`.
 
 ## Checklist Modul Baru
 
