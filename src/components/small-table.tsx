@@ -87,6 +87,8 @@ export interface SmallTableProps<T> {
   customTabBody?: Record<string, (item: T, tab: DetailTab) => React.ReactNode>;
   /** Search query saat ini (controlled oleh parent via useTable). */
   searchValue?: string;
+  /** Aktifkan pencarian hanya bila parent menyediakan handler server-side. */
+  searchable?: boolean;
   /** Placeholder input pencarian. */
   searchPlaceholder?: string;
   /** Accessible label untuk input pencarian. */
@@ -133,6 +135,7 @@ export function SmallTable<T>({
   refreshKey: _refreshKey = 0,
   customTabBody,
   searchValue,
+  searchable = Boolean(onSearchChange),
   searchPlaceholder = "Cari…",
   searchLabel = "Cari data",
   isLoading = false,
@@ -164,8 +167,6 @@ export function SmallTable<T>({
   const currentPage = pageProp ?? 1;
 
   // Search dikendalikan parent; server menerima query dan mengembalikan page data.
-  const [internalSearch, setInternalSearch] = useState("");
-  const setQ = onSearchChange ?? setInternalSearch;
 
   // Selection — detailItem diprioritaskan untuk konsistensi
   const listSelected =
@@ -211,7 +212,9 @@ export function SmallTable<T>({
     pageCount: totalPages,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    state: { pagination, sorting },
+    // Search/filtering dilakukan parent + backend sebelum pagination.
+    manualFiltering: true,
+    state: { pagination, sorting, globalFilter: searchValue ?? "" },
     onPaginationChange: (updater) => {
       const next = functionalUpdate(updater, pagination);
       onPageChange?.(next.pageIndex + 1);
@@ -240,16 +243,19 @@ export function SmallTable<T>({
       >
         {/* Search + optional list header */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <div className="small-table-search relative flex-1">
-            <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              aria-label={searchLabel}
-              placeholder={searchPlaceholder}
-              value={searchValue ?? internalSearch}
-              onChange={(e) => setQ(e.target.value)}
-              className="h-9 pl-9 text-sm"
-            />
-          </div>
+          {searchable && (
+            <div className="small-table-search relative flex-1">
+              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                aria-label={searchLabel}
+                placeholder={searchPlaceholder}
+                value={searchValue ?? ""}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                disabled={!onSearchChange}
+                className="h-9 pl-9 text-sm"
+              />
+            </div>
+          )}
           {listHeader && (
             <div className="flex items-center gap-2">{listHeader}</div>
           )}
