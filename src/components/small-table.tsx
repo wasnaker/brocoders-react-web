@@ -101,6 +101,9 @@ export interface SmallTableProps<T> {
   isFetching?: boolean;
   /** Teks saat request pertama sedang dimuat. */
   loadingText?: string;
+  /** Error query server-side, bila ada. */
+  error?: unknown;
+  errorText?: string;
   /** Handler saat search berubah (controlled oleh parent via useTable). */
   onSearchChange?: (v: string) => void;
   /** Halaman aktif (1-based, controlled oleh parent). */
@@ -147,6 +150,8 @@ export function SmallTable<T>({
   isLoading = false,
   isFetching = false,
   loadingText = "Memuat data…",
+  error,
+  errorText = "Gagal memuat data.",
   onSearchChange,
   page: pageProp = 1,
   onPageChange,
@@ -272,6 +277,11 @@ export function SmallTable<T>({
 
         {/* Table */}
         <div className="table-shell" aria-busy={isLoading || isFetching}>
+          {error && table.getRowModel().rows.length > 0 && (
+            <p className="px-1 pb-2 text-xs text-destructive" role="alert">
+              {errorText}
+            </p>
+          )}
           {isFetching && !isLoading && (
             <p className="px-1 pb-2 text-xs text-muted-foreground" role="status" aria-live="polite">
               {loadingText}
@@ -324,7 +334,16 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(isLoading || isFetching) && table.getRowModel().rows.length === 0 ? (
+              {error && table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={Math.max(1, visibleCols.length)}
+                    className="px-4 py-10 text-center text-sm text-destructive"
+                  >
+                    {errorText}
+                  </TableCell>
+                </TableRow>
+              ) : (isLoading || isFetching) && table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
