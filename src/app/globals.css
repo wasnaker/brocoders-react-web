@@ -369,7 +369,7 @@
 
   /* Identity block — profile header */
   .identity-block {
-    @apply flex gap-6 pt-6 pb-4;
+    @apply flex gap-5 border-b border-border py-5;
   }
   .identity-block__media {
     @apply shrink-0;
@@ -379,17 +379,37 @@
   }
 
   /* Vertical tabs shell — profile, settings */
+  .profile-settings-page {
+    @apply mt-5;
+  }
   .tabs-shell {
-    @apply flex w-full gap-6;
+    @apply flex w-full gap-0 overflow-hidden rounded-lg border border-border bg-card;
   }
   .tabs-shell__list {
-    @apply h-fit w-full max-w-48 flex-col justify-start rounded-none border-r border-border bg-transparent p-0;
+    @apply h-fit w-full max-w-48 shrink-0 flex-col justify-start gap-1 rounded-none border-r border-border bg-muted/20 p-3;
   }
   .tabs-shell__trigger {
-    @apply w-full justify-start rounded-none border-r-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground;
+    @apply w-full justify-start rounded-md border-r-0 border-transparent px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[var(--elevation-1)];
   }
   .tabs-shell__content {
-    @apply min-w-0 flex-1;
+    @apply min-w-0 flex-1 p-5;
+  }
+  .admin-list-page-header {
+    @apply mb-4 border-b border-border pb-3;
+  }
+  @media (max-width: 640px) {
+    .tabs-shell {
+      @apply flex-col;
+    }
+    .tabs-shell__list {
+      @apply max-w-none flex-row overflow-x-auto border-r-0 border-b p-2;
+    }
+    .tabs-shell__trigger {
+      @apply w-auto shrink-0 whitespace-nowrap border-b-2 border-transparent;
+    }
+    .tabs-shell__content {
+      @apply p-4;
+    }
   }
 
   /* User dropdown menu — sidebar footer */
