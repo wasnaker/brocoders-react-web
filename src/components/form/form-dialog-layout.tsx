@@ -74,7 +74,7 @@ export function FormDialogLayout({
 
           <div
             className={cn(
-              "min-h-0 flex-1 overflow-y-auto bg-muted/40 px-6 py-5",
+              "min-h-0 flex-1 space-y-4 overflow-y-auto bg-muted/40 px-6 py-5",
               bodyClassName
             )}
           >
