@@ -303,11 +303,11 @@
 
   /* App bar */
   .app-bar {
-    @apply flex h-[var(--header-height,4rem)] items-center gap-2 px-4;
+    @apply flex h-[var(--header-height,4rem)] items-center gap-2 border-b border-border bg-background px-4;
   }
 
   .app-bar__brand {
-    @apply me-auto min-w-0 truncate font-sans text-base font-semibold;
+    @apply me-auto min-w-0 truncate font-sans text-base font-semibold text-foreground;
     /* Tracking stepping down on narrow screens. At 0.3em the wordmark
        measured 172px and pushed the row 22px past the 390px viewport. */
     @apply tracking-[0.04em];
@@ -335,7 +335,7 @@
     @apply flex items-center gap-2;
   }
   .page-title {
-    @apply text-3xl font-semibold;
+    @apply text-2xl font-semibold tracking-tight;
   }
   .page-subtitle {
     @apply text-sm leading-6 text-muted-foreground;
@@ -707,7 +707,7 @@
   }
 
   .dashboard-toolbar {
-    @apply flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3;
+    @apply flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card px-4 py-3;
   }
   .dashboard-toolbar__hint {
     @apply text-sm text-muted-foreground;
@@ -831,36 +831,7 @@
 /* Enterprise visual refinement: restrained geometry, clear hierarchy and
    consistent elevation across the application shell and data surfaces. */
 @layer components {
-  .app-bar {
-    @apply border-b border-border bg-background px-5;
-  }
-
-  .app-bar__brand {
-    @apply font-sans text-base font-semibold tracking-[0.04em] text-foreground;
-  }
-
-  .page-title {
-    @apply tracking-tight;
-  }
-
-
-  .widget-card__header {
-    @apply min-h-11 px-4 py-3;
-  }
-
-  .widget-card__body {
-    @apply px-4 py-4;
-  }
-
-  .widget-list__row,
-  .widget-card-link {
-    @apply rounded-md;
-  }
-
-  .dashboard-toolbar {
-    @apply rounded-lg border-border bg-card;
-  }
-
+  /* Navigation state: a restrained leading marker, never a full saturated fill. */
   [data-slot="sidebar-menu-button"][data-active="true"] {
     @apply border-s-2 border-sidebar-primary bg-sidebar-accent font-semibold text-sidebar-accent-foreground;
   }
