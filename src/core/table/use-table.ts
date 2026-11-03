@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SortConfig, TableFilters, TableResponse } from "./types";
 import { useCoreSettings } from "@/core/settings/use-core-settings";
@@ -103,6 +103,19 @@ export function useTable<T>({
   const [limit, setLimitState] = useState(resolvedDefaultLimit);
   const [search, setSearchState] = useState("");
   const [sort, setSortState] = useState<SortConfig | undefined>();
+
+  // Sinkronkan limit ketika resolusi default (Settings › Misc) selesai dimuat.
+  // useState hanya membaca nilai sekali saat mount — kala itu settings masih
+  // loading (fallback 20), padahal nilai tersimpan 10. Effect ini menerapkan
+  // nilai akhir settings tanpa menunggu remount.
+  const appliedDefaultRef = useRef(resolvedDefaultLimit);
+  useEffect(() => {
+    if (appliedDefaultRef.current !== resolvedDefaultLimit) {
+      appliedDefaultRef.current = resolvedDefaultLimit;
+      setLimitState(resolvedDefaultLimit);
+      setPageState(1);
+    }
+  }, [resolvedDefaultLimit]);
 
   // Debounce hanya nilai yang dikirim ke server. Timer dikelola oleh effect
   // agar setiap perubahan query membersihkan timer sebelumnya dan tidak ada
