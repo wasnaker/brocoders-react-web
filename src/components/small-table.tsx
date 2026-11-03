@@ -144,7 +144,6 @@ export function SmallTable<T>({
   refreshKey: _refreshKey = 0,
   customTabBody,
   searchValue,
-  searchable = Boolean(onSearchChange),
   searchPlaceholder = "Cari…",
   searchLabel = "Cari data",
   isLoading = false,
@@ -165,6 +164,7 @@ export function SmallTable<T>({
   nextPageLabel = "Next",
   renderHeader,
   listHeader,
+  searchable = Boolean(onSearchChange),
 }: SmallTableProps<T>) {
   // Tabs sorted by position
   const sortedTabs = useMemo(
@@ -283,7 +283,11 @@ export function SmallTable<T>({
             </p>
           )}
           {isFetching && !isLoading && (
-            <p className="px-1 pb-2 text-xs text-muted-foreground" role="status" aria-live="polite">
+            <p
+              className="px-1 pb-2 text-xs text-muted-foreground"
+              role="status"
+              aria-live="polite"
+            >
               {loadingText}
             </p>
           )}
@@ -343,7 +347,8 @@ export function SmallTable<T>({
                     {errorText}
                   </TableCell>
                 </TableRow>
-              ) : (isLoading || isFetching) && table.getRowModel().rows.length === 0 ? (
+              ) : (isLoading || isFetching) &&
+                table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}

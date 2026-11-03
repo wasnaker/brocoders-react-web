@@ -86,7 +86,10 @@ export function useTable<T>({
 
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search.trim()), searchDebounce);
+    const timer = setTimeout(
+      () => setDebouncedSearch(search.trim()),
+      searchDebounce
+    );
     return () => clearTimeout(timer);
   }, [search, searchDebounce]);
 
@@ -111,10 +114,13 @@ export function useTable<T>({
   const total = query.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  const setPage = useCallback((newPage: number) => {
-    if (!Number.isFinite(newPage)) return;
-    setPageState(Math.max(1, Math.min(Math.floor(newPage), totalPages)));
-  }, [totalPages]);
+  const setPage = useCallback(
+    (newPage: number) => {
+      if (!Number.isFinite(newPage)) return;
+      setPageState(Math.max(1, Math.min(Math.floor(newPage), totalPages)));
+    },
+    [totalPages]
+  );
 
   const setLimit = useCallback((newLimit: number) => {
     if (!Number.isFinite(newLimit) || newLimit < 1) return;
