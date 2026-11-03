@@ -48,6 +48,8 @@ export interface SmallTableColumn<T> {
   label: string;
   /** Kolom utama — tetap tampil saat mode kecil (kolom non-primary hidden). */
   primary?: boolean;
+  /** Nonaktifkan sorting untuk kolom komposit/tidak didukung API. */
+  sortable?: boolean;
   render: (item: T) => React.ReactNode;
 }
 
@@ -87,6 +89,21 @@ export interface SmallTableProps<T> {
   customTabBody?: Record<string, (item: T, tab: DetailTab) => React.ReactNode>;
   /** Search query saat ini (controlled oleh parent via useTable). */
   searchValue?: string;
+  /** Aktifkan pencarian hanya bila parent menyediakan handler server-side. */
+  searchable?: boolean;
+  /** Placeholder input pencarian. */
+  searchPlaceholder?: string;
+  /** Accessible label untuk input pencarian. */
+  searchLabel?: string;
+  /** Menampilkan state loading tanpa mengosongkan panel detail. */
+  isLoading?: boolean;
+  /** True selama request berlangsung, termasuk refetch saat search/filter berubah. */
+  isFetching?: boolean;
+  /** Teks saat request pertama sedang dimuat. */
+  loadingText?: string;
+  /** Error query server-side, bila ada. */
+  error?: unknown;
+  errorText?: string;
   /** Handler saat search berubah (controlled oleh parent via useTable). */
   onSearchChange?: (v: string) => void;
   /** Halaman aktif (1-based, controlled oleh parent). */
@@ -103,6 +120,8 @@ export interface SmallTableProps<T> {
   tabEmptyText?: string;
   /** Label untuk pagination, misal "dari N" / "of N". */
   paginationOfLabel?: string;
+  previousPageLabel?: string;
+  nextPageLabel?: string;
   renderHeader?: (item: T) => React.ReactNode;
   /** Escape hatch: render arbitrary content above the table (e.g., "Tambah" button). */
   listHeader?: React.ReactNode;
@@ -125,6 +144,14 @@ export function SmallTable<T>({
   refreshKey: _refreshKey = 0,
   customTabBody,
   searchValue,
+  searchable = Boolean(onSearchChange),
+  searchPlaceholder = "Cari…",
+  searchLabel = "Cari data",
+  isLoading = false,
+  isFetching = false,
+  loadingText = "Memuat data…",
+  error,
+  errorText = "Gagal memuat data.",
   onSearchChange,
   page: pageProp = 1,
   onPageChange,
@@ -134,6 +161,8 @@ export function SmallTable<T>({
   emptyText = "Tidak ada item.",
   tabEmptyText = "Tidak ada data.",
   paginationOfLabel = "dari",
+  previousPageLabel = "Prev",
+  nextPageLabel = "Next",
   renderHeader,
   listHeader,
 }: SmallTableProps<T>) {
@@ -152,8 +181,6 @@ export function SmallTable<T>({
   const currentPage = pageProp ?? 1;
 
   // Search dikendalikan parent; server menerima query dan mengembalikan page data.
-  const [internalSearch, setInternalSearch] = useState("");
-  const setQ = onSearchChange ?? setInternalSearch;
 
   // Selection — detailItem diprioritaskan untuk konsistensi
   const listSelected =
@@ -185,7 +212,7 @@ export function SmallTable<T>({
         accessorFn: (item) => item,
         header: column.label,
         cell: (context) => column.render(context.row.original),
-        enableSorting: Boolean(onSortChange),
+        enableSorting: Boolean(onSortChange) && column.sortable !== false,
       })),
     [visibleCols, onSortChange]
   );
@@ -199,7 +226,9 @@ export function SmallTable<T>({
     pageCount: totalPages,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    state: { pagination, sorting },
+    // Search/filtering dilakukan parent + backend sebelum pagination.
+    manualFiltering: true,
+    state: { pagination, sorting, globalFilter: searchValue ?? "" },
     onPaginationChange: (updater) => {
       const next = functionalUpdate(updater, pagination);
       onPageChange?.(next.pageIndex + 1);
@@ -228,22 +257,36 @@ export function SmallTable<T>({
       >
         {/* Search + optional list header */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <div className="small-table-search relative flex-1">
-            <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Cari…"
-              value={searchValue ?? internalSearch}
-              onChange={(e) => setQ(e.target.value)}
-              className="h-9 pl-9 text-sm"
-            />
-          </div>
+          {searchable && (
+            <div className="small-table-search relative flex-1">
+              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                aria-label={searchLabel}
+                placeholder={searchPlaceholder}
+                value={searchValue ?? ""}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                disabled={!onSearchChange}
+                className="h-9 pl-9 text-sm"
+              />
+            </div>
+          )}
           {listHeader && (
             <div className="flex items-center gap-2">{listHeader}</div>
           )}
         </div>
 
         {/* Table */}
-        <div className="table-shell">
+        <div className="table-shell" aria-busy={isLoading || isFetching}>
+          {Boolean(error) && table.getRowModel().rows.length > 0 && (
+            <p className="px-1 pb-2 text-xs text-destructive" role="alert">
+              {errorText}
+            </p>
+          )}
+          {isFetching && !isLoading && (
+            <p className="px-1 pb-2 text-xs text-muted-foreground" role="status" aria-live="polite">
+              {loadingText}
+            </p>
+          )}
           <Table>
             <TableHeader>
               <TableRow>
@@ -291,7 +334,25 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.length === 0 ? (
+              {Boolean(error) && table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={Math.max(1, visibleCols.length)}
+                    className="px-4 py-10 text-center text-sm text-destructive"
+                  >
+                    {errorText}
+                  </TableCell>
+                </TableRow>
+              ) : (isLoading || isFetching) && table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={Math.max(1, visibleCols.length)}
+                    className="px-4 py-10 text-center text-sm text-muted-foreground"
+                  >
+                    {loadingText}
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
@@ -361,7 +422,7 @@ export function SmallTable<T>({
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  ‹ Prev
+                  ‹ {previousPageLabel}
                 </Button>
                 <span className="min-w-[2rem] text-center">
                   {currentPage} / {totalPages}
@@ -372,7 +433,7 @@ export function SmallTable<T>({
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  Next ›
+                  {nextPageLabel} ›
                 </Button>
               </div>
             </div>
