@@ -95,7 +95,7 @@ export function useTable<T>({
         limit,
         search: debouncedSearch || undefined,
         sort,
-        filters: stableFilters,
+        filters: filters,
       }),
     placeholderData: (previous) => previous,
     staleTime: settings.staleTimeSeconds * 1000,
