@@ -32,7 +32,7 @@ function Roles() {
   return (
     <div className="page-content--wide">
       <div className="page-content--body">
-        <div className="page-header--split">
+        <div className="page-header--split admin-list-page-header">
           <h3 className="page-title">{t("admin-panel-roles:title")}</h3>
         </div>
 
