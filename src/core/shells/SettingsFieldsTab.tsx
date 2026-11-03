@@ -206,7 +206,7 @@ function SettingsFieldsTabInner({
 
     for (const [index, field] of fields.entries()) {
       const formName = formFieldName(index, field.key);
-      const initialValue = initial[field.key];
+      const initialValue = initial[formName];
       const currentValue = formValues[formName];
 
       if (

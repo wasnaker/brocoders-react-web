@@ -66,12 +66,14 @@ export function useCoreSettings(): {
     queryKey: ["settings", "misc"],
     queryFn: async ({ signal }) => {
       const response = await fetchGetSettings({ group: "misc" }, { signal });
-      return response.status === HTTP_CODES_ENUM.OK ? response.data : [];
+      const d = response.status === HTTP_CODES_ENUM.OK ? response.data : [];
+      return d;
     },
     enabled: isLoaded && !!user,
     staleTime: 30_000,
   });
 
+  // settings dibawah; debug log dipindah ke useMemo bawah (lihat bawah)
   const settings = useMemo<CoreSettings>(() => {
     const byKey = new Map<string, string>();
     for (const row of data) byKey.set(row.key, row.value);
