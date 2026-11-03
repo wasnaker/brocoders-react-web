@@ -39,7 +39,7 @@ function Modules() {
   return (
     <div className="page-content--wide">
       <div className="page-content--body">
-        <div className="page-header--split">
+        <div className="page-header--split admin-list-page-header">
           <h3 className="page-title">{t("admin-panel-modules:title")}</h3>
         </div>
 

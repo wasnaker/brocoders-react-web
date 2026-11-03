@@ -25,7 +25,7 @@ const TableComponents = {
   },
   TableHead: function VirtuosoTableHead(props: TableSectionProps) {
     return (
-      <thead {...props} className="sticky top-0 z-10 bg-card [&_th]:border-b" />
+      <thead {...props} className="sticky top-0 z-10 bg-muted/30 [&_th]:border-b [&_th]:text-xs [&_th]:font-semibold [&_th]:tracking-wide [&_th]:text-muted-foreground" />
     );
   },
   TableFoot: function VirtuosoTableFoot(props: TableSectionProps) {

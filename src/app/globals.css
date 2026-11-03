@@ -369,7 +369,7 @@
 
   /* Identity block — profile header */
   .identity-block {
-    @apply flex gap-6 pt-6 pb-4;
+    @apply flex gap-5 border-b border-border py-5;
   }
   .identity-block__media {
     @apply shrink-0;
@@ -379,17 +379,37 @@
   }
 
   /* Vertical tabs shell — profile, settings */
+  .profile-settings-page {
+    @apply mt-5;
+  }
   .tabs-shell {
-    @apply flex w-full gap-6;
+    @apply flex w-full gap-0 overflow-hidden rounded-lg border border-border bg-card;
   }
   .tabs-shell__list {
-    @apply h-fit w-full max-w-48 flex-col justify-start rounded-none border-r border-border bg-transparent p-0;
+    @apply h-fit w-full max-w-48 shrink-0 flex-col justify-start gap-1 rounded-none border-r border-border bg-muted/20 p-3;
   }
   .tabs-shell__trigger {
-    @apply w-full justify-start rounded-none border-r-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground;
+    @apply w-full justify-start rounded-md border-r-0 border-transparent px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[var(--elevation-1)];
   }
   .tabs-shell__content {
-    @apply min-w-0 flex-1;
+    @apply min-w-0 flex-1 p-5;
+  }
+  .admin-list-page-header {
+    @apply mb-4 border-b border-border pb-3;
+  }
+  @media (max-width: 640px) {
+    .tabs-shell {
+      @apply flex-col;
+    }
+    .tabs-shell__list {
+      @apply max-w-none flex-col border-r-0 border-b p-2;
+    }
+    .tabs-shell__trigger {
+      @apply w-full shrink-0 border-r-2 border-transparent;
+    }
+    .tabs-shell__content {
+      @apply p-4;
+    }
   }
 
   /* User dropdown menu — sidebar footer */
@@ -432,7 +452,7 @@
     @apply text-sm text-destructive;
   }
   .form-field {
-    @apply flex flex-col gap-1.5;
+    @apply flex flex-col gap-2;
   }
   .form-field__help {
     @apply text-sm text-muted-foreground;
@@ -620,6 +640,10 @@
     @apply text-xs text-muted-foreground;
   }
 
+  .dashboard-page-header {
+    @apply mb-6;
+  }
+
   /* Dashboard — grid area + kartu widget */
   .dashboard-grid {
     @apply grid grid-cols-12 gap-4;
@@ -632,16 +656,16 @@
     @apply flex flex-col;
   }
   .dashboard-area__label {
-    @apply px-1 pb-1.5 text-xs font-medium tracking-wide text-muted-foreground;
+    @apply px-1 pb-2 text-xs font-semibold tracking-[0.06em] text-muted-foreground;
   }
   /* Min height supaya area kosong tetap kelihatan sebagai drop zone. */
   .dashboard-area__body {
-    @apply flex min-h-12 flex-col gap-4 rounded-xl p-1;
+    @apply flex min-h-12 flex-col gap-3 rounded-lg p-1;
   }
   /* Area bertipe "row": widget ditata horizontal. Sub-grid, bukan flex —
      2 kolom di layar sempit, 4 kolom saat ruang cukup. */
   .dashboard-area__body--row {
-    @apply grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4;
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4;
   }
   .dashboard-area__body--droppable {
     @apply border-2 border-dashed border-border;
@@ -716,7 +740,7 @@
     @apply ms-auto flex flex-wrap items-center gap-2;
   }
   .dashboard-toolbar__panel {
-    @apply absolute end-0 z-20 mt-2 w-60 rounded-xl border border-border bg-popover p-3;
+    @apply absolute end-0 z-20 mt-2 w-60 rounded-lg border border-border bg-popover p-3 shadow-[var(--elevation-2)];
   }
   .dashboard-toolbar__panel-list {
     @apply flex flex-col gap-1.5;
@@ -725,10 +749,10 @@
     @apply flex cursor-pointer items-center gap-2 text-sm text-muted-foreground;
   }
   .dashboard-toolbar__summary {
-    @apply rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent;
+    @apply rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent;
   }
   .dashboard-toolbar__action {
-    @apply rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent;
+    @apply rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent;
   }
   .dashboard-toolbar__action--active {
     @apply border-primary/40 bg-primary/10 text-primary;
