@@ -2,7 +2,7 @@
 to: src/app/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page.tsx
 ---
 import type { Metadata } from "next";
-import Create<%= h.pascalName(name) %> from "./page-content";
+import Create<%= h.pascalName(name) %> from "@/app/[language]/admin/<%= h.inflection.transform(name, ['pluralize', 'underscore', 'dasherize']) %>/create/page-content";
 import { getServerTranslation } from "@/services/i18n";
 import { getRequestLanguage } from "@/services/i18n/get-request-language";
 

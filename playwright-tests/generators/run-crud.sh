@@ -78,7 +78,7 @@ cleanup() {
   (cd "$NESTJS_DIR" && docker compose -f "$COMPOSE_FILE" -p "$COMPOSE_PROJECT" down -v) 2>/dev/null || true
 
   # React side
-  rm -rf "$REPO_ROOT/src/app/admin/tags" 2>/dev/null || true
+  rm -rf "$REPO_ROOT/src/app/[language]/admin/tags" 2>/dev/null || true
   rm -f "$REPO_ROOT/src/services/api/types/tag.ts" 2>/dev/null || true
   rm -f "$REPO_ROOT/src/services/api/services/tags.ts" 2>/dev/null || true
   rm -f "$REPO_ROOT/src/services/i18n/locales/en/admin-tags"*.json 2>/dev/null || true

@@ -70,19 +70,22 @@ export const entityPaths = (
 ): EntityPaths => {
   const file = entityFileName(entityName);
   const route = entityRouteSegment(entityName);
-  const adminDir = resolve(srcRoot, "app", "admin", route);
+  // Pola konsisten: implementasi di app/[language]/admin/<route>/,
+  // wrapper canonical di app/admin/<route>/page.tsx.
+  const implDir = resolve(srcRoot, "app", "[language]", "admin", route);
+  const legacyDir = resolve(srcRoot, "app", "admin", route);
   const i18nDir = resolve(srcRoot, "services", "i18n", "locales", "en");
 
   return {
     entityType: resolve(srcRoot, "services", "api", "types", `${file}.ts`),
     apiService: resolve(srcRoot, "services", "api", "services", `${route}.ts`),
-    listPage: resolve(adminDir, "page.tsx"),
-    listPageContent: resolve(adminDir, "page-content.tsx"),
-    createPage: resolve(adminDir, "create", "page.tsx"),
-    createPageContent: resolve(adminDir, "create", "page-content.tsx"),
-    editPage: resolve(adminDir, "edit", "[id]", "page.tsx"),
-    editPageContent: resolve(adminDir, "edit", "[id]", "page-content.tsx"),
-    queries: resolve(adminDir, "queries", "queries.ts"),
+    listPage: resolve(legacyDir, "page.tsx"),
+    listPageContent: resolve(implDir, "page-content.tsx"),
+    createPage: resolve(legacyDir, "create", "page.tsx"),
+    createPageContent: resolve(implDir, "create", "page-content.tsx"),
+    editPage: resolve(legacyDir, "edit", "[id]", "page.tsx"),
+    editPageContent: resolve(implDir, "edit", "[id]", "page-content.tsx"),
+    queries: resolve(implDir, "queries", "queries.ts"),
     i18nList: resolve(i18nDir, `admin-${route}.json`),
     i18nCreate: resolve(i18nDir, `admin-${route}-create.json`),
     i18nEdit: resolve(i18nDir, `admin-${route}-edit.json`),

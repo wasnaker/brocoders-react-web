@@ -280,6 +280,7 @@ function AppSidebar() {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+                    {/* sidebar-menu-items */}
                   </>
                 )}
 
