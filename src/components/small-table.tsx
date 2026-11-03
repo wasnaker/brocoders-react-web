@@ -115,6 +115,8 @@ export interface SmallTableProps<T> {
   tabEmptyText?: string;
   /** Label untuk pagination, misal "dari N" / "of N". */
   paginationOfLabel?: string;
+  previousPageLabel?: string;
+  nextPageLabel?: string;
   renderHeader?: (item: T) => React.ReactNode;
   /** Escape hatch: render arbitrary content above the table (e.g., "Tambah" button). */
   listHeader?: React.ReactNode;
@@ -152,6 +154,8 @@ export function SmallTable<T>({
   emptyText = "Tidak ada item.",
   tabEmptyText = "Tidak ada data.",
   paginationOfLabel = "dari",
+  previousPageLabel = "Prev",
+  nextPageLabel = "Next",
   renderHeader,
   listHeader,
 }: SmallTableProps<T>) {
@@ -397,7 +401,7 @@ export function SmallTable<T>({
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
                 >
-                  ‹ Prev
+                  ‹ {previousPageLabel}
                 </Button>
                 <span className="min-w-[2rem] text-center">
                   {currentPage} / {totalPages}
@@ -408,7 +412,7 @@ export function SmallTable<T>({
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
                 >
-                  Next ›
+                  {nextPageLabel} ›
                 </Button>
               </div>
             </div>
