@@ -12,7 +12,7 @@ function DashboardPage() {
 
   return (
     <div className="page-content--narrow">
-      <div className="page-header pt-6">
+      <div className="page-header dashboard-page-header pt-6">
         <h1 className="page-title">{t("title")}</h1>
         <p className="page-subtitle">{t("description")}</p>
       </div>
