@@ -231,14 +231,11 @@ function Users() {
   return (
     <div className="page-content--wide">
       <div className="page-content--body">
-        <div className="page-header--split">
+        <div className="page-header--split admin-list-page-header">
           <h3 className="page-title">{tUsers("admin-panel-users:title")}</h3>
           <div className="page-header__actions">
             <UserFilter />
-            <Button
-              asChild
-              className="bg-success text-success-foreground hover:bg-success/90"
-            >
+            <Button asChild>
               <Link href="/admin/users/create">
                 {tUsers("admin-panel-users:actions.create")}
               </Link>
