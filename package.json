@@ -56,7 +56,7 @@
     "@types/node": "25.5.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@wasnaker/module-region": "github:wasnaker/bc-region#main",
+    "@wasnaker/module-region": "github:wasnaker/bc-region#refactor/universal-small-table",
     "accept-language": "3.0.20",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
