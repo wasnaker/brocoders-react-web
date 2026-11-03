@@ -139,7 +139,10 @@ function Roles() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="py-10 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="py-10 text-center text-muted-foreground"
+                  >
                     Loading…
                   </TableCell>
                 </TableRow>
@@ -148,14 +151,20 @@ function Roles() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="py-10 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="py-10 text-center text-muted-foreground"
+                  >
                     {t("admin-panel-roles:alerts.roles.empty")}
                   </TableCell>
                 </TableRow>
@@ -173,13 +182,23 @@ function Roles() {
               dari {table.getFilteredRowModel().rows.length}
             </span>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="xs" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
                 ‹ Prev
               </Button>
               <span className="min-w-[2rem] text-center tabular-nums">
                 {pageCount === 0 ? 0 : pagination.pageIndex + 1} / {pageCount}
               </span>
-              <Button variant="outline" size="xs" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
                 Next ›
               </Button>
             </div>

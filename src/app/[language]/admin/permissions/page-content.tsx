@@ -75,9 +75,10 @@ function Actions({ permission }: { permission: Permission }) {
     if (searchParamsSort) sort = JSON.parse(searchParamsSort);
 
     const queryKey = permissionsQueryKeys.list().sub.by({ sort, filter }).key;
-    const previousData = queryClient.getQueryData<
-      InfiniteData<{ nextPage: number; data: Permission[] }>
-    >(queryKey);
+    const previousData =
+      queryClient.getQueryData<
+        InfiniteData<{ nextPage: number; data: Permission[] }>
+      >(queryKey);
 
     await queryClient.cancelQueries({
       queryKey: permissionsQueryKeys.list().key,
@@ -169,7 +170,9 @@ function Permissions() {
       filter,
       sort: {
         order,
-        orderBy: (orderBy === "name" ? "name" : "id") as PermissionSortType["orderBy"],
+        orderBy: (orderBy === "name"
+          ? "name"
+          : "id") as PermissionSortType["orderBy"],
       },
     });
 
@@ -199,7 +202,9 @@ function Permissions() {
         header: tPermissions("admin-panel-permissions:table.column1"),
         enableSorting: true,
         cell: ({ row }) => (
-          <span className="font-mono text-muted-foreground">{row.original.id}</span>
+          <span className="font-mono text-muted-foreground">
+            {row.original.id}
+          </span>
         ),
       },
       {
@@ -207,7 +212,9 @@ function Permissions() {
         header: tPermissions("admin-panel-permissions:table.column2"),
         enableSorting: true,
         cell: ({ row }) => (
-          <span className="font-medium text-foreground">{row.original.name}</span>
+          <span className="font-medium text-foreground">
+            {row.original.name}
+          </span>
         ),
       },
       {
@@ -215,16 +222,16 @@ function Permissions() {
         header: tPermissions("admin-panel-permissions:table.column3"),
         enableSorting: false,
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{row.original.description ?? "—"}</span>
+          <span className="text-muted-foreground">
+            {row.original.description ?? "—"}
+          </span>
         ),
       },
       {
         id: "actions",
         header: "",
         enableSorting: false,
-        cell: ({ row }) => (
-          <Actions permission={row.original} />
-        ),
+        cell: ({ row }) => <Actions permission={row.original} />,
       },
     ],
     [tPermissions]
@@ -273,7 +280,10 @@ function Permissions() {
                             onClick={header.column.getToggleSortingHandler()}
                             className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
                           >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                             {sorted === "asc" ? (
                               <ArrowUp className="size-4" />
                             ) : sorted === "desc" ? (
@@ -283,7 +293,10 @@ function Permissions() {
                             )}
                           </button>
                         ) : (
-                          flexRender(header.column.columnDef.header, header.getContext())
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )
                         )}
                       </TableHead>
                     );
@@ -297,14 +310,20 @@ function Permissions() {
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="py-10 text-center text-sm text-muted-foreground">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="py-10 text-center text-sm text-muted-foreground"
+                  >
                     —
                   </TableCell>
                 </TableRow>
