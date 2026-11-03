@@ -843,15 +843,6 @@
     @apply tracking-tight;
   }
 
-  .page-subtitle {
-    @apply text-sm leading-6 text-muted-foreground;
-  }
-
-  .table-shell,
-  .widget-card,
-  .stat-tile {
-    box-shadow: var(--elevation-1);
-  }
 
   .widget-card__header {
     @apply min-h-11 px-4 py-3;
