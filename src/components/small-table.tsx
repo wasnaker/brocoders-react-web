@@ -243,7 +243,7 @@ export function SmallTable<T>({
         </div>
 
         {/* Table */}
-        <div className="table-shell overflow-hidden rounded-xl border border-border bg-card">
+        <div className="table-shell">
           <Table>
             <TableHeader>
               <TableRow>
@@ -251,7 +251,7 @@ export function SmallTable<T>({
                   headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className="px-4 py-2.5 text-xs font-semibold text-muted-foreground"
+                      className="px-4 py-3 text-xs font-semibold tracking-wide text-muted-foreground"
                     >
                       {header.isPlaceholder ? null : header.column.getCanSort() ? (
                         <button
@@ -384,7 +384,7 @@ export function SmallTable<T>({
       {showDetailPanel && (
         <div className="small-table-detail min-w-0 flex-1 lg:w-7/12">
           {selected ? (
-            <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="overflow-hidden rounded-lg border border-border bg-card shadow-[var(--elevation-1)]">
               {/* Header */}
               <div className="small-table-detail-header flex flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-4">
                 <h2 className="text-sm font-semibold text-foreground">
@@ -448,7 +448,7 @@ export function SmallTable<T>({
               </div>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-border bg-card p-5">
+            <div className="overflow-hidden rounded-lg border border-border bg-card p-5 shadow-[var(--elevation-1)]">
               <div className="space-y-3" aria-busy={detailLoading}>
                 <div className="h-5 w-1/3 animate-pulse rounded bg-muted" />
                 <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
