@@ -139,7 +139,7 @@
 
   --sidebar: oklch(0.235 0.035 255);
   --sidebar-foreground: var(--neutral-50);
-  --sidebar-primary: oklch(0.43 0.13 255);
+  --sidebar-primary: oklch(0.72 0.12 250);
   --sidebar-primary-foreground: var(--neutral-950);
   --sidebar-accent: oklch(0.31 0.045 255);
   --sidebar-accent-foreground: var(--neutral-50);
