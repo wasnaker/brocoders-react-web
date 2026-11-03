@@ -452,7 +452,7 @@
     @apply text-sm text-destructive;
   }
   .form-field {
-    @apply flex flex-col gap-1.5;
+    @apply flex flex-col gap-2;
   }
   .form-field__help {
     @apply text-sm text-muted-foreground;
