@@ -17,6 +17,7 @@ import {
 } from "@dnd-kit/core";
 import { useTranslation } from "@/services/i18n/client";
 import { getDashboardWidgets } from "@/core/modules/registry";
+import { useCoreSettings } from "@/core/settings/use-core-settings";
 import {
   resolveAreas,
   resolveDashboardLayout,
@@ -118,8 +119,15 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
   const [preview, setPreview] = useState(false);
   const [activeWidgetId, setActiveWidgetId] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
+  const { settings: coreSettings } = useCoreSettings();
 
-  const widgets = useMemo(() => getDashboardWidgets(user), [user]);
+  const allWidgets = useMemo(() => getDashboardWidgets(user), [user]);
+  // Toggle global Settings › Misc › dashboardWidgetsEnabled: saat off,
+  // semua widget modul disembunyikan dari dashboard.
+  const widgets = useMemo(
+    () => (coreSettings.dashboardWidgetsEnabled ? allWidgets : []),
+    [allWidgets, coreSettings.dashboardWidgetsEnabled]
+  );
   const { data: state } = useDashboardState(user);
   const saveVisibility = useSaveDashboardVisibility(user);
   const saveLayout = useSaveDashboardLayout(user);

@@ -4,12 +4,29 @@
     "general": "General",
     "appearance": "Appearance",
     "language": "Language",
-    "roles": "Roles"
+    "roles": "Roles",
+    "misc": "Misc"
   },
   "fields": {
     "appName": { "label": "Application Name" },
     "defaultLanguage": { "label": "Default Language" },
-    "theme": { "label": "Theme" }
+    "theme": { "label": "Theme" },
+    "defaultPageSize": {
+      "label": "Default table page size",
+      "help": "Default number of rows per page for all module tables."
+    },
+    "maxApiLimit": {
+      "label": "Maximum API limit",
+      "help": "Caps how many records a single list request may return."
+    },
+    "dashboardWidgetsEnabled": {
+      "label": "Enable dashboard widgets",
+      "help": "Turn all module dashboard widgets on or off."
+    },
+    "staleTimeSeconds": {
+      "label": "Data refresh interval (seconds)",
+      "help": "How long React Query considers list data fresh before refetching."
+    }
   },
   "submit": "Save changes",
   "saved": "Settings saved",

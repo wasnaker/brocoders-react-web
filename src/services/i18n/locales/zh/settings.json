@@ -4,12 +4,29 @@
     "general": "常规",
     "appearance": "外观",
     "language": "语言",
-    "roles": "角色"
+    "roles": "角色",
+    "misc": "其他"
   },
   "fields": {
     "appName": { "label": "应用名称" },
     "defaultLanguage": { "label": "默认语言" },
-    "theme": { "label": "主题" }
+    "theme": { "label": "主题" },
+    "defaultPageSize": {
+      "label": "默认表格页面大小",
+      "help": "所有模块表格每页默认显示的行数。"
+    },
+    "maxApiLimit": {
+      "label": "最大 API 请求限制",
+      "help": "限制单个列表请求最多可返回的记录数。"
+    },
+    "dashboardWidgetsEnabled": {
+      "label": "启用仪表板小组件",
+      "help": "开启或关闭所有模块的仪表板小组件。"
+    },
+    "staleTimeSeconds": {
+      "label": "数据刷新间隔（秒）",
+      "help": "React Query 在重新获取之前将列表数据视为最新数据的时间。"
+    }
   },
   "submit": "保存更改",
   "saved": "设置已保存",

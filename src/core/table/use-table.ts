@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SortConfig, TableFilters, TableResponse } from "./types";
+import { useCoreSettings } from "@/core/settings/use-core-settings";
 
 export interface UseTableOptions<T> {
   /** Query key prefix — akan ditambah dengan page, limit, search, sort. */
@@ -89,13 +90,17 @@ export function useTable<T>({
   queryKey,
   fetchFn,
   defaultPage = 1,
-  defaultLimit = 20,
+  defaultLimit,
   searchDebounce = 300,
 }: UseTableOptions<T>): UseTableReturn<T> {
   const queryClient = useQueryClient();
+  // Sumber default page size global (Settings › Misc). Modul boleh override
+  // dengan defaultLimit eksplisit; jika tidak, ikuti settings core.
+  const { settings } = useCoreSettings();
+  const resolvedDefaultLimit = defaultLimit ?? settings.defaultPageSize;
 
   const [page, setPageState] = useState(defaultPage);
-  const [limit, setLimitState] = useState(defaultLimit);
+  const [limit, setLimitState] = useState(resolvedDefaultLimit);
   const [search, setSearchState] = useState("");
   const [sort, setSortState] = useState<SortConfig | undefined>();
 
@@ -122,6 +127,7 @@ export function useTable<T>({
         sort,
       }),
     placeholderData: (prev) => prev,
+    staleTime: settings.staleTimeSeconds * 1000,
   });
 
   const items = data?.data ?? [];
@@ -156,11 +162,11 @@ export function useTable<T>({
 
   const reset = useCallback(() => {
     setPageState(defaultPage);
-    setLimitState(defaultLimit);
+    setLimitState(resolvedDefaultLimit);
     setSearchState("");
     setDebouncedSearch("");
     setSortState(undefined);
-  }, [defaultPage, defaultLimit]);
+  }, [defaultPage, resolvedDefaultLimit]);
 
   const refresh = useCallback(() => {
     void queryClient.invalidateQueries({

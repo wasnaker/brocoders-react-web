@@ -4,12 +4,29 @@
     "general": "Umum",
     "appearance": "Tampilan",
     "language": "Bahasa",
-    "roles": "Peran"
+    "roles": "Peran",
+    "misc": "Lain-lain"
   },
   "fields": {
     "appName": { "label": "Nama Aplikasi" },
     "defaultLanguage": { "label": "Bahasa Default" },
-    "theme": { "label": "Tema" }
+    "theme": { "label": "Tema" },
+    "defaultPageSize": {
+      "label": "Ukuran halaman tabel default",
+      "help": "Jumlah baris per halaman default untuk semua tabel modul."
+    },
+    "maxApiLimit": {
+      "label": "Batas limit API maksimum",
+      "help": "Membatasi berapa banyak record yang bisa diminta dalam satu daftar."
+    },
+    "dashboardWidgetsEnabled": {
+      "label": "Aktifkan widget dashboard",
+      "help": "Menghidupkan atau mematikan semua widget modul di dashboard."
+    },
+    "staleTimeSeconds": {
+      "label": "Interval refresh data (detik)",
+      "help": "Berapa lama React Query menganggap data list masih segar sebelum fetch ulang."
+    }
   },
   "submit": "Simpan perubahan",
   "saved": "Pengaturan disimpan",

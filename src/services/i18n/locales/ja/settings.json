@@ -4,12 +4,29 @@
     "general": "一般",
     "appearance": "外観",
     "language": "言語",
-    "roles": "役割"
+    "roles": "役割",
+    "misc": "その他"
   },
   "fields": {
     "appName": { "label": "アプリケーション名" },
     "defaultLanguage": { "label": "デフォルト言語" },
-    "theme": { "label": "テーマ" }
+    "theme": { "label": "テーマ" },
+    "defaultPageSize": {
+      "label": "デフォルトのテーブルページサイズ",
+      "help": "すべてのモジュールテーブルの1ページあたりのデフォルト行数。"
+    },
+    "maxApiLimit": {
+      "label": "APIの最大リクエスト制限",
+      "help": "1回のリストリクエストで返せるレコード数を制限します。"
+    },
+    "dashboardWidgetsEnabled": {
+      "label": "ダッシュボードウィジェットを有効化",
+      "help": "すべてのモジュールのダッシュボードウィジェットをオン・オフします。"
+    },
+    "staleTimeSeconds": {
+      "label": "データ更新間隔（秒）",
+      "help": "React Queryが再取得するまでリストデータを新しいと見なす時間。"
+    }
   },
   "submit": "変更を保存",
   "saved": "設定を保存しました",
