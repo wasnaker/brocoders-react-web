@@ -1,26 +1,32 @@
 "use client";
 
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  type SortingState,
+  type ColumnDef,
+} from "@tanstack/react-table";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { RoleEnum } from "@/services/api/types/role";
 import { useTranslation } from "@/services/i18n/client";
 import {
-  PropsWithChildren,
-  useCallback,
-  useMemo,
-  useState,
-  type MouseEvent,
-} from "react";
-import {
   useGetPermissionsListQuery,
   permissionsQueryKeys,
 } from "./queries/queries";
-import { TableVirtuoso } from "react-virtuoso";
 import ArrowDown from "lucide-react/dist/esm/icons/arrow-down";
 import ArrowUp from "lucide-react/dist/esm/icons/arrow-up";
 import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
-import TableComponents from "@/components/table/table-components";
-import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,7 +34,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Permission } from "@/services/api/types/permission";
+import type { Permission } from "@/services/api/types/permission";
 import Link from "@/components/link";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
 import { useDeletePermissionsService } from "@/services/api/services/permissions";
@@ -42,47 +48,10 @@ import { SortEnum } from "@/services/api/types/sort-type";
 
 type PermissionKeys = keyof Permission;
 
-function TableSortCellWrapper(
-  props: PropsWithChildren<{
-    width?: number;
-    orderBy: PermissionKeys;
-    order: SortEnum;
-    column: PermissionKeys;
-    handleRequestSort: (
-      event: MouseEvent<HTMLButtonElement>,
-      property: PermissionKeys
-    ) => void;
-  }>
-) {
-  const isActive = props.orderBy === props.column;
-
-  return (
-    <TableHead style={{ width: props.width }}>
-      <button
-        type="button"
-        onClick={(event) => props.handleRequestSort(event, props.column)}
-        className="table-sort"
-      >
-        {props.children}
-        {isActive ? (
-          props.order === SortEnum.ASC ? (
-            <ArrowUp className="size-4" />
-          ) : (
-            <ArrowDown className="size-4" />
-          )
-        ) : (
-          <ChevronsUpDown className="size-4 opacity-50" />
-        )}
-      </button>
-    </TableHead>
-  );
-}
-
 function Actions({ permission }: { permission: Permission }) {
   const { confirmDialog } = useConfirmDialog();
   const fetchPermissionDelete = useDeletePermissionsService();
   const queryClient = useQueryClient();
-  const canDelete = true; // Permissions can always be deleted (no self-delete restriction like users)
   const { t: tPermissions } = useTranslation("admin-panel-permissions");
 
   const handleDelete = async () => {
@@ -91,68 +60,49 @@ function Actions({ permission }: { permission: Permission }) {
       message: tPermissions("admin-panel-permissions:confirm.delete.message"),
     });
 
-    if (isConfirmed) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const searchParamsFilter = searchParams.get("filter");
-      const searchParamsSort = searchParams.get("sort");
+    if (!isConfirmed) return;
 
-      let filter: PermissionFilterType | undefined = undefined;
-      let sort: PermissionSortType | undefined = {
-        order: SortEnum.DESC,
-        orderBy: "id",
-      };
+    const searchParams = new URLSearchParams(window.location.search);
+    const searchParamsFilter = searchParams.get("filter");
+    const searchParamsSort = searchParams.get("sort");
+    let filter: PermissionFilterType | undefined;
+    let sort: PermissionSortType | undefined = {
+      order: SortEnum.DESC,
+      orderBy: "id",
+    };
 
-      if (searchParamsFilter) {
-        filter = JSON.parse(searchParamsFilter);
-      }
-      if (searchParamsSort) {
-        sort = JSON.parse(searchParamsSort);
-      }
+    if (searchParamsFilter) filter = JSON.parse(searchParamsFilter);
+    if (searchParamsSort) sort = JSON.parse(searchParamsSort);
 
-      const previousData = queryClient.getQueryData<
-        InfiniteData<{ nextPage: number; data: Permission[] }>
-      >(permissionsQueryKeys.list().sub.by({ sort, filter }).key);
+    const queryKey = permissionsQueryKeys.list().sub.by({ sort, filter }).key;
+    const previousData = queryClient.getQueryData<
+      InfiniteData<{ nextPage: number; data: Permission[] }>
+    >(queryKey);
 
-      await queryClient.cancelQueries({
-        queryKey: permissionsQueryKeys.list().key,
-      });
+    await queryClient.cancelQueries({
+      queryKey: permissionsQueryKeys.list().key,
+    });
 
-      const newData = {
+    if (previousData) {
+      queryClient.setQueryData(queryKey, {
         ...previousData,
-        pages: previousData?.pages.map(
-          (page: { nextPage: number; data: Permission[] }) => ({
-            ...page,
-            data: page?.data.filter((item) => item.id !== permission.id),
-          })
-        ),
-      };
-
-      queryClient.setQueryData(
-        permissionsQueryKeys.list().sub.by({ sort, filter }).key,
-        newData
-      );
-
-      await fetchPermissionDelete({
-        id: permission.id,
+        pages: previousData.pages.map((page) => ({
+          ...page,
+          data: page.data.filter((item) => item.id !== permission.id),
+        })),
       });
     }
+
+    await fetchPermissionDelete({ id: permission.id });
   };
-
-  const editButton = (
-    <Button asChild size="sm" className={canDelete ? "rounded-e-none" : ""}>
-      <Link href={`/admin/permissions/edit/${permission.id}`}>
-        {tPermissions("admin-panel-permissions:actions.edit")}
-      </Link>
-    </Button>
-  );
-
-  if (!canDelete) {
-    return editButton;
-  }
 
   return (
     <div className="inline-flex items-center">
-      {editButton}
+      <Button asChild size="sm" className="rounded-e-none">
+        <Link href={`/admin/permissions/edit/${permission.id}`}>
+          {tPermissions("admin-panel-permissions:actions.edit")}
+        </Link>
+      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -177,43 +127,41 @@ function Permissions() {
   const { t: tPermissions } = useTranslation("admin-panel-permissions");
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [{ order, orderBy }, setSort] = useState<{
-    order: SortEnum;
-    orderBy: PermissionKeys;
-  }>(() => {
-    const searchParamsSort = searchParams.get("sort");
-    if (searchParamsSort) {
-      return JSON.parse(searchParamsSort);
-    }
-    return { order: SortEnum.DESC, orderBy: "id" };
+  const [sorting, setSorting] = useState<SortingState>(() => {
+    const value = searchParams.get("sort");
+    const sort = value
+      ? (JSON.parse(value) as { order: SortEnum; orderBy: PermissionKeys })
+      : { order: SortEnum.DESC, orderBy: "id" as PermissionKeys };
+
+    return [{ id: sort.orderBy, desc: sort.order === SortEnum.DESC }];
   });
 
-  const handleRequestSort = (
-    event: MouseEvent<HTMLButtonElement>,
-    property: PermissionKeys
-  ) => {
-    const isAsc = orderBy === property && order === SortEnum.ASC;
-    const searchParams = new URLSearchParams(window.location.search);
-    const newOrder = isAsc ? SortEnum.DESC : SortEnum.ASC;
-    const newOrderBy = property;
-    searchParams.set(
-      "sort",
-      JSON.stringify({ order: newOrder, orderBy: newOrderBy })
-    );
-    setSort({
-      order: newOrder,
-      orderBy: newOrderBy,
-    });
-    router.push(window.location.pathname + "?" + searchParams.toString());
-  };
+  const currentSort = sorting[0];
+  const order = currentSort?.desc ? SortEnum.DESC : SortEnum.ASC;
+  const orderBy = (currentSort?.id ?? "id") as PermissionKeys;
+
+  const handleSortingChange = useCallback(
+    (updater: SortingState | ((old: SortingState) => SortingState)) => {
+      const next = typeof updater === "function" ? updater(sorting) : updater;
+      const active = next[0];
+      if (!active) return;
+
+      const nextOrder = active.desc ? SortEnum.DESC : SortEnum.ASC;
+      const nextOrderBy = active.id as PermissionKeys;
+      const params = new URLSearchParams(window.location.search);
+      params.set(
+        "sort",
+        JSON.stringify({ order: nextOrder, orderBy: nextOrderBy })
+      );
+      setSorting(next);
+      router.push(window.location.pathname + "?" + params.toString());
+    },
+    [router, sorting]
+  );
 
   const filter = useMemo(() => {
-    const searchParamsFilter = searchParams.get("filter");
-    if (searchParamsFilter) {
-      return JSON.parse(searchParamsFilter) as PermissionFilterType;
-    }
-
-    return undefined;
+    const value = searchParams.get("filter");
+    return value ? (JSON.parse(value) as PermissionFilterType) : undefined;
   }, [searchParams]);
 
   const { data, hasNextPage, isFetchingNextPage, fetchNextPage } =
@@ -221,24 +169,77 @@ function Permissions() {
       filter,
       sort: {
         order,
-        orderBy: (orderBy === "name"
-          ? "name"
-          : "id") as PermissionSortType["orderBy"],
+        orderBy: (orderBy === "name" ? "name" : "id") as PermissionSortType["orderBy"],
       },
     });
 
   const handleScroll = useCallback(() => {
     if (!hasNextPage || isFetchingNextPage) return;
-    fetchNextPage();
+    const nearBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 500;
+    if (nearBottom) void fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const result = useMemo(() => {
-    const result =
-      (data?.pages.flatMap((page) => page?.data) as Permission[]) ??
-      ([] as Permission[]);
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
-    return result;
-  }, [data]);
+  const result = useMemo(
+    () => (data?.pages.flatMap((page) => page?.data) as Permission[]) ?? [],
+    [data]
+  );
+
+  const columns = useMemo<ColumnDef<Permission>[]>(
+    () => [
+      {
+        accessorKey: "id",
+        header: tPermissions("admin-panel-permissions:table.column1"),
+        enableSorting: true,
+        cell: ({ row }) => (
+          <span className="font-mono text-muted-foreground">{row.original.id}</span>
+        ),
+      },
+      {
+        accessorKey: "name",
+        header: tPermissions("admin-panel-permissions:table.column2"),
+        enableSorting: true,
+        cell: ({ row }) => (
+          <span className="font-medium text-foreground">{row.original.name}</span>
+        ),
+      },
+      {
+        accessorKey: "description",
+        header: tPermissions("admin-panel-permissions:table.column3"),
+        enableSorting: false,
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{row.original.description ?? "—"}</span>
+        ),
+      },
+      {
+        id: "actions",
+        header: "",
+        enableSorting: false,
+        cell: ({ row }) => (
+          <Actions permission={row.original} />
+        ),
+      },
+    ],
+    [tPermissions]
+  );
+
+  const table = useReactTable({
+    data: result,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualSorting: true,
+    enableMultiSort: false,
+    enableSortingRemoval: false,
+    state: { sorting },
+    onSortingChange: handleSortingChange,
+  });
 
   return (
     <div className="page-content--wide">
@@ -257,67 +258,68 @@ function Permissions() {
         </div>
 
         <div className="table-shell">
-          <TableVirtuoso
-            data={result}
-            components={TableComponents}
-            endReached={handleScroll}
-            overscan={20}
-            useWindowScroll
-            increaseViewportBy={400}
-            fixedHeaderContent={() => (
-              <>
-                <TableRow>
-                  <TableHead style={{ width: 80 }}></TableHead>
-                  <TableSortCellWrapper
-                    width={100}
-                    orderBy={orderBy}
-                    order={order}
-                    column="id"
-                    handleRequestSort={handleRequestSort}
-                  >
-                    {tPermissions("admin-panel-permissions:table.column1")}
-                  </TableSortCellWrapper>
-                  <TableHead style={{ width: 200 }}>
-                    {tPermissions("admin-panel-permissions:table.column2")}
-                  </TableHead>
-                  <TableSortCellWrapper
-                    orderBy={orderBy}
-                    order={order}
-                    column="description"
-                    handleRequestSort={handleRequestSort}
-                  >
-                    {tPermissions("admin-panel-permissions:table.column3")}
-                  </TableSortCellWrapper>
-                  <TableHead style={{ width: 130 }}></TableHead>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort();
+                    const sorted = header.column.getIsSorted();
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder ? null : canSort ? (
+                          <button
+                            type="button"
+                            onClick={header.column.getToggleSortingHandler()}
+                            className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {sorted === "asc" ? (
+                              <ArrowUp className="size-4" />
+                            ) : sorted === "desc" ? (
+                              <ArrowDown className="size-4" />
+                            ) : (
+                              <ChevronsUpDown className="size-4 opacity-50" />
+                            )}
+                          </button>
+                        ) : (
+                          flexRender(header.column.columnDef.header, header.getContext())
+                        )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-                {isFetchingNextPage && (
-                  <TableRow>
-                    <TableHead colSpan={4} className="p-0">
-                      <div className="table-shell__progress">
-                        <div className="table-shell__progress-bar animate-progress-bar" />
-                      </div>
-                    </TableHead>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </>
-            )}
-            itemContent={(_index, permission) => {
-              return (
-                <>
-                  <TableCell style={{ width: 80 }}>{permission.id}</TableCell>
-                  <TableCell style={{ width: 200 }}>
-                    {permission.name}
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="py-10 text-center text-sm text-muted-foreground">
+                    —
                   </TableCell>
-                  <TableCell style={{ width: 200 }}>
-                    {permission.description ?? "-"}
+                </TableRow>
+              )}
+              {isFetchingNextPage && (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="py-3">
+                    <div className="table-shell__progress">
+                      <div className="table-shell__progress-bar animate-progress-bar" />
+                    </div>
                   </TableCell>
-                  <TableCell style={{ width: 130 }}>
-                    {!!permission && <Actions permission={permission} />}
-                  </TableCell>
-                </>
-              );
-            }}
-          />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
