@@ -10,9 +10,7 @@ export interface SortConfig {
   order: SortOrder;
 }
 
-export interface TableFilters {
-  [key: string]: string | number | boolean | null | undefined;
-}
+export type TableFilters = Record<string, unknown>;
 
 export interface TableQueryParams {
   page: number;
