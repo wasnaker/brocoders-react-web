@@ -95,6 +95,8 @@ export interface SmallTableProps<T> {
   searchLabel?: string;
   /** Menampilkan state loading tanpa mengosongkan panel detail. */
   isLoading?: boolean;
+  /** True selama request berlangsung, termasuk refetch saat search/filter berubah. */
+  isFetching?: boolean;
   /** Teks saat request pertama sedang dimuat. */
   loadingText?: string;
   /** Handler saat search berubah (controlled oleh parent via useTable). */
@@ -139,6 +141,7 @@ export function SmallTable<T>({
   searchPlaceholder = "Cari…",
   searchLabel = "Cari data",
   isLoading = false,
+  isFetching = false,
   loadingText = "Memuat data…",
   onSearchChange,
   page: pageProp = 1,
@@ -262,7 +265,12 @@ export function SmallTable<T>({
         </div>
 
         {/* Table */}
-        <div className="table-shell" aria-busy={isLoading}>
+        <div className="table-shell" aria-busy={isLoading || isFetching}>
+          {isFetching && !isLoading && (
+            <p className="px-1 pb-2 text-xs text-muted-foreground" role="status" aria-live="polite">
+              {loadingText}
+            </p>
+          )}
           <Table>
             <TableHeader>
               <TableRow>
