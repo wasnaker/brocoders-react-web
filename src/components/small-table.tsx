@@ -59,8 +59,6 @@ export interface DetailTab {
 }
 
 export interface SmallTableProps<T> {
-  /** Mode tabel — saat ini hanya 'server' (client-side dihapus untuk konsistensi). */
-  mode?: 'server';
   items: T[];
   /** Total record di server (wajib untuk mode server — untuk hitung totalPages). */
   total?: number;
@@ -98,9 +96,9 @@ export interface SmallTableProps<T> {
   /** Baris per halaman (default: 20). */
   perPage?: number;
   /** Sort config saat ini (controlled oleh parent). */
-  sort?: { field: string; order: 'ASC' | 'DESC' };
+  sort?: { field: string; order: "ASC" | "DESC" };
   /** Handler saat sort berubah (controlled oleh parent). */
-  onSortChange?: (sort: { field: string; order: 'ASC' | 'DESC' }) => void;
+  onSortChange?: (sort: { field: string; order: "ASC" | "DESC" }) => void;
   emptyText?: string;
   tabEmptyText?: string;
   /** Label untuk pagination, misal "dari N" / "of N". */
@@ -111,7 +109,6 @@ export interface SmallTableProps<T> {
 }
 
 export function SmallTable<T>({
-  mode = 'server',
   items,
   total: totalProp,
   tabs = [],
@@ -262,7 +259,10 @@ export function SmallTable<T>({
                           className="inline-flex items-center gap-1 hover:text-foreground"
                           onClick={header.column.getToggleSortingHandler()}
                         >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                           <span
                             aria-label={
                               header.column.getIsSorted() === "asc"
@@ -272,10 +272,19 @@ export function SmallTable<T>({
                                   : "Unsorted"
                             }
                           >
-                            {header.column.getIsSorted() === "asc" ? "↑" : header.column.getIsSorted() === "desc" ? "↓" : "↕"}
+                            {header.column.getIsSorted() === "asc"
+                              ? "↑"
+                              : header.column.getIsSorted() === "desc"
+                                ? "↓"
+                                : "↕"}
                           </span>
                         </button>
-                      ) : flexRender(header.column.columnDef.header, header.getContext())}
+                      ) : (
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
+                      )}
                     </TableHead>
                   ))
                 )}
@@ -306,7 +315,9 @@ export function SmallTable<T>({
                       )}
                     >
                       {row.getVisibleCells().map((cell) => {
-                        const col = visibleCols.find((candidate) => candidate.key === cell.column.id);
+                        const col = visibleCols.find(
+                          (candidate) => candidate.key === cell.column.id
+                        );
                         return (
                           <TableCell
                             key={cell.id}
@@ -317,7 +328,10 @@ export function SmallTable<T>({
                                 : "text-muted-foreground"
                             )}
                           >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
                           </TableCell>
                         );
                       })}
@@ -406,7 +420,9 @@ export function SmallTable<T>({
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         )}
                       >
-                        {tab.icon && <span className="text-xs">{tab.icon}</span>}
+                        {tab.icon && (
+                          <span className="text-xs">{tab.icon}</span>
+                        )}
                         {tab.label}
                       </button>
                     );
@@ -420,10 +436,14 @@ export function SmallTable<T>({
                   customTabBody?.[activeTabDef.slug] ? (
                     customTabBody[activeTabDef.slug](selected, activeTabDef)
                   ) : (
-                    <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {tabEmptyText}
+                    </p>
                   )
                 ) : (
-                  <p className="text-sm text-muted-foreground">{tabEmptyText}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {tabEmptyText}
+                  </p>
                 )}
               </div>
             </div>

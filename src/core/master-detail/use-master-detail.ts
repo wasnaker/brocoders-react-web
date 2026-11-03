@@ -46,9 +46,10 @@ export interface MasterDetailState {
   setShowDetail: (value: boolean) => void;
 }
 
-export function useMasterDetail(
-  { syncHash = true, invalidateKey }: UseMasterDetailOptions = {},
-): MasterDetailState {
+export function useMasterDetail({
+  syncHash = true,
+  invalidateKey,
+}: UseMasterDetailOptions = {}): MasterDetailState {
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<MasterDetailId | null>(null);
   const [showDetail, setShowDetailState] = useState(false);
@@ -59,10 +60,10 @@ export function useMasterDetail(
       window.history.replaceState(
         null,
         "",
-        id != null ? `#${id}` : window.location.pathname,
+        id !== null ? `#${id}` : window.location.pathname
       );
     },
-    [syncHash],
+    [syncHash]
   );
 
   // Pulihkan pilihan dari hash saat mount (mis. refresh / bookmark).
@@ -80,13 +81,10 @@ export function useMasterDetail(
       setShowDetailState(true);
       writeHash(id);
     },
-    [writeHash],
+    [writeHash]
   );
 
-  const select = useCallback(
-    (id: MasterDetailId) => openWith(id),
-    [openWith],
-  );
+  const select = useCallback((id: MasterDetailId) => openWith(id), [openWith]);
 
   // Semantik eksplisit untuk alur simpan: segarkan cache lalu tampilkan
   // entitas hasil simpan. Query detail dan list punya key berbeda, jadi
@@ -94,11 +92,11 @@ export function useMasterDetail(
   const afterSave = useCallback(
     (id: MasterDetailId) => {
       void queryClient.invalidateQueries(
-        invalidateKey ? { queryKey: invalidateKey } : undefined,
+        invalidateKey ? { queryKey: invalidateKey } : undefined
       );
       openWith(id);
     },
-    [openWith, queryClient, invalidateKey],
+    [openWith, queryClient, invalidateKey]
   );
 
   const close = useCallback(() => {
@@ -111,10 +109,13 @@ export function useMasterDetail(
     setShowDetailState((value) => !value);
   }, []);
 
-  const setShowDetail = useCallback((value: boolean) => {
-    setShowDetailState(value);
-    if (!value) writeHash(null);
-  }, [writeHash]);
+  const setShowDetail = useCallback(
+    (value: boolean) => {
+      setShowDetailState(value);
+      if (!value) writeHash(null);
+    },
+    [writeHash]
+  );
 
   return {
     selectedId,
