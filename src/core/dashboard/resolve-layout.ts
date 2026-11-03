@@ -211,12 +211,25 @@ export function moveWidget(
   return next;
 }
 
-/** Widget tersembunyi: map absen / true = tampil; hanya `false` yang menyembunyikan. */
+/**
+ * Apakah widget dirender di grid.
+ *
+ * Prioritas (terkuat → terlemah):
+ * 1. `enabled=false` (global Settings › Misc › dashboardWidgetsEnabled OFF)
+ *    → SEMUA widget off. Ini hard gate — override apa pun tidak berlaku.
+ * 2. Preferensi user per-widget di halaman dashboard (`visibility`) — ketika
+ *    user pernah mencentang widget, pilihan itu menang.
+ * 3. `defaultVisible` modul (konstanta di manifest) → fallback `true`.
+ */
 export function isWidgetVisible(
   widgetId: string,
-  visibility: Record<string, boolean> | null | undefined
+  visibility: Record<string, boolean> | null | undefined,
+  options?: { defaultVisible?: boolean; enabled?: boolean }
 ): boolean {
-  return !(visibility && visibility[widgetId] === false);
+  if (options?.enabled === false) return false;
+  const userValue = visibility?.[widgetId];
+  if (userValue !== undefined) return userValue;
+  return options?.defaultVisible ?? true;
 }
 
 // ---------------------------------------------------------------------------

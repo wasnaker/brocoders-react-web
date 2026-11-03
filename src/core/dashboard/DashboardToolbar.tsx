@@ -17,6 +17,7 @@ function resolveLabel(label: I18nLabel, t: (key: string) => string): string {
 interface DashboardToolbarProps {
   widgets: ResolvedDashboardWidget[];
   visibility: Record<string, boolean> | null;
+  enabled: boolean;
   preview: boolean;
   onTogglePreview: () => void;
   onToggleVisibility: (id: string) => void;
@@ -26,6 +27,7 @@ interface DashboardToolbarProps {
 export function DashboardToolbar({
   widgets,
   visibility,
+  enabled,
   preview,
   onTogglePreview,
   onToggleVisibility,
@@ -34,7 +36,10 @@ export function DashboardToolbar({
   const { t } = useTranslation("dashboard");
   const { confirmDialog } = useConfirmDialog();
   const visibleCount = widgets.filter((w) =>
-    isWidgetVisible(w.id, visibility)
+    isWidgetVisible(w.id, visibility, {
+      defaultVisible: w.defaultVisible ?? true,
+      enabled,
+    })
   ).length;
 
   async function handleReset() {
@@ -69,7 +74,10 @@ export function DashboardToolbar({
                     <input
                       type="checkbox"
                       className="size-3.5 accent-primary"
-                      checked={isWidgetVisible(widget.id, visibility)}
+                      checked={isWidgetVisible(widget.id, visibility, {
+                        defaultVisible: widget.defaultVisible ?? true,
+                        enabled,
+                      })}
                       onChange={() => onToggleVisibility(widget.id)}
                       data-testid={`toolbar-visibility-${widget.id}`}
                     />

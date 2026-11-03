@@ -51,6 +51,15 @@ export interface DashboardWidgetDef {
   /** Di-register tapi belum punya komponen -> kartu placeholder, bukan crash. */
   component?: ComponentType;
   permission?: string;
+  /**
+   * Visibilitas awal widget saat global Settings › Misc › dashboardWidgetsEnabled
+   * bernilai true dan user belum toggle widget ini di halaman dashboard.
+   *
+   * Default: true. Modul boleh menetapkan false jika ingin widget tersembunyi
+   * sampai user mencentangnya lewat toolbar dashboard (preferensi user menang).
+   * Tidak dipakai saat global system OFF — saat itu SEMUA widget disembunyikan.
+   */
+  defaultVisible?: boolean;
 }
 
 /**

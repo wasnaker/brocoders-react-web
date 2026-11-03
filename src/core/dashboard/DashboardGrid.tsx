@@ -159,9 +159,15 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
   );
 
   function toggleVisibility(widgetId: string) {
+    const widget = allWidgets.find((w) => w.id === widgetId) ?? null;
+    // Global tidak perlu diteruskan di sini karena `widgets` sudah difilter
+    // habis saat global OFF (area kosong, tidak ada yang bisa di-toggle).
     saveVisibility.mutate({
       ...(visibility ?? {}),
-      [widgetId]: !isWidgetVisible(widgetId, visibility),
+      [widgetId]: !isWidgetVisible(widgetId, visibility, {
+        defaultVisible: widget?.defaultVisible ?? true,
+        enabled: coreSettings.dashboardWidgetsEnabled,
+      }),
     });
   }
 
@@ -293,6 +299,7 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
       <DashboardToolbar
         widgets={widgets}
         visibility={visibility}
+        enabled={coreSettings.dashboardWidgetsEnabled}
         preview={preview}
         onTogglePreview={() => setPreview((p) => !p)}
         onToggleVisibility={toggleVisibility}
@@ -348,7 +355,10 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
                     <WidgetCard
                       key={widget.id}
                       widget={widget}
-                      visible={isWidgetVisible(widget.id, visibility)}
+                      visible={isWidgetVisible(widget.id, visibility, {
+                        defaultVisible: widget.defaultVisible ?? true,
+                        enabled: coreSettings.dashboardWidgetsEnabled,
+                      })}
                       onToggleVisibility={toggleVisibility}
                       area={areaId}
                       index={index}
