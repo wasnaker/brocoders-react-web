@@ -36,7 +36,7 @@ export function SettingsShell({ user }: { user: User | null | undefined }) {
 
   if (tabs.length === 0) {
     return (
-      <div className="page-content--narrow">
+      <div className="page-content--narrow profile-settings-page">
         <div className="empty-state">No settings available.</div>
       </div>
     );
