@@ -318,7 +318,16 @@ export function SmallTable<T>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading && table.getRowModel().rows.length === 0 ? (\n                <TableRow>\n                  <TableCell\n                    colSpan={Math.max(1, visibleCols.length)}\n                    className="px-4 py-10 text-center text-sm text-muted-foreground"\n                  >\n                    {loadingText}\n                  </TableCell>\n                </TableRow>\n              ) : table.getRowModel().rows.length === 0 ? (
+              {isLoading && table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={Math.max(1, visibleCols.length)}
+                    className="px-4 py-10 text-center text-sm text-muted-foreground"
+                  >
+                    {loadingText}
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={Math.max(1, visibleCols.length)}
