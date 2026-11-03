@@ -21,6 +21,8 @@ export interface UseTableOptions<T> {
   defaultPage?: number;
   /** Baris per halaman (default: mengikuti Core Settings). */
   defaultLimit?: number;
+  /** Sort bawaan yang juga dikirim ke server. */
+  defaultSort?: SortConfig;
   /** Debounce search (ms). Default: 300. */
   searchDebounce?: number;
   /** Filter awal yang diterapkan di server. */
@@ -59,6 +61,7 @@ export function useTable<T>({
   fetchFn,
   defaultPage = 1,
   defaultLimit,
+  defaultSort,
   searchDebounce = 300,
   defaultFilters = {},
 }: UseTableOptions<T>): UseTableReturn<T> {
@@ -69,7 +72,7 @@ export function useTable<T>({
   const [page, setPageState] = useState(defaultPage);
   const [limit, setLimitState] = useState(resolvedDefaultLimit);
   const [search, setSearchState] = useState("");
-  const [sort, setSortState] = useState<SortConfig | undefined>();
+  const [sort, setSortState] = useState<SortConfig | undefined>(defaultSort);
   const [filters, setFiltersState] = useState<TableFilters>(defaultFilters);
 
   const appliedDefaultRef = useRef(resolvedDefaultLimit);
@@ -140,9 +143,9 @@ export function useTable<T>({
     setLimitState(resolvedDefaultLimit);
     setSearchState("");
     setDebouncedSearch("");
-    setSortState(undefined);
+    setSortState(defaultSort);
     setFiltersState(defaultFilters);
-  }, [defaultPage, resolvedDefaultLimit, defaultFilters]);
+  }, [defaultPage, resolvedDefaultLimit, defaultSort, defaultFilters]);
 
   const refresh = useCallback(() => {
     void queryClient.invalidateQueries({ queryKey });
