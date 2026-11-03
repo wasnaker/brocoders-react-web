@@ -48,6 +48,8 @@ export interface SmallTableColumn<T> {
   label: string;
   /** Kolom utama — tetap tampil saat mode kecil (kolom non-primary hidden). */
   primary?: boolean;
+  /** Nonaktifkan sorting untuk kolom komposit/tidak didukung API. */
+  sortable?: boolean;
   render: (item: T) => React.ReactNode;
 }
 
@@ -205,7 +207,7 @@ export function SmallTable<T>({
         accessorFn: (item) => item,
         header: column.label,
         cell: (context) => column.render(context.row.original),
-        enableSorting: Boolean(onSortChange),
+        enableSorting: Boolean(onSortChange) && column.sortable !== false,
       })),
     [visibleCols, onSortChange]
   );
