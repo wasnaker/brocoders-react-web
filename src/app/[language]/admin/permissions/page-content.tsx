@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
   type SortingState,
+  type ColumnDef,
 } from "@tanstack/react-table";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { RoleEnum } from "@/services/api/types/role";
@@ -191,13 +192,13 @@ function Permissions() {
     [data]
   );
 
-  const columns = useMemo(
+  const columns = useMemo<ColumnDef<Permission>[]>(
     () => [
       {
         accessorKey: "id",
         header: tPermissions("admin-panel-permissions:table.column1"),
         enableSorting: true,
-        cell: ({ row }: { row: { original: Permission } }) => (
+        cell: ({ row }) => (
           <span className="font-mono text-muted-foreground">{row.original.id}</span>
         ),
       },
@@ -205,7 +206,7 @@ function Permissions() {
         accessorKey: "name",
         header: tPermissions("admin-panel-permissions:table.column2"),
         enableSorting: true,
-        cell: ({ row }: { row: { original: Permission } }) => (
+        cell: ({ row }) => (
           <span className="font-medium text-foreground">{row.original.name}</span>
         ),
       },
@@ -213,7 +214,7 @@ function Permissions() {
         accessorKey: "description",
         header: tPermissions("admin-panel-permissions:table.column3"),
         enableSorting: false,
-        cell: ({ row }: { row: { original: Permission } }) => (
+        cell: ({ row }) => (
           <span className="text-muted-foreground">{row.original.description ?? "—"}</span>
         ),
       },
@@ -221,7 +222,7 @@ function Permissions() {
         id: "actions",
         header: "",
         enableSorting: false,
-        cell: ({ row }: { row: { original: Permission } }) => (
+        cell: ({ row }) => (
           <Actions permission={row.original} />
         ),
       },
@@ -304,7 +305,7 @@ function Permissions() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="py-10 text-center text-sm text-muted-foreground">
-                    {tPermissions("admin-panel-permissions:table.empty")}
+                    —
                   </TableCell>
                 </TableRow>
               )}
@@ -319,9 +320,6 @@ function Permissions() {
               )}
             </TableBody>
           </Table>
-          <div className="small-table-pagination border-t border-border px-4 py-2.5 text-xs text-muted-foreground">
-            {result.length} {tPermissions("admin-panel-permissions:table.loaded")}
-          </div>
         </div>
       </div>
     </div>
