@@ -19,11 +19,9 @@ jobs:
       - name: Start PostgreSQL, MailDev, and API
         run: |
           cd backend
-          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational up -d postgres
-          # Compose "run" does not register the service DNS alias by default.
-          # The API startup script waits for maildev:1080, so add that alias.
-          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational run --detach --no-deps --publish 1080:1080 --publish 1025:1025 --name e2e-maildev maildev
-          docker network connect --alias maildev backend_default e2e-maildev
+          # Start MailDev as a regular Compose service so its "maildev" DNS
+          # alias is registered on the shared network before the API starts.
+          docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational up -d postgres maildev
           docker compose -f docker-compose.relational.test.yaml --env-file env-example-relational run --detach --no-deps --publish 3001:3001 --name e2e-api api
 
       - name: Wait for PostgreSQL API
