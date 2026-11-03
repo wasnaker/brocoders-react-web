@@ -303,7 +303,7 @@
 
   /* App bar */
   .app-bar {
-    @apply flex h-[var(--header-height,4rem)] items-center gap-2 border-b border-border bg-background px-4;
+    @apply flex h-[var(--header-height,4rem)] items-center gap-2 bg-background px-4;
   }
 
   .app-bar__brand {
