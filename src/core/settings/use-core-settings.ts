@@ -63,7 +63,7 @@ export function useCoreSettings(): {
   const fetchGetSettings = useGetSettingsService();
 
   const { data = [], isLoading } = useQuery<SettingsResponse>({
-    queryKey: ["core-settings", "misc"],
+    queryKey: ["settings", "misc"],
     queryFn: async ({ signal }) => {
       const response = await fetchGetSettings({ group: "misc" }, { signal });
       return response.status === HTTP_CODES_ENUM.OK ? response.data : [];
