@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { SortConfig, TableFilters, TableResponse } from "./types";
 import { useCoreSettings } from "@/core/settings/use-core-settings";
 
 export interface UseTableOptions<T> {
-  /** Query key prefix — akan ditambah dengan page, limit, search, sort. */
+  /** Query key prefix — akan ditambah dengan page, limit, search, sort, dan filters. */
   queryKey: readonly unknown[];
-  /** Fungsi fetch ke API. Harus terima params dan return { data, total }. */
+  /** Fungsi fetch ke API. Semua parameter diterapkan di server sebelum pagination. */
   fetchFn: (params: {
     page: number;
     limit: number;
@@ -18,73 +18,40 @@ export interface UseTableOptions<T> {
   }) => Promise<TableResponse<T>>;
   /** Halaman awal (default: 1). */
   defaultPage?: number;
-  /** Baris per halaman (default: 20). */
+  /** Baris per halaman (default: mengikuti Core Settings). */
   defaultLimit?: number;
   /** Debounce search (ms). Default: 300. */
   searchDebounce?: number;
+  /** Filter awal yang diterapkan di server. */
+  defaultFilters?: TableFilters;
 }
 
 export interface UseTableReturn<T> {
-  /** Data hasil query. */
   data: T[];
-  /** Total record di server (untuk hitung totalPages). */
   total: number;
-  /** Loading state dari React Query. */
   isLoading: boolean;
-  /** Error state dari React Query. */
+  isFetching: boolean;
   error: unknown;
-  /** Halaman aktif (1-based). */
   page: number;
-  /** Baris per halaman. */
   limit: number;
-  /** Total halaman. */
   totalPages: number;
-  /** Search query saat ini. */
   search: string;
-  /** Sort config saat ini. */
   sort: SortConfig | undefined;
-  /** Set halaman — auto clamp ke totalPages. */
+  filters: TableFilters;
   setPage: (page: number) => void;
-  /** Set limit — reset ke halaman 1. */
   setLimit: (limit: number) => void;
-  /** Set search — reset ke halaman 1, debounce otomatis. */
   setSearch: (q: string) => void;
-  /** Set sort — reset ke halaman 1. */
   setSort: (sort: SortConfig | undefined) => void;
-  /** Reset semua filter ke default. */
+  setFilters: (filters: TableFilters) => void;
   reset: () => void;
-  /** Refresh data manual. */
   refresh: () => void;
 }
 
 /**
- * Hook universal untuk server-side table.
+ * Hook universal untuk tabel server-side.
  *
- * Semua modul dengan data > 0 record WAJIB pakai hook ini.
- * Client-side pagination/filter dihapus untuk konsistensi.
- *
- * @example
- * ```tsx
- * const { data, total, page, setPage, search, setSearch, isLoading } = useTable({
- *   queryKey: ["region", "provinces"],
- *   fetchFn: async ({ page, limit, search, sort }) => {
- *     const res = await api.getProvinces({ page, limit, search, sort });
- *     return { data: res.data, total: res.total };
- *   },
- *   defaultLimit: 20,
- * });
- *
- * <SmallTable
- *   items={data}
- *   total={total}
- *   page={page}
- *   onPageChange={setPage}
- *   search={search}
- *   onSearch={setSearch}
- *   sort={sort}
- *   onSortChange={setSort}
- * />
- * ```
+ * Search, filters, dan sorting harus diterapkan backend sebelum pagination.
+ * Hook ini tidak pernah memfilter subset data yang kebetulan sedang dimuat.
  */
 export function useTable<T>({
   queryKey,
@@ -92,10 +59,9 @@ export function useTable<T>({
   defaultPage = 1,
   defaultLimit,
   searchDebounce = 300,
+  defaultFilters = {},
 }: UseTableOptions<T>): UseTableReturn<T> {
   const queryClient = useQueryClient();
-  // Sumber default page size global (Settings › Misc). Modul boleh override
-  // dengan defaultLimit eksplisit; jika tidak, ikuti settings core.
   const { settings } = useCoreSettings();
   const resolvedDefaultLimit = defaultLimit ?? settings.defaultPageSize;
 
@@ -103,11 +69,8 @@ export function useTable<T>({
   const [limit, setLimitState] = useState(resolvedDefaultLimit);
   const [search, setSearchState] = useState("");
   const [sort, setSortState] = useState<SortConfig | undefined>();
+  const [filters, setFiltersState] = useState<TableFilters>(defaultFilters);
 
-  // Sinkronkan limit ketika resolusi default (Settings › Misc) selesai dimuat.
-  // useState hanya membaca nilai sekali saat mount — kala itu settings masih
-  // loading (fallback 20), padahal nilai tersimpan 10. Effect ini menerapkan
-  // nilai akhir settings tanpa menunggu remount.
   const appliedDefaultRef = useRef(resolvedDefaultLimit);
   useEffect(() => {
     if (appliedDefaultRef.current !== resolvedDefaultLimit) {
@@ -117,59 +80,56 @@ export function useTable<T>({
     }
   }, [resolvedDefaultLimit]);
 
-  // Debounce hanya nilai yang dikirim ke server. Timer dikelola oleh effect
-  // agar setiap perubahan query membersihkan timer sebelumnya dan tidak ada
-  // request tertunda setelah komponen unmount.
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search.trim());
-    }, searchDebounce);
-
+    const timer = setTimeout(() => setDebouncedSearch(search.trim()), searchDebounce);
     return () => clearTimeout(timer);
   }, [search, searchDebounce]);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: [...queryKey, page, limit, debouncedSearch, sort],
+  // Query key memakai snapshot filter agar perubahan filter selalu menghasilkan
+  // query baru dan tidak mencampur hasil dari kombinasi filter sebelumnya.
+  const stableFilters = useMemo(() => filters, [filters]);
+  const query = useQuery({
+    queryKey: [...queryKey, page, limit, debouncedSearch, sort, stableFilters],
     queryFn: () =>
       fetchFn({
         page,
         limit,
         search: debouncedSearch || undefined,
         sort,
+        filters: stableFilters,
       }),
-    placeholderData: (prev) => prev,
+    placeholderData: (previous) => previous,
     staleTime: settings.staleTimeSeconds * 1000,
   });
 
-  const items = data?.data ?? [];
-  const total = data?.total ?? 0;
+  const data = query.data?.data ?? [];
+  const total = query.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  const setPage = useCallback(
-    (newPage: number) => {
-      setPageState((prev) => {
-        const clamped = Math.max(1, Math.min(newPage, totalPages));
-        return clamped === prev ? prev : clamped;
-      });
-    },
-    [totalPages]
-  );
+  const setPage = useCallback((newPage: number) => {
+    setPageState((previous) => Math.max(1, Math.min(newPage, totalPages)));
+  }, [totalPages]);
 
   const setLimit = useCallback((newLimit: number) => {
-    setLimitState(newLimit);
+    if (!Number.isFinite(newLimit) || newLimit < 1) return;
+    setLimitState(Math.floor(newLimit));
     setPageState(1);
   }, []);
 
-  const setSearch = useCallback((q: string) => {
-    setSearchState(q);
-    // Reset langsung supaya hasil pencarian selalu dimulai dari halaman 1.
+  const setSearch = useCallback((value: string) => {
+    setSearchState(value);
+    // Reset langsung; request baru berjalan setelah debounce selesai.
     setPageState(1);
   }, []);
 
-  const setSort = useCallback((newSort: SortConfig | undefined) => {
-    setSortState(newSort);
+  const setSort = useCallback((nextSort: SortConfig | undefined) => {
+    setSortState(nextSort);
+    setPageState(1);
+  }, []);
+
+  const setFilters = useCallback((nextFilters: TableFilters) => {
+    setFiltersState(nextFilters);
     setPageState(1);
   }, []);
 
@@ -179,28 +139,30 @@ export function useTable<T>({
     setSearchState("");
     setDebouncedSearch("");
     setSortState(undefined);
-  }, [defaultPage, resolvedDefaultLimit]);
+    setFiltersState(defaultFilters);
+  }, [defaultPage, resolvedDefaultLimit, defaultFilters]);
 
   const refresh = useCallback(() => {
-    void queryClient.invalidateQueries({
-      queryKey: [...queryKey, page, limit, debouncedSearch, sort],
-    });
-  }, [queryClient, queryKey, page, limit, debouncedSearch, sort]);
+    void queryClient.invalidateQueries({ queryKey });
+  }, [queryClient, queryKey]);
 
   return {
-    data: items,
+    data,
     total,
-    isLoading,
-    error,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    error: query.error,
     page,
     limit,
     totalPages,
     search,
     sort,
+    filters,
     setPage,
     setLimit,
     setSearch,
     setSort,
+    setFilters,
     reset,
     refresh,
   };
