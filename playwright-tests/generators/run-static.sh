@@ -28,6 +28,10 @@ cleanup() {
   rm -rf "src/app/[language]/admin/tags" 2>/dev/null || true
   rm -rf "src/app/[language]/admin/blog-comments" 2>/dev/null || true
   rm -rf "src/app/[language]/admin/articles" 2>/dev/null || true
+  # Wrapper route canonical juga dibuat generator (page.tsx tipis) di /admin/<res>/.
+  rm -rf "src/app/admin/tags" 2>/dev/null || true
+  rm -rf "src/app/admin/blog-comments" 2>/dev/null || true
+  rm -rf "src/app/admin/articles" 2>/dev/null || true
   rm -f src/services/api/types/tag.ts 2>/dev/null || true
   rm -f src/services/api/types/blog-comment.ts 2>/dev/null || true
   rm -f src/services/api/types/article.ts 2>/dev/null || true
