@@ -12,13 +12,14 @@ function ModulePage({ path }: { path: string }) {
   return <PageComponent />;
 }
 
+const AuthenticatedModulePage = withPageRequiredAuth(ModulePage, {
+  roles: [RoleEnum.ADMIN],
+});
+
 /**
  * Shared route adapter. It contains no module-specific imports or paths;
  * the owning package supplies the page component through its manifest.
  */
 export default function ModulePageContent({ path }: { path: string }) {
-  const AuthenticatedModulePage = withPageRequiredAuth(ModulePage, {
-    roles: [RoleEnum.ADMIN],
-  });
   return <AuthenticatedModulePage path={path} />;
 }
