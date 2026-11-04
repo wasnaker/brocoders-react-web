@@ -4,7 +4,13 @@ import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { getModulePage } from "@/core/modules/registry";
 
-function ModulePage({ path }: { path: string }) {
+type ModulePageProps = {
+  path?: string;
+  [key: string]: string | string[] | undefined;
+};
+
+function ModulePage({ path }: ModulePageProps) {
+  if (!path) return null;
   const page = getModulePage(path);
   if (!page) return null;
 
