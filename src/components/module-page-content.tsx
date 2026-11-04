@@ -1,12 +1,14 @@
 "use client";
 
+import type { ComponentType } from "react";
 import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { getModulePage } from "@/core/modules/registry";
 
 type ModulePageProps = {
   path?: string;
-  [key: string]: string | string[] | undefined;
+  params?: { [key: string]: string | string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 function ModulePage({ path }: ModulePageProps) {
@@ -20,7 +22,7 @@ function ModulePage({ path }: ModulePageProps) {
 
 const AuthenticatedModulePage = withPageRequiredAuth(ModulePage, {
   roles: [RoleEnum.ADMIN],
-});
+}) as ComponentType<ModulePageProps>;
 
 /**
  * Shared route adapter. It contains no module-specific imports or paths;
