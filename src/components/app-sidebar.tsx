@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Loader2 from "lucide-react/dist/esm/icons/loader-2";
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
 import House from "lucide-react/dist/esm/icons/house";
 import LayoutGrid from "lucide-react/dist/esm/icons/layout-grid";
@@ -37,9 +38,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { resolveMenu } from "@/core/modules/resolve-menu";
+import {
+  resolveMenu,
+  type ResolvedMenuItem,
+} from "@/core/modules/resolve-menu";
 import { getManifests } from "@/core/modules/registry";
 import type { I18nLabel } from "@/core/modules/types";
 
@@ -52,6 +59,76 @@ function CloseSidebarOnNavigate() {
   }, [pathname, setOpenMobile]);
 
   return null;
+}
+
+/**
+ * Satu item menu modul — polos (link) atau grup collapsible (punya children).
+ * Grup terbuka otomatis saat pathname aktif berada di salah satu sub-path.
+ */
+function ModuleMenuEntry({
+  item,
+  t,
+  pathname,
+}: {
+  item: ResolvedMenuItem;
+  t: (key: string) => string;
+  pathname: string;
+}) {
+  const Icon = item.icon;
+  const isActiveChild =
+    item.children?.some((child) => pathname.includes(child.href)) ?? false;
+  const [open, setOpen] = useState(isActiveChild);
+
+  // Efek samping ringan: ikuti perubahan rute (mis. navigasi antar halaman
+  // anak dari halaman lain) — bukan state yang didorong render lain.
+  useEffect(() => {
+    if (isActiveChild) setOpen(true);
+  }, [isActiveChild]);
+
+  if (item.children?.length) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          data-testid={`module-menu-${item.slug}`}
+        >
+          {Icon ? <Icon /> : null}
+          {resolveLabel(item.label, t)}
+          <ChevronDown
+            className={`ms-auto size-4 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </SidebarMenuButton>
+        {open && (
+          <SidebarMenuSub>
+            {item.children.map((child) => (
+              <SidebarMenuSubItem key={child.slug}>
+                <SidebarMenuSubButton
+                  asChild
+                  isActive={pathname.includes(child.href)}
+                >
+                  <Link href={child.href}>{resolveLabel(child.label, t)}</Link>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        )}
+      </SidebarMenuItem>
+    );
+  }
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={pathname.includes(item.href)}>
+        <Link href={item.href}>
+          {Icon ? <Icon /> : null}
+          {resolveLabel(item.label, t)}
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 }
 
 /** Resolve I18nLabel (string | { namespace, key }) to a translated string.
@@ -195,8 +272,9 @@ function AppSidebar() {
   const moduleNamespaces = [
     ...new Set(
       moduleMenu
-        .map((item) =>
-          typeof item.label === "object" ? item.label.namespace : null
+        .flatMap((item) => [item, ...(item.children ?? [])])
+        .map((entry) =>
+          typeof entry.label === "object" ? entry.label.namespace : null
         )
         .filter((ns): ns is string => Boolean(ns))
     ),
@@ -285,23 +363,16 @@ function AppSidebar() {
                 )}
 
                 {/* Module menu items from registry — rendered after core items.
-                    Each item has its own permission; resolver already filtered. */}
-                {moduleMenu.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <SidebarMenuItem key={item.slug}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes(item.href)}
-                      >
-                        <Link href={item.href}>
-                          {Icon ? <Icon /> : null}
-                          {resolveLabel(item.label, t)}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
+                    Each item has its own permission; resolver already filtered.
+                    Items with `children` render as collapsible submenus. */}
+                {moduleMenu.map((item) => (
+                  <ModuleMenuEntry
+                    key={item.slug}
+                    item={item}
+                    t={t}
+                    pathname={pathname}
+                  />
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

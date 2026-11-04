@@ -51,6 +51,12 @@ export interface MenuItem {
   permission?: string;
   /** Pengelompokan visual, opsional. */
   group?: string;
+  /**
+   * Sub-menu. Jika diisi, item dirender sebagai grup collapsible — `href`
+   * jadi opsional (parent boleh hanya pembuka grup). Permission tiap anak
+   * difilter sendiri-sendiri; parent tampil bila ≥1 anak lolos filter.
+   */
+  children?: MenuItem[];
 }
 
 import type { DashboardWidgetDef } from "@/core/dashboard/areas";
