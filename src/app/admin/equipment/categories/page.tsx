@@ -8,4 +8,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerTranslation(language, "module-equipment");
   return { title: t("module-equipment:categories_title") };
 }
-export default function Page() { return <Categories />; }
+export default function Page() {
+  return <Categories />;
+}
