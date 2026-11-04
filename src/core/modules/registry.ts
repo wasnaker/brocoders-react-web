@@ -13,7 +13,9 @@ export function getTabs(slot: "profileTabs" | "settingsTabs"): TabDef[] {
 }
 
 /** Resolve an exact canonical URL to its owning module page. */
-export function getModulePage(path: string): (ModulePageDef & { moduleAlias: string }) | null {
+export function getModulePage(
+  path: string
+): (ModulePageDef & { moduleAlias: string }) | null {
   for (const manifest of getManifests()) {
     const page = manifest.pages?.find((candidate) => candidate.path === path);
     if (page) return { ...page, moduleAlias: manifest.alias };
