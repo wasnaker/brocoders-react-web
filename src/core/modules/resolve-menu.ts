@@ -13,6 +13,14 @@ function resolveItem(
   moduleAlias: string,
   user: User | null | undefined
 ): ResolvedMenuItem | null {
+  // Batas role fail-closed: item dengan `roles` hanya tampil untuk role itu.
+  if (item.roles?.length) {
+    const roleId = Number(user?.role?.id);
+    if (!user || !item.roles.some((role) => Number(role) === roleId)) {
+      return null;
+    }
+  }
+
   if (!can(item.permission, user)) {
     return null;
   }

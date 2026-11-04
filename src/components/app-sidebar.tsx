@@ -5,15 +5,9 @@ import { usePathname } from "next/navigation";
 import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
-import House from "lucide-react/dist/esm/icons/house";
-import LayoutGrid from "lucide-react/dist/esm/icons/layout-grid";
-import Users from "lucide-react/dist/esm/icons/users";
-import ShieldCheck from "lucide-react/dist/esm/icons/shield-check";
 import Settings from "lucide-react/dist/esm/icons/settings";
 import CircleUser from "lucide-react/dist/esm/icons/circle-user";
 import LogOut from "lucide-react/dist/esm/icons/log-out";
-import ShieldUser from "lucide-react/dist/esm/icons/shield-user";
-import Blocks from "lucide-react/dist/esm/icons/blocks";
 import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
@@ -61,6 +55,14 @@ function CloseSidebarOnNavigate() {
   return null;
 }
 
+/** Cocokkan href per segmen (bukan substring); root "/" hanya aktif di home. */
+function isHrefActive(pathname: string, href: string): boolean {
+  if (href === "/") {
+    return pathname.split("/").filter(Boolean).length <= 1;
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 /**
  * Satu item menu modul — polos (link) atau grup collapsible (punya children).
  * Grup terbuka otomatis saat pathname aktif berada di salah satu sub-path.
@@ -76,7 +78,7 @@ function ModuleMenuEntry({
 }) {
   const Icon = item.icon;
   const isActiveChild =
-    item.children?.some((child) => pathname.includes(child.href)) ?? false;
+    item.children?.some((child) => isHrefActive(pathname, child.href)) ?? false;
   const [open, setOpen] = useState(isActiveChild);
 
   // Efek samping ringan: ikuti perubahan rute (mis. navigasi antar halaman
@@ -107,7 +109,7 @@ function ModuleMenuEntry({
               <SidebarMenuSubItem key={child.slug}>
                 <SidebarMenuSubButton
                   asChild
-                  isActive={pathname.includes(child.href)}
+                  isActive={isHrefActive(pathname, child.href)}
                 >
                   <Link href={child.href}>{resolveLabel(child.label, t)}</Link>
                 </SidebarMenuSubButton>
@@ -121,7 +123,7 @@ function ModuleMenuEntry({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={pathname.includes(item.href)}>
+      <SidebarMenuButton asChild isActive={isHrefActive(pathname, item.href)}>
         <Link href={item.href}>
           {Icon ? <Icon /> : null}
           {resolveLabel(item.label, t)}
@@ -256,14 +258,9 @@ function AppSidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
 
-  const isAdmin =
-    !!user?.role && [RoleEnum.ADMIN].includes(Number(user?.role?.id));
-
-  // Module menu items from registry. Resolver already filters by permission
-  // (fail-closed) and sorts by position → moduleAlias → slug. We do NOT
-  // wrap this in `isAdmin` because each item carries its own permission;
-  // a non-admin user with a specific permission should see their allowed
-  // module menu items. The resolver handles all permission logic.
+  // Seluruh menu (core + modul) berasal dari manifest. Resolver memfilter
+  // role + permission secara fail-closed lalu mengurutkan
+  // position → moduleAlias → slug.
   const moduleMenu = resolveMenu(getManifests(), user);
 
   // Subscribe juga ke namespace label modul — kalau hanya "common",
@@ -289,82 +286,9 @@ function AppSidebar() {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname.split("/").filter(Boolean).length <= 1}
-                  >
-                    <Link href="/">
-                      <House />
-                      {t("common:navigation.home")}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-
-                {isAdmin && (
-                  <>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes("/admin/dashboard")}
-                      >
-                        <Link href="/admin/dashboard">
-                          <LayoutGrid />
-                          {t("common:navigation.dashboard")}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes("/admin/users")}
-                      >
-                        <Link href="/admin/users">
-                          <Users />
-                          {t("common:navigation.users")}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes("/admin/permissions")}
-                      >
-                        <Link href="/admin/permissions">
-                          <ShieldCheck />
-                          {t("common:navigation.permissions")}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes("/admin/roles")}
-                      >
-                        <Link href="/admin/roles">
-                          <ShieldUser />
-                          {t("common:navigation.roles")}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname.includes("/admin/modules")}
-                      >
-                        <Link href="/admin/modules">
-                          <Blocks />
-                          {t("common:navigation.modules")}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    {/* sidebar-menu-items */}
-                  </>
-                )}
-
-                {/* Module menu items from registry — rendered after core items.
-                    Each item has its own permission; resolver already filtered.
-                    Items with `children` render as collapsible submenus. */}
+                {/* Semua item menu (core + modul) berasal dari manifest.
+                    Resolver sudah memfilter role/permission dan mengurutkan
+                    position → moduleAlias → slug. */}
                 {moduleMenu.map((item) => (
                   <ModuleMenuEntry
                     key={item.slug}

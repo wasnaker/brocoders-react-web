@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { RoleEnum } from "@/services/api/types/role";
 
 export type I18nLabel = string | { namespace: string; key: string };
 
@@ -46,6 +47,8 @@ export interface MenuItem {
   icon?: ComponentType<{ className?: string }>;
   position: number;
   permission?: string;
+  /** Batasi item ke role tertentu (fail-closed, dicek sebelum permission). */
+  roles?: RoleEnum[];
   group?: string;
   children?: MenuItem[];
 }
