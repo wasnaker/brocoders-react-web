@@ -32,8 +32,7 @@ export interface TabDef {
   slug: string;
   label: I18nLabel;
   position: number;
-  /** Lucide icon component for the tab trigger. Omit for tabs that
-      should render text-only. */
+  /** Lucide icon component for the tab trigger. Omit for text-only tabs. */
   icon?: ComponentType<{ className?: string }>;
   permission?: string;
   content: TabContent;
@@ -44,29 +43,33 @@ export interface MenuItem {
   slug: string;
   label: I18nLabel;
   href: string;
-  /** Komponen, bukan string. Lihat catatan di bawah. */
   icon?: ComponentType<{ className?: string }>;
-  /** Lebih kecil = lebih atas. Default core 10–90. */
   position: number;
   permission?: string;
-  /** Pengelompokan visual, opsional. */
   group?: string;
-  /**
-   * Sub-menu. Jika diisi, item dirender sebagai grup collapsible — `href`
-   * jadi opsional (parent boleh hanya pembuka grup). Permission tiap anak
-   * difilter sendiri-sendiri; parent tampil bila ≥1 anak lolos filter.
-   */
   children?: MenuItem[];
+}
+
+/** A module-owned page exposed at a canonical host URL. */
+export interface ModulePageDef {
+  /** Canonical URL, e.g. /admin/customer/branch. */
+  path: string;
+  /** Page implementation stays inside the owning module package. */
+  component: ComponentType;
+  /** Optional permission metadata; host applies its shared route auth. */
+  permission?: string;
+  /** Optional translated browser/document title. */
+  title?: I18nLabel;
 }
 
 import type { DashboardWidgetDef } from "@/core/dashboard/areas";
 
 export interface ModuleManifest {
   alias: string;
+  pages?: ModulePageDef[];
   profileTabs?: TabDef[];
   settingsTabs?: TabDef[];
   dashboardWidgets?: DashboardWidgetDef[];
-  /** Slot menu navigasi — BELUM diimplementasikan (resolver & sidebar Coming di T-065/T-066). */
   menu?: MenuItem[];
 }
 
