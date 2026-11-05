@@ -1,4 +1,4 @@
-import { can } from "./can";
+import { can, hasRole } from "./can";
 import type { ModuleManifest, MenuItem } from "./types";
 import type { User } from "@/services/api/types/user";
 
@@ -13,10 +13,9 @@ function resolveItem(
   moduleAlias: string,
   user: User | null | undefined
 ): ResolvedMenuItem | null {
-  // Batas role fail-closed: item dengan `roles` hanya tampil untuk role itu.
+  // Role restrictions must consider every assigned role (multirole).
   if (item.roles?.length) {
-    const roleId = Number(user?.role?.id);
-    if (!user || !item.roles.some((role) => Number(role) === roleId)) {
+    if (!user || !item.roles.some((role) => hasRole(user, role))) {
       return null;
     }
   }
