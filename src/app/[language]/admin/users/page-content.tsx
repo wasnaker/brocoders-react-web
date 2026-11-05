@@ -313,7 +313,12 @@ function Users() {
                   </TableCell>
                   <TableCell>{user?.email}</TableCell>
                   <TableCell style={{ width: 80 }}>
-                    {(user?.roles?.length ? user.roles : user?.role ? [user.role] : [])
+                    {(user?.roles?.length
+                      ? user.roles
+                      : user?.role
+                        ? [user.role]
+                        : []
+                    )
                       .map((role) => role.name || tRoles(`role.${role.id}`))
                       .join(", ")}
                   </TableCell>

@@ -28,7 +28,10 @@
         "label": "Role",
         "options": {
           "1": "Admin",
-          "2": "User"
+          "2": "User",
+          "3": "Customer Admin",
+          "4": "Branch Admin",
+          "5": "Customer"
         }
       }
     }

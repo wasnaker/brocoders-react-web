@@ -28,7 +28,10 @@
         "label": "Role",
         "options": {
           "1": "Admin",
-          "2": "User"
+          "2": "User",
+          "3": "Admin Customer",
+          "4": "Admin Cabang",
+          "5": "Customer"
         }
       }
     }
