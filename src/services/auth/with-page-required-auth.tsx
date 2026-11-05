@@ -31,10 +31,16 @@ function withPageRequiredAuth(
 
     useEffect(() => {
       const check = () => {
+        // Collect all roles: prefer roles[] (multirole), fall back to legacy role
+        const allRoles = user?.roles?.length
+          ? user.roles
+          : user?.role
+            ? [user.role]
+            : [];
+
         if (
           (user &&
-            user?.role?.id &&
-            optionRoles.includes(Number(user?.role.id))) ||
+            allRoles.some((role) => optionRoles.includes(Number(role.id)))) ||
           !isLoaded
         )
           return;
@@ -59,9 +65,15 @@ function withPageRequiredAuth(
       check();
     }, [user, isLoaded, router, language]);
 
+    // Collect all roles: prefer roles[] (multirole), fall back to legacy role
+    const allRoles = user?.roles?.length
+      ? user.roles
+      : user?.role
+        ? [user.role]
+        : [];
+
     return user &&
-      user?.role?.id &&
-      optionRoles.includes(Number(user?.role.id)) ? (
+      allRoles.some((role) => optionRoles.includes(Number(role.id))) ? (
       <Component {...props} />
     ) : null;
   };

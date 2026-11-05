@@ -15,11 +15,20 @@ export function can(
     return false;
   }
 
-  if (Number(user.role?.id) === RoleEnum.ADMIN) {
+  // Collect all roles: prefer roles[] (multirole), fall back to legacy role
+  const allRoles = user.roles?.length
+    ? user.roles
+    : user.role
+      ? [user.role]
+      : [];
+
+  // Admin role (id = 1) bypasses all permission checks
+  if (allRoles.some((role) => Number(role.id) === RoleEnum.ADMIN)) {
     return true;
   }
 
-  const permissions = user.role?.permissions ?? [];
+  // Collect all permissions from all roles
+  const permissions = allRoles.flatMap((role) => role.permissions ?? []);
 
   if (permissions.some((p) => p.name === WILDCARD)) {
     return true;
