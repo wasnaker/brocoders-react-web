@@ -313,7 +313,9 @@ function Users() {
                   </TableCell>
                   <TableCell>{user?.email}</TableCell>
                   <TableCell style={{ width: 80 }}>
-                    {tRoles(`role.${user?.role?.id}`)}
+                    {(user?.roles?.length ? user.roles : user?.role ? [user.role] : [])
+                      .map((role) => role.name || tRoles(`role.${role.id}`))
+                      .join(", ")}
                   </TableCell>
                   <TableCell style={{ width: 130 }}>
                     {!!user && <Actions user={user} />}
