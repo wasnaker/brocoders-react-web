@@ -15,5 +15,8 @@ export type User = {
   provider?: UserProviderEnum;
   socialId?: string;
   language?: string | null;
+  /** Legacy single role retained during API migration. */
   role?: Role;
+  /** Canonical role assignments. */
+  roles?: Role[];
 };
