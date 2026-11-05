@@ -12,7 +12,7 @@ import useAuth from "@/services/auth/use-auth";
 import useAuthActions from "@/services/auth/use-auth-actions";
 import { useTranslation } from "@/services/i18n/client";
 import Link from "@/components/link";
-import { RoleEnum } from "@/services/api/types/role";
+import { hasRole } from "@/core/modules/can";
 import { IS_SIGN_UP_ENABLED } from "@/services/auth/config";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -183,8 +183,7 @@ function NavUser() {
   const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
-  const isAdmin =
-    !!user?.role && [RoleEnum.ADMIN].includes(Number(user.role.id));
+  const isAdmin = hasRole(user, 1);
 
   return (
     <SidebarMenu>
