@@ -3,6 +3,27 @@ import { RoleEnum } from "@/services/api/types/role";
 
 const WILDCARD = "*";
 
+/**
+ * Return every assigned role. The legacy singular role is kept as a fallback
+ * for older API responses during the multirole migration.
+ */
+export function getUserRoles(user: User | null | undefined) {
+  if (!user) return [];
+  if (user.roles?.length) return user.roles;
+  return user.role ? [user.role] : [];
+}
+
+/** Check a role against all assignments, not only the legacy primary role. */
+export function hasRole(
+  user: User | null | undefined,
+  role: number | string
+): boolean {
+  const expectedRoleId = Number(role);
+  return getUserRoles(user).some(
+    (assignedRole) => Number(assignedRole.id) === expectedRoleId
+  );
+}
+
 export function can(
   permission: string | null | undefined,
   user: User | null | undefined
@@ -15,19 +36,14 @@ export function can(
     return false;
   }
 
-  // Collect all roles: prefer roles[] (multirole), fall back to legacy role
-  const allRoles = user.roles?.length
-    ? user.roles
-    : user.role
-      ? [user.role]
-      : [];
+  const allRoles = getUserRoles(user);
 
-  // Admin role (id = 1) bypasses all permission checks
-  if (allRoles.some((role) => Number(role.id) === RoleEnum.ADMIN)) {
+  // Admin role (id = 1) bypasses all permission checks.
+  if (hasRole(user, RoleEnum.ADMIN)) {
     return true;
   }
 
-  // Collect all permissions from all roles
+  // Collect permissions from every assigned role.
   const permissions = allRoles.flatMap((role) => role.permissions ?? []);
 
   if (permissions.some((p) => p.name === WILDCARD)) {
