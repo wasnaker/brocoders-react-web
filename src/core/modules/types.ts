@@ -39,7 +39,7 @@ export interface TabDef {
   content: TabContent;
 }
 
-export interface MenuItem {
+export type ProfileTabDef = Omit<TabDef, "content"> & {\n  /** Profile tabs are module-owned React components; settings fields are not valid here. */\n  content: { kind: "component"; component: ComponentType };\n};\n\nexport interface MenuItem {
   /** Unik dalam satu manifest. */
   slug: string;
   label: I18nLabel;
@@ -70,7 +70,7 @@ import type { DashboardWidgetDef } from "@/core/dashboard/areas";
 export interface ModuleManifest {
   alias: string;
   pages?: ModulePageDef[];
-  profileTabs?: TabDef[];
+  profileTabs?: ProfileTabDef[];
   settingsTabs?: TabDef[];
   dashboardWidgets?: DashboardWidgetDef[];
   menu?: MenuItem[];
