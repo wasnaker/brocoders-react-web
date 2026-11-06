@@ -50,7 +50,9 @@ function ModulePageContent({ path }: { path: string }) {
     router.replace(`/${language}?${params.toString()}`);
   }, [isLoaded, user, allowed, router, language]);
 
-  const AuthenticatedModulePage = withPageRequiredAuth(ModulePage) as ComponentType<ModulePageProps>;
+  const AuthenticatedModulePage = withPageRequiredAuth(
+    ModulePage
+  ) as ComponentType<ModulePageProps>;
 
   return allowed ? <AuthenticatedModulePage path={path} /> : null;
 }
