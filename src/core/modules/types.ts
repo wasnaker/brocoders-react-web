@@ -39,7 +39,12 @@ export interface TabDef {
   content: TabContent;
 }
 
-export type ProfileTabDef = Omit<TabDef, "content"> & {\n  /** Profile tabs are module-owned React components; settings fields are not valid here. */\n  content: { kind: "component"; component: ComponentType };\n};\n\nexport interface MenuItem {
+export type ProfileTabDef = Omit<TabDef, "content"> & {
+  /** Profile tabs are module-owned React components; settings fields are not valid here. */
+  content: { kind: "component"; component: ComponentType };
+};
+
+export interface MenuItem {
   /** Unik dalam satu manifest. */
   slug: string;
   label: I18nLabel;
