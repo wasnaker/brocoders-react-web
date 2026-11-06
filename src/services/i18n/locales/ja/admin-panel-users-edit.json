@@ -37,10 +37,24 @@
         "1": "Admin",
         "2": "User",
           "3": "カスタマー管理者",
-          "4": "支店管理者",
+          "4": "顧客支店管理者",
           "5": "カスタマー"
       }
     },
+    "roles": {
+      "label": "ロール",
+      "validation": {
+        "required": "ロールは必須です",
+        "min": "少なくとも1つのロールを選択してください"
+      },
+      "options": {
+        "admin": "管理者",
+        "customerAdmin": "カスタマー管理者",
+        "branchAdmin": "顧客支店管理者",
+        "customer": "カスタマー"
+      }
+    },
+
     "password": {
       "label": "Password",
       "validation": {

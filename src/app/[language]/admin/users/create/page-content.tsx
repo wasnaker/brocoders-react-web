@@ -16,7 +16,7 @@ import { useTranslation } from "@/services/i18n/client";
 import { usePostUserService } from "@/services/api/services/users";
 import { useRouter } from "next/navigation";
 import { Role, RoleEnum } from "@/services/api/types/role";
-import FormSelectInput from "@/components/form/select/form-select";
+import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
 
 type CreateFormData = {
   email: string;
@@ -25,7 +25,7 @@ type CreateFormData = {
   password: string;
   passwordConfirmation: string;
   photo?: FileEntity;
-  role: Role;
+  roles: Role[];
 };
 
 const useValidationSchema = () => {
@@ -67,13 +67,16 @@ const useValidationSchema = () => {
           "admin-panel-users-create:inputs.passwordConfirmation.validation.required"
         )
       ),
-    role: yup
-      .object()
-      .shape({
-        id: yup.mixed<string | number>().required(),
-        name: yup.string(),
-      })
-      .required(t("admin-panel-users-create:inputs.role.validation.required")),
+    roles: yup
+      .array()
+      .of(
+        yup.object().shape({
+          id: yup.mixed<string | number>().required(),
+          name: yup.string(),
+        })
+      )
+      .min(1, t("admin-panel-users-create:inputs.roles.validation.min"))
+      .required(t("admin-panel-users-create:inputs.roles.validation.required")),
   });
 };
 
@@ -105,9 +108,7 @@ function FormCreateUser() {
       lastName: "",
       password: "",
       passwordConfirmation: "",
-      role: {
-        id: RoleEnum.USER,
-      },
+      roles: [{ id: RoleEnum.USER }],
       photo: undefined,
     },
   });
@@ -115,7 +116,10 @@ function FormCreateUser() {
   const { handleSubmit, setError } = methods;
 
   const onSubmit = handleSubmit(async (formData) => {
-    const { data, status } = await fetchPostUser(formData);
+    const { data, status } = await fetchPostUser({
+      ...formData,
+      roles: formData.roles.map((r) => ({ id: r.id })),
+    });
     if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
       (Object.keys(data.errors) as Array<keyof CreateFormData>).forEach(
         (key) => {
@@ -198,22 +202,39 @@ function FormCreateUser() {
             </div>
 
             <div className="form-grid__cell">
-              <FormSelectInput<CreateFormData, Pick<Role, "id">>
-                name="role"
-                testId="role"
-                label={t("admin-panel-users-create:inputs.role.label")}
+              <FormMultipleSelectInput<CreateFormData, Role>
+                name="roles"
+                testId="roles"
+                label={t("admin-panel-users-create:inputs.roles.label")}
                 options={[
                   {
                     id: RoleEnum.ADMIN,
+                    name: t(
+                      "admin-panel-users-create:inputs.roles.options.admin"
+                    ),
                   },
                   {
-                    id: RoleEnum.USER,
+                    id: 3,
+                    name: t(
+                      "admin-panel-users-create:inputs.roles.options.customerAdmin"
+                    ),
+                  },
+                  {
+                    id: 4,
+                    name: t(
+                      "admin-panel-users-create:inputs.roles.options.branchAdmin"
+                    ),
+                  },
+                  {
+                    id: 5,
+                    name: t(
+                      "admin-panel-users-create:inputs.roles.options.customer"
+                    ),
                   },
                 ]}
                 keyValue="id"
-                renderOption={(option) =>
-                  t(`admin-panel-users-create:inputs.role.options.${option.id}`)
-                }
+                renderOption={(option) => option.name}
+                renderValue={(roles) => roles.map((r) => r.name).join(", ")}
               />
             </div>
 

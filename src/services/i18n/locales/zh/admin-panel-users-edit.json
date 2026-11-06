@@ -35,7 +35,23 @@
       },
       "options": {
         "1": "管理员",
-        "2": "用户"
+        "2": "用户",
+        "3": "客户管理员",
+        "4": "客户分店管理员",
+        "5": "客户"
+      }
+    },
+    "roles": {
+      "label": "角色",
+      "validation": {
+        "required": "角色为必填项",
+        "min": "请至少选择一个角色"
+      },
+      "options": {
+        "admin": "管理员",
+        "customerAdmin": "客户管理员",
+        "branchAdmin": "客户分店管理员",
+        "customer": "客户"
       }
     },
     "password": {

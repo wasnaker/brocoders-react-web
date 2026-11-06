@@ -20,14 +20,14 @@ import {
 } from "@/services/api/services/users";
 import { useParams } from "next/navigation";
 import { Role, RoleEnum } from "@/services/api/types/role";
-import FormSelectInput from "@/components/form/select/form-select";
+import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
 
 type EditUserFormData = {
   email: string;
   firstName: string;
   lastName: string;
   photo?: FileEntity;
-  role: Role;
+  roles: Role[];
 };
 
 type ChangeUserPasswordFormData = {
@@ -55,13 +55,16 @@ const useValidationEditUserSchema = () => {
       .required(
         t("admin-panel-users-edit:inputs.lastName.validation.required")
       ),
-    role: yup
-      .object()
-      .shape({
-        id: yup.mixed<string | number>().required(),
-        name: yup.string(),
-      })
-      .required(t("admin-panel-users-edit:inputs.role.validation.required")),
+    roles: yup
+      .array()
+      .of(
+        yup.object().shape({
+          id: yup.mixed<string | number>().required(),
+          name: yup.string(),
+        })
+      )
+      .min(1, t("admin-panel-users-edit:inputs.roles.validation.min"))
+      .required(t("admin-panel-users-edit:inputs.roles.validation.required")),
   });
 };
 
@@ -128,7 +131,7 @@ function FormEditUser() {
       email: "",
       firstName: "",
       lastName: "",
-      role: undefined,
+      roles: [],
       photo: undefined,
     },
   });
@@ -142,6 +145,7 @@ function FormEditUser() {
       data: {
         ...formData,
         email: isEmailDirty ? formData.email : undefined,
+        roles: formData.roles.map((r) => ({ id: r.id })),
       },
     });
     if (status === HTTP_CODES_ENUM.UNPROCESSABLE_ENTITY) {
@@ -174,9 +178,11 @@ function FormEditUser() {
           email: user?.email ?? "",
           firstName: user?.firstName ?? "",
           lastName: user?.lastName ?? "",
-          role: {
-            id: Number(user?.role?.id),
-          },
+          roles: user?.roles?.length
+            ? user.roles
+            : user?.role
+              ? [user.role]
+              : [],
           photo: user?.photo,
         });
       }
@@ -224,22 +230,39 @@ function FormEditUser() {
             </div>
 
             <div className="form-grid__cell">
-              <FormSelectInput<EditUserFormData, Pick<Role, "id">>
-                name="role"
-                testId="role"
-                label={t("admin-panel-users-edit:inputs.role.label")}
+              <FormMultipleSelectInput<EditUserFormData, Role>
+                name="roles"
+                testId="roles"
+                label={t("admin-panel-users-edit:inputs.roles.label")}
                 options={[
                   {
                     id: RoleEnum.ADMIN,
+                    name: t(
+                      "admin-panel-users-edit:inputs.roles.options.admin"
+                    ),
                   },
                   {
-                    id: RoleEnum.USER,
+                    id: 3,
+                    name: t(
+                      "admin-panel-users-edit:inputs.roles.options.customerAdmin"
+                    ),
+                  },
+                  {
+                    id: 4,
+                    name: t(
+                      "admin-panel-users-edit:inputs.roles.options.branchAdmin"
+                    ),
+                  },
+                  {
+                    id: 5,
+                    name: t(
+                      "admin-panel-users-edit:inputs.roles.options.customer"
+                    ),
                   },
                 ]}
                 keyValue="id"
-                renderOption={(option) =>
-                  t(`admin-panel-users-edit:inputs.role.options.${option.id}`)
-                }
+                renderOption={(option) => option.name}
+                renderValue={(roles) => roles.map((r) => r.name).join(", ")}
               />
             </div>
 

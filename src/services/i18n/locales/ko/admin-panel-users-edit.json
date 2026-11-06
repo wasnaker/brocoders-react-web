@@ -37,10 +37,24 @@
         "1": "Admin",
         "2": "User",
           "3": "고객 관리자",
-          "4": "지점 관리자",
+          "4": "고객 지점 관리자",
           "5": "고객"
       }
     },
+    "roles": {
+      "label": "역할",
+      "validation": {
+        "required": "역할은 필수입니다",
+        "min": "하나 이상의 역할을 선택하세요"
+      },
+      "options": {
+        "admin": "관리자",
+        "customerAdmin": "고객 관리자",
+        "branchAdmin": "고객 지점 관리자",
+        "customer": "고객"
+      }
+    },
+
     "password": {
       "label": "Password",
       "validation": {

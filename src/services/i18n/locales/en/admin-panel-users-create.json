@@ -36,8 +36,21 @@
         "1": "Admin",
         "2": "User",
           "3": "Customer Admin",
-          "4": "Branch Admin",
+          "4": "Customer Branch Admin",
           "5": "Customer"
+      }
+    },
+    "roles": {
+      "label": "Roles",
+      "validation": {
+        "required": "Roles is required",
+        "min": "Select at least one role"
+      },
+      "options": {
+        "admin": "Admin",
+        "customerAdmin": "Customer Admin",
+        "branchAdmin": "Customer Branch Admin",
+        "customer": "Customer"
       }
     },
     "password": {

@@ -37,10 +37,24 @@
         "1": "Admin",
         "2": "User",
           "3": "Admin Customer",
-          "4": "Admin Cabang",
+          "4": "Customer Branch Admin",
           "5": "Customer"
       }
     },
+    "roles": {
+      "label": "Roles",
+      "validation": {
+        "required": "Roles wajib diisi",
+        "min": "Pilih minimal satu role"
+      },
+      "options": {
+        "admin": "Admin",
+        "customerAdmin": "Admin Customer",
+        "branchAdmin": "Customer Branch Admin",
+        "customer": "Customer"
+      }
+    },
+
     "password": {
       "label": "Password",
       "validation": {
