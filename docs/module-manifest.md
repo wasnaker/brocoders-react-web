@@ -46,7 +46,7 @@ Setiap module boleh menambahkan nol atau lebih profile tabs. Deklarasikan tab di
 ```tsx
 import Building2 from "lucide-react/dist/esm/icons/building-2";
 import { defineModuleManifest } from "@/core/modules/types";
-import { MyCompanyTab } from "./pages/my-company-tab";
+import { MyCompanyTab } from "./pages/my-customer-page";
 
 export default defineModuleManifest({
   alias: "customer",
