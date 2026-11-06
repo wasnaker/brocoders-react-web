@@ -21,6 +21,8 @@ export function ProfileShell({ user }: { user: User | null | undefined }) {
   const [active, setActive] = useState<string | undefined>(
     tabs.length ? tabs[0].slug : undefined
   );
+  // Keep selection valid if the user or permission set changes while Profile stays mounted.
+  const activeTab = tabs.find((tab) => tab.slug === active) ?? tabs[0];
   const initials = (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "");
   const fullName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
 
@@ -80,9 +82,7 @@ export function ProfileShell({ user }: { user: User | null | undefined }) {
             value={tab.slug}
             className="tabs-shell__content"
           >
-            {tab.content.kind === "component" ? (
-              <tab.content.component />
-            ) : null}
+            <tab.content.component />
           </TabsContent>
         ))}
       </Tabs>
