@@ -47,7 +47,7 @@ function ModulePageContent({ path }: { path: string }) {
       currentLocation.replace(new URL(currentLocation).origin, "") ||
       `/${language}`;
     const params = new URLSearchParams({ returnTo: returnToPath });
-    router.replace(`/${language}? ${params.toString()}`.replace("? ", "?"));
+    router.replace(`/${language}?${params.toString()}`);
   }, [isLoaded, user, allowed, router, language]);
 
   const AuthenticatedModulePage = withPageRequiredAuth(ModulePage) as ComponentType<ModulePageProps>;
