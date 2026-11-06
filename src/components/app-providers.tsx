@@ -15,6 +15,7 @@ import StoreLanguageProvider from "@/services/i18n/store-language-provider";
 import LeavePageProvider from "@/services/leave-page/leave-page-provider";
 import { DirectionProvider } from "@radix-ui/react-direction";
 import i18next from "i18next";
+import { ImpersonationBanner } from "@wasnaker/module-impersonate";
 
 type AppProvidersProps = PropsWithChildren<{
   language: string;
@@ -41,6 +42,7 @@ export default function AppProviders({
                   <AuthStateClass />
                   <SidebarProvider className="flex-col [--header-height:4rem]">
                     <ResponsiveAppBar />
+                    <ImpersonationBanner />
                     <div className="system-banner">
                       <SystemBannerProvider />
                     </div>
