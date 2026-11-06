@@ -69,8 +69,8 @@ function AuthProvider(props: PropsWithChildren) {
       // (offline, server down) — otherwise the user stays logged in.
       setTokensInfo(null);
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('bc-impersonate:actor-tokens');
-        sessionStorage.removeItem('bc-impersonate:active-id');
+        localStorage.removeItem('bc-impersonate:actor-tokens');
+        localStorage.removeItem('bc-impersonate:active-id');
       }
     }
   }, [setTokensInfo, fetchBase]);
