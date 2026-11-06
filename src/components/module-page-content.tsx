@@ -3,12 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { ComponentType } from "react";
-import { RoleEnum } from "@/services/api/types/role";
 import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { getModulePage } from "@/core/modules/registry";
-import { can, hasRole } from "@/core/modules/can";
+import { can } from "@/core/modules/can";
 
 type ModulePageProps = {
   path?: string;
@@ -26,15 +25,10 @@ function ModulePage({ path }: ModulePageProps) {
 }
 
 /**
- * Shared route adapter. It contains no module-specific imports or paths;
- * the owning package supplies the page component through its manifest.
- *
- * Selain `withPageRequiredAuth` (role ADMIN), komponen ini juga menerapkan
- * `permission` yang dideklarasikan di `ModulePageDef` — sama konsistensi yang
- * dipakai `resolveMenu()` di sidebar. Pengguna yang tidak punya permission
- * tidak melihat konten halaman dan diarahkan kembali ke halaman sebelumnya
- * (atau ke root bila tidak ada return path), meskipun akses langsung melalui
- * URL.
+ * Shared route adapter. Module pages are available to any authenticated
+ * account whose assigned roles grant the page's declared permission.
+ * Pages without a permission (for example, a self-service page that resolves
+ * data from the current user ID) require authentication but no admin role.
  */
 function ModulePageContent({ path }: { path: string }) {
   const router = useRouter();
@@ -43,17 +37,9 @@ function ModulePageContent({ path }: { path: string }) {
 
   const page = getModulePage(path);
   const permission = page?.permission;
-
-  // /auth/me hanya menyertakan roles[] (multirole); field legacy `role`
-  // tidak diekspos di group serializer "me". Pakai hasRole() agar cek
-  // tetap benar untuk kedua bentuk payload.
-  const isAdmin = hasRole(user, RoleEnum.ADMIN);
-  const allowed = !isLoaded || !user || (isAdmin && can(permission, user));
+  const allowed = !isLoaded || !user || can(permission, user);
 
   useEffect(() => {
-    // Redirect hanya untuk user yang SUDAH termuat dan TIDAK berhak
-    // (bukan admin / tanpa permission). Kebalikannya (redirect saat
-    // allowed) akan menendang justru pengguna yang berhak.
     if (!isLoaded || !user || allowed) return;
 
     const currentLocation = window.location.toString();
@@ -61,12 +47,10 @@ function ModulePageContent({ path }: { path: string }) {
       currentLocation.replace(new URL(currentLocation).origin, "") ||
       `/${language}`;
     const params = new URLSearchParams({ returnTo: returnToPath });
-    router.replace(`/${language}?${params.toString()}`);
+    router.replace(`/${language}? ${params.toString()}`.replace("? ", "?"));
   }, [isLoaded, user, allowed, router, language]);
 
-  const AuthenticatedModulePage = withPageRequiredAuth(ModulePage, {
-    roles: [RoleEnum.ADMIN],
-  }) as ComponentType<ModulePageProps>;
+  const AuthenticatedModulePage = withPageRequiredAuth(ModulePage) as ComponentType<ModulePageProps>;
 
   return allowed ? <AuthenticatedModulePage path={path} /> : null;
 }
