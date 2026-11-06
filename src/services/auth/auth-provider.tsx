@@ -26,6 +26,19 @@ import queryClient from "@/services/react-query/query-client";
 import Cookies from "js-cookie";
 import { cookieName, languages } from "@/services/i18n/config";
 
+function hasImpersonationClaim(token: string | null | undefined): boolean {
+  const payload = token?.split(".")[1];
+  if (!payload) return false;
+  try {
+    const claims = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    ) as { impersonationId?: unknown };
+    return typeof claims.impersonationId === "string" && claims.impersonationId.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 function AuthProvider(props: PropsWithChildren) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -72,7 +85,11 @@ function AuthProvider(props: PropsWithChildren) {
         });
 
         if (response.status === HTTP_CODES_ENUM.UNAUTHORIZED) {
-          logOut();
+          // The impersonation banner owns recovery and restores the preserved
+          // administrator session. A generic logout here would erase it first.
+          if (!hasImpersonationClaim(tokens?.token)) {
+            logOut();
+          }
           return;
         }
 
