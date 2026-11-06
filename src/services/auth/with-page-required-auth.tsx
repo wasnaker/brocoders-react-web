@@ -14,68 +14,45 @@ type OptionsType = {
   roles: RoleEnum[];
 };
 
-const roles = Object.values(RoleEnum).filter(
-  (value) => !Number.isNaN(Number(value))
-) as RoleEnum[];
-
 function withPageRequiredAuth(
   Component: FunctionComponent<PropsType>,
   options?: OptionsType
 ) {
-  const optionRoles = options?.roles || roles;
-
   return function WithPageRequiredAuth(props: PropsType) {
     const { user, isLoaded } = useAuth();
     const router = useRouter();
     const language = useLanguage();
 
-    useEffect(() => {
-      const check = () => {
-        // Collect all roles: prefer roles[] (multirole), fall back to legacy role
-        const allRoles = user?.roles?.length
-          ? user.roles
-          : user?.role
-            ? [user.role]
-            : [];
-
-        if (
-          (user &&
-            allRoles.some((role) => optionRoles.includes(Number(role.id)))) ||
-          !isLoaded
-        )
-          return;
-
-        const currentLocation = window.location.toString();
-        const returnToPath =
-          currentLocation.replace(new URL(currentLocation).origin, "") ||
-          `/${language}`;
-        const params = new URLSearchParams({
-          returnTo: returnToPath,
-        });
-
-        let redirectTo = `/${language}/sign-in?${params.toString()}`;
-
-        if (user) {
-          redirectTo = `/${language}`;
-        }
-
-        router.replace(redirectTo);
-      };
-
-      check();
-    }, [user, isLoaded, router, language]);
-
-    // Collect all roles: prefer roles[] (multirole), fall back to legacy role
+    // A page without an explicit role restriction is available to every
+    // authenticated account, including module-owned roles (Customer, etc.).
+    // Role restrictions remain opt-in for pages that explicitly declare them.
     const allRoles = user?.roles?.length
       ? user.roles
       : user?.role
         ? [user.role]
         : [];
+    const hasRequiredRole =
+      !options?.roles?.length ||
+      allRoles.some((role) => options.roles.includes(Number(role.id)));
 
-    return user &&
-      allRoles.some((role) => optionRoles.includes(Number(role.id))) ? (
-      <Component {...props} />
-    ) : null;
+    useEffect(() => {
+      if (!isLoaded || (user && hasRequiredRole)) return;
+
+      const currentLocation = window.location.toString();
+      const returnToPath =
+        currentLocation.replace(new URL(currentLocation).origin, "") ||
+        `/${language}`;
+      const params = new URLSearchParams({
+        returnTo: returnToPath,
+      });
+
+      const redirectTo = user
+        ? `/${language}`
+        : `/${language}/sign-in?${params.toString()}`;
+      router.replace(redirectTo);
+    }, [user, isLoaded, hasRequiredRole, router, language]);
+
+    return user && hasRequiredRole ? <Component {...props} /> : null;
   };
 }
 
