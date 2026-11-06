@@ -50,5 +50,5 @@ export function can(
     return true;
   }
 
-  return permissions.some((p) => p.name === permission);
+  return permissions.some((p) => p.name.trim() === permission.trim());
 }
