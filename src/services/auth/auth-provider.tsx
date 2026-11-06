@@ -55,6 +55,10 @@ function AuthProvider(props: PropsWithChildren) {
       // Local auth state must be cleared even when the logout request fails
       // (offline, server down) — otherwise the user stays logged in.
       setTokensInfo(null);
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('bc-impersonate:actor-tokens');
+        sessionStorage.removeItem('bc-impersonate:active-id');
+      }
     }
   }, [setTokensInfo, fetchBase]);
 
