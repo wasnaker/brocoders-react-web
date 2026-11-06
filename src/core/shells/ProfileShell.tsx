@@ -55,7 +55,7 @@ export function ProfileShell({ user }: { user: User | null | undefined }) {
       {/* Vertical tabs: navigation on the left, content on the right. */}
       <Tabs
         orientation="vertical"
-        value={active}
+        value={activeTab?.slug}
         onValueChange={setActive}
         className="tabs-shell"
       >
