@@ -33,7 +33,10 @@ function hasImpersonationClaim(token: string | null | undefined): boolean {
     const claims = JSON.parse(
       atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
     ) as { impersonationId?: unknown };
-    return typeof claims.impersonationId === "string" && claims.impersonationId.length > 0;
+    return (
+      typeof claims.impersonationId === "string" &&
+      claims.impersonationId.length > 0
+    );
   } catch {
     return false;
   }
@@ -68,9 +71,9 @@ function AuthProvider(props: PropsWithChildren) {
       // Local auth state must be cleared even when the logout request fails
       // (offline, server down) — otherwise the user stays logged in.
       setTokensInfo(null);
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('bc-impersonate:actor-tokens');
-        localStorage.removeItem('bc-impersonate:active-id');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("bc-impersonate:actor-tokens");
+        localStorage.removeItem("bc-impersonate:active-id");
       }
     }
   }, [setTokensInfo, fetchBase]);

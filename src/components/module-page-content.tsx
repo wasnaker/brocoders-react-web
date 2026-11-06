@@ -8,7 +8,7 @@ import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { getModulePage } from "@/core/modules/registry";
-import { can } from "@/core/modules/can";
+import { can, hasRole } from "@/core/modules/can";
 
 type ModulePageProps = {
   path?: string;
@@ -44,11 +44,17 @@ function ModulePageContent({ path }: { path: string }) {
   const page = getModulePage(path);
   const permission = page?.permission;
 
-  const isAdmin = !!user?.role && Number(user.role.id) === RoleEnum.ADMIN;
+  // /auth/me hanya menyertakan roles[] (multirole); field legacy `role`
+  // tidak diekspos di group serializer "me". Pakai hasRole() agar cek
+  // tetap benar untuk kedua bentuk payload.
+  const isAdmin = hasRole(user, RoleEnum.ADMIN);
   const allowed = !isLoaded || !user || (isAdmin && can(permission, user));
 
   useEffect(() => {
-    if (!isLoaded || !user || !allowed) return;
+    // Redirect hanya untuk user yang SUDAH termuat dan TIDAK berhak
+    // (bukan admin / tanpa permission). Kebalikannya (redirect saat
+    // allowed) akan menendang justru pengguna yang berhak.
+    if (!isLoaded || !user || allowed) return;
 
     const currentLocation = window.location.toString();
     const returnToPath =
