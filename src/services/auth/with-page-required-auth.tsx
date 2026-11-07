@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import useAuth from "./use-auth";
 import React, { FunctionComponent, useEffect } from "react";
 import useLanguage from "../i18n/use-language";
-import { RoleEnum } from "../api/types/role";
+import { can } from "@/core/modules/can";
 
 type PropsType = {
   params?: { [key: string]: string | string[] | undefined };
@@ -11,7 +11,7 @@ type PropsType = {
 };
 
 type OptionsType = {
-  roles: RoleEnum[];
+  permission?: string;
 };
 
 function withPageRequiredAuth(
@@ -23,20 +23,10 @@ function withPageRequiredAuth(
     const router = useRouter();
     const language = useLanguage();
 
-    // A page without an explicit role restriction is available to every
-    // authenticated account, including module-owned roles (Customer, etc.).
-    // Role restrictions remain opt-in for pages that explicitly declare them.
-    const allRoles = user?.roles?.length
-      ? user.roles
-      : user?.role
-        ? [user.role]
-        : [];
-    const hasRequiredRole =
-      !options?.roles?.length ||
-      allRoles.some((role) => options.roles.includes(Number(role.id)));
+    const hasAccess = !options?.permission || can(options.permission, user);
 
     useEffect(() => {
-      if (!isLoaded || (user && hasRequiredRole)) return;
+      if (!isLoaded || (user && hasAccess)) return;
 
       const currentLocation = window.location.toString();
       const returnToPath =
@@ -50,9 +40,9 @@ function withPageRequiredAuth(
         ? `/${language}`
         : `/${language}/sign-in?${params.toString()}`;
       router.replace(redirectTo);
-    }, [user, isLoaded, hasRequiredRole, router, language]);
+    }, [user, isLoaded, hasAccess, router, language]);
 
-    return user && hasRequiredRole ? <Component {...props} /> : null;
+    return user && hasAccess ? <Component {...props} /> : null;
   };
 }
 

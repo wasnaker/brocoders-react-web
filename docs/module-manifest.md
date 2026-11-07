@@ -14,13 +14,13 @@ Dokumen ini adalah kontrak implementasi module untuk host Brocoders React Web. S
 
 `ModuleManifest` berada di `src/core/modules/types.ts`.
 
-| Slot | Tujuan | Pemilik renderer |
-| --- | --- | --- |
-| `pages` | Halaman module pada URL canonical, mis. `/admin/customer/branch` | Host route resolver |
-| `profileTabs` | Tab tambahan pada halaman Profile milik user yang sedang login | `ProfileShell` |
-| `settingsTabs` | Tab pengaturan aplikasi | `SettingsShell` |
-| `dashboardWidgets` | Widget dashboard | `DashboardGrid` |
-| `menu` | Navigasi sidebar module | App sidebar |
+| Slot               | Tujuan                                                           | Pemilik renderer    |
+| ------------------ | ---------------------------------------------------------------- | ------------------- |
+| `pages`            | Halaman module pada URL canonical, mis. `/admin/customer/branch` | Host route resolver |
+| `profileTabs`      | Tab tambahan pada halaman Profile milik user yang sedang login   | `ProfileShell`      |
+| `settingsTabs`     | Tab pengaturan aplikasi                                          | `SettingsShell`     |
+| `dashboardWidgets` | Widget dashboard                                                 | `DashboardGrid`     |
+| `menu`             | Navigasi sidebar module                                          | App sidebar         |
 
 Jangan mendaftarkan tab Profile sebagai `pages` atau `menu`. Profile tab adalah kontribusi ke halaman Profile Core, bukan halaman admin mandiri.
 
@@ -31,6 +31,7 @@ Jangan mendaftarkan tab Profile sebagai `pages` atau `menu`. Profile tab adalah 
 Core menyediakan satu halaman Profile untuk semua user. Core memiliki tab bawaan seperti Account dan Security melalui manifest Core di `src/core/manifests/profile.manifest.ts`.
 
 Core bertanggung jawab untuk:
+
 - mengambil seluruh manifest dari generated module registry;
 - menggabungkan `profileTabs` dari Core dan semua module;
 - memfilter tab berdasarkan permission user;
@@ -71,14 +72,14 @@ export default defineModuleManifest({
 
 Field contract:
 
-| Field | Ketentuan |
-| --- | --- |
-| `slug` | Identifier stabil dan unik lintas manifest. Gunakan nama spesifik, mis. `my-company`, bukan `overview` yang mudah bentrok. Jangan mengubah slug setelah digunakan tanpa alasan migrasi. |
-| `label` | Gunakan object `{ namespace, key }` agar label mengikuti bahasa aktif. |
-| `position` | Angka; urutan ascending. Core Profile saat ini memakai 10 dan 20, sehingga module mulai dari 30. Sisakan jarak 10 untuk penambahan tab berikutnya. |
-| `icon` | Komponen Lucide opsional. Gunakan deep import seperti contoh. |
-| `permission` | Opsional. Jika diisi, tab hanya ditampilkan ketika user memiliki permission tersebut. Jika tidak diisi, tab dianggap boleh dilihat semua user. |
-| `content` | Profile tab menggunakan `kind: "component"`. Komponen menjadi tanggung jawab module. |
+| Field        | Ketentuan                                                                                                                                                                               |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slug`       | Identifier stabil dan unik lintas manifest. Gunakan nama spesifik, mis. `my-company`, bukan `overview` yang mudah bentrok. Jangan mengubah slug setelah digunakan tanpa alasan migrasi. |
+| `label`      | Gunakan object `{ namespace, key }` agar label mengikuti bahasa aktif.                                                                                                                  |
+| `position`   | Angka; urutan ascending. Core Profile saat ini memakai 10 dan 20, sehingga module mulai dari 30. Sisakan jarak 10 untuk penambahan tab berikutnya.                                      |
+| `icon`       | Komponen Lucide opsional. Gunakan deep import seperti contoh.                                                                                                                           |
+| `permission` | Opsional. Jika diisi, tab hanya ditampilkan ketika user memiliki permission tersebut. Jika tidak diisi, tab dianggap boleh dilihat semua user.                                          |
+| `content`    | Profile tab menggunakan `kind: "component"`. Komponen menjadi tanggung jawab module.                                                                                                    |
 
 Resolver berada di `src/core/modules/resolve-tabs.ts`. Tab diurutkan berdasarkan `position`, lalu `moduleAlias` sebagai tie-breaker. Karena itu hasil gabungan tetap deterministik meskipun beberapa module memilih posisi yang sama.
 
@@ -87,6 +88,7 @@ Resolver berada di `src/core/modules/resolve-tabs.ts`. Tab diurutkan berdasarkan
 ### Kontrak komponen tab
 
 Komponen tab:
+
 - merupakan React component yang tidak menerima props dari ProfileShell;
 - mengambil user/session melalui auth hook yang tersedia di host;
 - mengambil data melalui service/API module;
@@ -112,6 +114,7 @@ Pola ini dapat dipakai module lain, misalnya module Equipment kelak dapat mendaf
 ## Settings tabs berbeda dari Profile tabs
 
 `settingsTabs` dapat memakai:
+
 - `content: { kind: "component", component: ... }` untuk UI custom milik module; atau
 - `content: { kind: "fields", fields: [...] }` untuk form settings standar yang disimpan melalui Settings API Core.
 
@@ -122,6 +125,7 @@ Jangan memakai `kind: "fields"` untuk Profile. Profile menampilkan informasi dan
 Module frontend dipasang sebagai package dependency, bukan disalin ke `src/modules`.
 
 Generator `scripts/generate-module-registry.mjs`:
+
 1. membaca manifest Core dari `src/core/manifests/*.manifest.ts`;
 2. menemukan dependency `@wasnaker/module-*` dari `package.json`;
 3. memeriksa manifest package pada `node_modules/@wasnaker/module-<alias>/web/src/modules/<alias>/module.manifest.ts`;
@@ -139,10 +143,12 @@ npm run module:add -- customer --ref <commit-sha>
 Secara default script menggunakan repository `wasnaker/bc-<alias>`. Untuk repository lain, gunakan `--repo owner/repo`. Ref harus berupa tag atau commit SHA yang eksplisit agar dependency dapat direproduksi. Script menjalankan npm install dan generator; commit **package.json dan package-lock.json** bersama-sama. Jangan mengubah salah satunya saja.
 
 Perintah terkait:
+
 - `npm run module:list` — daftar package module di dependencies.
 - `npm run module:rm -- <alias>` — melepas dependency module.
 
 Package module harus mengekspor:
+
 - `./manifest` yang menunjuk ke module manifest;
 - `./locales/en`, `./locales/id`, `./locales/ja`, `./locales/ko`, dan `./locales/zh` untuk locale yang disediakan;
 - file frontend module dan locale harus tercakup dalam field `files` pada package.json.
@@ -154,6 +160,7 @@ Namespace locale module mengikuti pola `module-<alias>`. Contoh: module alias `c
 Resolver memakai `can(permission, user)` dari Core. Pemeriksaan ini menggabungkan permission dari seluruh role user (multi-role), mendukung wildcard, dan admin bypass.
 
 Pedoman:
+
 - Gunakan permission module yang stabil dan bermakna, mis. `read:branch`.
 - Tab yang hanya relevan bagi kelompok user tertentu sebaiknya menyatakan permission secara eksplisit.
 - Jangan menganggap tab tersembunyi sebagai proteksi data.

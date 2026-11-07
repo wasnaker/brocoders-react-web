@@ -11,18 +11,18 @@ This document defines the visual baseline for the Wasnaker enterprise applicatio
 
 ## Color tokens
 
-| Role | Token | Value / intent |
-| --- | --- | --- |
-| Primary action | `--primary` | Deep corporate blue: `oklch(0.43 0.13 255)` |
-| Main canvas | `--background` | Cool neutral 50 |
-| Main text | `--foreground` | Neutral 950 |
-| Content surface | `--card` | White in light mode |
-| Subtle surface | `--muted` | Neutral 100 |
-| Secondary text | `--muted-foreground` | Neutral 600 |
-| Borders | `--border` | Neutral 200 |
-| Input boundaries | `--input` | Neutral 500, retained for visible control boundaries |
-| Navigation | `--sidebar` | Deep navy surface with high-contrast text |
-| Status | `--success`, `--warning`, `--destructive`, `--info` | Reserved for semantic feedback |
+| Role             | Token                                               | Value / intent                                       |
+| ---------------- | --------------------------------------------------- | ---------------------------------------------------- |
+| Primary action   | `--primary`                                         | Deep corporate blue: `oklch(0.43 0.13 255)`          |
+| Main canvas      | `--background`                                      | Cool neutral 50                                      |
+| Main text        | `--foreground`                                      | Neutral 950                                          |
+| Content surface  | `--card`                                            | White in light mode                                  |
+| Subtle surface   | `--muted`                                           | Neutral 100                                          |
+| Secondary text   | `--muted-foreground`                                | Neutral 600                                          |
+| Borders          | `--border`                                          | Neutral 200                                          |
+| Input boundaries | `--input`                                           | Neutral 500, retained for visible control boundaries |
+| Navigation       | `--sidebar`                                         | Deep navy surface with high-contrast text            |
+| Status           | `--success`, `--warning`, `--destructive`, `--info` | Reserved for semantic feedback                       |
 
 Use primary blue for the main action, selected navigation, links and focus indicators. Do not use it as a decorative fill on every card. Status colors communicate state only; never rely on color alone to convey meaning.
 
@@ -46,19 +46,20 @@ Use primary blue for the main action, selected navigation, links and focus indic
 
 ## Component rules
 
-| Component | Standard |
-| --- | --- |
-| App bar | Compact, neutral, fixed hierarchy; brand uses the application sans-serif rather than decorative monospace styling |
-| Sidebar | Deep navy, high-contrast labels, restrained active state with a blue leading marker |
-| Buttons | Clear primary/secondary hierarchy; compact geometry; visible keyboard focus |
-| Cards | White surface, thin border, subtle elevation; consistent header/body padding |
-| Tables | Prioritize scanability, alignment, row density and clear sort/filter affordances; keep horizontal overflow usable |
-| Forms | Consistent field spacing, visible labels, clear validation and accessible input boundaries |
-| Badges | Semantic status only; neutral by default; avoid using badges as decoration |
+| Component | Standard                                                                                                          |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| App bar   | Compact, neutral, fixed hierarchy; brand uses the application sans-serif rather than decorative monospace styling |
+| Sidebar   | Deep navy, high-contrast labels, restrained active state with a blue leading marker                               |
+| Buttons   | Clear primary/secondary hierarchy; compact geometry; visible keyboard focus                                       |
+| Cards     | White surface, thin border, subtle elevation; consistent header/body padding                                      |
+| Tables    | Prioritize scanability, alignment, row density and clear sort/filter affordances; keep horizontal overflow usable |
+| Forms     | Consistent field spacing, visible labels, clear validation and accessible input boundaries                        |
+| Badges    | Semantic status only; neutral by default; avoid using badges as decoration                                        |
 
 ## Spacing and layout
 
 Use the existing Tailwind spacing scale consistently:
+
 - 4px: icon/text micro gap.
 - 8px: compact control and row spacing.
 - 12–16px: component internal padding.
@@ -78,14 +79,14 @@ Do not add whitespace indiscriminately. Data tables should remain information-de
 
 ## Before / after direction
 
-| Area | Before | After |
-| --- | --- | --- |
-| Brand accent | Violet-forward | Deep corporate blue |
-| Navigation | Light surface | Deep navy with clear active state |
-| Typography hierarchy | Oversized supporting text and decorative wordmark | Compact, consistent enterprise hierarchy |
-| Surfaces | Similar visual weight across cards | Neutral borders and restrained elevation |
-| Shape language | More rounded panels | Consistent 8px base radius |
-| Motion | Component-specific transitions | Purposeful transitions with reduced-motion support |
+| Area                 | Before                                            | After                                              |
+| -------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| Brand accent         | Violet-forward                                    | Deep corporate blue                                |
+| Navigation           | Light surface                                     | Deep navy with clear active state                  |
+| Typography hierarchy | Oversized supporting text and decorative wordmark | Compact, consistent enterprise hierarchy           |
+| Surfaces             | Similar visual weight across cards                | Neutral borders and restrained elevation           |
+| Shape language       | More rounded panels                               | Consistent 8px base radius                         |
+| Motion               | Component-specific transitions                    | Purposeful transitions with reduced-motion support |
 
 ## Implementation boundary
 

@@ -1,5 +1,4 @@
 import type { User } from "@/services/api/types/user";
-import { RoleEnum } from "@/services/api/types/role";
 
 const WILDCARD = "*";
 
@@ -28,6 +27,12 @@ export function can(
   permission: string | null | undefined,
   user: User | null | undefined
 ): boolean {
+  console.log("[Frontend Can] Permission required:", permission);
+  console.log(
+    "[Frontend Can] User roles/permissions:",
+    user?.roles?.flatMap((r) => r.permissions?.map((p) => p.name))
+  );
+
   if (!permission) {
     return true;
   }
@@ -38,14 +43,10 @@ export function can(
 
   const allRoles = getUserRoles(user);
 
-  // Admin role (id = 1) bypasses all permission checks.
-  if (hasRole(user, RoleEnum.ADMIN)) {
-    return true;
-  }
-
   // Collect permissions from every assigned role.
   const permissions = allRoles.flatMap((role) => role.permissions ?? []);
 
+  // Admin bypass via wildcard permission (assigned to admin role in database)
   if (permissions.some((p) => p.name === WILDCARD)) {
     return true;
   }

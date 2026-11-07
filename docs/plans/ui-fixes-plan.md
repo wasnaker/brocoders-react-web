@@ -1,10 +1,10 @@
 # Plan: Perbaikan UI — Dropdown Profil, Menu Settings, dan Styling
 
-Status     : SEMUA SELESAI · terverifikasi 36/36 check · sudah di-deploy
-Dibuat     : 2026-09-29
-Diubah     : 2026-09-29 (implementasi §1/§2/§4/§5 + deploy + koreksi §6 + revisi lebar container)
-Repo       : /www/wwwroot/brocoders/brocoders-react-web
-Deploy     : http://brocoders-react-web.lan  (HTTP saja — tidak ada HTTPS, lihat §6)
+Status : SEMUA SELESAI · terverifikasi 36/36 check · sudah di-deploy
+Dibuat : 2026-09-29
+Diubah : 2026-09-29 (implementasi §1/§2/§4/§5 + deploy + koreksi §6 + revisi lebar container)
+Repo : /www/wwwroot/brocoders/brocoders-react-web
+Deploy : http://brocoders-react-web.lan (HTTP saja — tidak ada HTTPS, lihat §6)
 Dokumen ini adalah satu-satunya artefak durable. Jika file ini hilang, pekerjaan BELUM dimulai.
 
 ---
@@ -13,21 +13,21 @@ Dokumen ini adalah satu-satunya artefak durable. Jika file ini hilang, pekerjaan
 
 ### Kondisi awal (sebelum kerja, sudah tidak berlaku)
 
-| Item asli dari user | Status awal | Bukti (sudah usang) |
-|---|---|---|
-| Dropdown profil terlalu lebar | BELUM dikerjakan | `app-sidebar.tsx:112-116` |
-| Tambah menu `/settings` | BELUM dikerjakan | tidak ada di `NavUser` |
-| Hanya admin boleh akses `/settings` | **SUDAH JADI** | `settings/page-content.tsx:19` |
-| Perbaiki semantic class | **PERLU DIMASALAHKAN ULANG** | lihat §5 |
+| Item asli dari user                 | Status awal                  | Bukti (sudah usang)            |
+| ----------------------------------- | ---------------------------- | ------------------------------ |
+| Dropdown profil terlalu lebar       | BELUM dikerjakan             | `app-sidebar.tsx:112-116`      |
+| Tambah menu `/settings`             | BELUM dikerjakan             | tidak ada di `NavUser`         |
+| Hanya admin boleh akses `/settings` | **SUDAH JADI**               | `settings/page-content.tsx:19` |
+| Perbaiki semantic class             | **PERLU DIMASALAHKAN ULANG** | lihat §5                       |
 
 ### Kondisi akhir (per 2026-09-29, semua terverifikasi)
 
-| Item | Status akhir | Bukti |
-|---|---|---|
-| Dropdown profil terlalu lebar | **SELESAI** | `app-sidebar.tsx:115-116` — `w-56`, `align="end"`, bukan trigger-width |
-| Tambah menu `/settings` | **SELESAI** | `app-sidebar.tsx:135-139` + `navigation.settings` di 5 locale |
-| Hanya admin boleh akses `/settings` | **SELESAI** | guard sudah ada; item menu kini conditional `isAdmin` |
-| Perbaiki semantic class | **SELESAI (opsi C)** | `globals.css` `@layer components`, 23 class; lihat §5 |
+| Item                                | Status akhir         | Bukti                                                                  |
+| ----------------------------------- | -------------------- | ---------------------------------------------------------------------- |
+| Dropdown profil terlalu lebar       | **SELESAI**          | `app-sidebar.tsx:115-116` — `w-56`, `align="end"`, bukan trigger-width |
+| Tambah menu `/settings`             | **SELESAI**          | `app-sidebar.tsx:135-139` + `navigation.settings` di 5 locale          |
+| Hanya admin boleh akses `/settings` | **SELESAI**          | guard sudah ada; item menu kini conditional `isAdmin`                  |
+| Perbaiki semantic class             | **SELESAI (opsi C)** | `globals.css` `@layer components`, 23 class; lihat §5                  |
 
 Palette warna: selesai, tidak ada perubahan. Semua 14 pasangan teks lolos AAA
 (≥7:1) di mode light maupun dark. `globals.css` **berubah** di §5 — jadi
@@ -77,6 +77,7 @@ Tidak ada header.
    `focus:bg-destructive/10` supaya aksi destruktif terbaca sekilas.
 
 ### Verifikasi
+
 - `data-testid` yang sudah ada (`profile-menu-item`, `user-profile`,
   `logout-menu-item`) harus **tetap** — ada test yang memakainya.
 - Cek manual pada dua state sidebar: dropdown lebarnya identik, tidak
@@ -87,16 +88,19 @@ Tidak ada header.
 ## 2. Menu `/settings` — hanya admin
 
 ### Yang sudah ada (jangan dibuat ulang)
+
 - Route: `src/app/[language]/settings/page.tsx` ✅
 - Guard admin: `withPageRequiredAuth(SettingsPage, { roles: [RoleEnum.ADMIN] })`
   di `settings/page-content.tsx:19` ✅ — **tidak perlu disentuh**
 - `isAdmin` sudah dihitung di `app-sidebar.tsx:138-139`:
   ```ts
-  const isAdmin = !!user?.role && [RoleEnum.ADMIN].includes(Number(user?.role?.id));
+  const isAdmin =
+    !!user?.role && [RoleEnum.ADMIN].includes(Number(user?.role?.id));
   ```
   Variabel ini sekarang hanya dipakai untuk blok `admin-panel` (lines 158-182).
 
 ### Yang perlu dikerjakan
+
 1. Di dalam `NavUser`, conditional-render item Settings **hanya saat `isAdmin`**.
    `NavUser` saat ini tidak punya `isAdmin` — harus dihitung ulang di dalam
    `NavUser` (atau di-hoist ke komponen atas dan dioper lewat props).
@@ -110,6 +114,7 @@ Tidak ada header.
    memakai `t("common:navigation.settings")`.
 
 ### Verifikasi
+
 - `npm run build` lolos; tidak ada key i18n hilang.
 - Cek: akun admin melihat item Settings, akun non-admin tidak melihatnya.
 - Cek: klik Settings → `/settings` terbuka, guard tidakdlewatkan.
@@ -118,13 +123,13 @@ Tidak ada header.
 
 ## 3. Halaman yang perlu disentuh (baca dulu, jangan langsung edit)
 
-| File | Catatan |
-|---|---|
-| `src/components/app-sidebar.tsx` | §1 dan §2 |
-| `src/core/shells/ProfileShell.tsx` | shell profil, untuk review §5 |
-| `src/core/shells/SettingsShell.tsx` | shell settings, untuk review §5 |
-| `src/services/i18n/locales/{id,en,ko,zh,ja}/common.json` | §2 |
-| `src/services/api/types/role.ts` | `RoleEnum.ADMIN` — referensi saja |
+| File                                                     | Catatan                           |
+| -------------------------------------------------------- | --------------------------------- |
+| `src/components/app-sidebar.tsx`                         | §1 dan §2                         |
+| `src/core/shells/ProfileShell.tsx`                       | shell profil, untuk review §5     |
+| `src/core/shells/SettingsShell.tsx`                      | shell settings, untuk review §5   |
+| `src/services/i18n/locales/{id,en,ko,zh,ja}/common.json` | §2                                |
+| `src/services/api/types/role.ts`                         | `RoleEnum.ADMIN` — referensi saja |
 
 ---
 
@@ -168,6 +173,7 @@ Artinya permintaan "perbaiki semantic class" tidak bisa dieksekusi apa adanya:
 tidak ada apa yang "rusak" — konvensinya memang tidak ada di sini.
 
 Tiga opsi yang pernah dibahas:
+
 - **(A) Buang** — proyek memang sengaja memakai utility Tailwind, konsisten,
   tidak ada yang perlu dibetulkan. Nol risiko.
 - **(B) Translasi ke aksesibilitas** — baca "semantic" sebagai semantik HTML/
@@ -186,7 +192,7 @@ contoh. Yang dilakukan:
 
 - `@layer components` ditambahkan ke `src/app/globals.css` — 23 class.
 - Kosakata diambil dari `/www/wwwroot/crm-web/resources/css/app.css` (`@layer
-  components`), tapi **di-adapt ke token shadcn repo ini**: `text-ink` →
+components`), tapi **di-adapt ke token shadcn repo ini**: `text-ink` →
   `text-foreground`, `border-line-soft` → `border-border`, `bg-surface-raised`
   → `bg-muted`, `text-danger` → `text-destructive`. Token crm-web tidak
   boleh disalin mentah — tidak ada di brocoders.
@@ -276,21 +282,21 @@ Dijalankan terhadap app yang sudah ter-deploy via `http://brocoders-react-web.la
 13/13 pass untuk akun admin, 13/13 pass untuk akun non-admin, plus 10/10
 check khusus bug sidebar (lihat bagian "Bug sidebar" di bawah).
 
-| Skenario | Trigger width | Dropdown width | Header | Item |
-|---|---|---|---|---|
-| Desktop 1440px (admin) | 239px | **224px** | "SA / Super Admin" | profile, settings, logout |
-| Mobile 390px, sidebar di dalam sheet (admin) | — (sheet 288px) | **224px** | "SA / Super Admin / admin@example.com" | profile, settings, logout |
-| Desktop 1440px (non-admin) | 239px | **224px** | "JD / John Doe" | profile, logout |
+| Skenario                                     | Trigger width   | Dropdown width | Header                                 | Item                      |
+| -------------------------------------------- | --------------- | -------------- | -------------------------------------- | ------------------------- |
+| Desktop 1440px (admin)                       | 239px           | **224px**      | "SA / Super Admin"                     | profile, settings, logout |
+| Mobile 390px, sidebar di dalam sheet (admin) | — (sheet 288px) | **224px**      | "SA / Super Admin / admin@example.com" | profile, settings, logout |
+| Desktop 1440px (non-admin)                   | 239px           | **224px**      | "JD / John Doe"                        | profile, logout           |
 
 Lebar dropdown 224px (= `w-56`) di kedua kondisi — tidak lagi mengikuti lebar
 trigger seperti versi lama. Tidak keluar viewport, tidak terpotong atas.
 
 Peran:
 
-| Akun | Item Settings | Akses langsung `/en/settings` |
-|---|---|---|
-| `admin@example.com` (role 1) | muncul | terbuka |
-| `john.doe@example.com` (role 2) | tidak muncul | ditolak, redirect ke `/en` |
+| Akun                            | Item Settings | Akses langsung `/en/settings` |
+| ------------------------------- | ------------- | ----------------------------- |
+| `admin@example.com` (role 1)    | muncul        | terbuka                       |
+| `john.doe@example.com` (role 2) | tidak muncul  | ditolak, redirect ke `/en`    |
 
 ### Bug sidebar — ditemukan, diperbaiki, terverifikasi
 
@@ -301,7 +307,7 @@ diperbaiki** pada 2026-09-29 (setelah commit `d2c9838`).
    `src/components/ui/sidebar.tsx` — `useState(defaultOpen)` tanpa
    inisialisasi dari `Cookies.get(SIDEBAR_COOKIE_NAME)`. State sidebar
    selalu balik ke expanded setelah reload, berapa pun cookie-nya.
-   *Perbaikan:* `useEffect` yang membaca cookie setelah mount. Tidak
+   _Perbaikan:_ `useEffect` yang membaca cookie setelah mount. Tidak
    dilakukan di server (`cookies()` dari `next/headers`) karena itu akan
    mengubah seluruh route menjadi dynamic. Trade-off: sidebar yang
    collapsed akan tampak expanded sesaat sebelum hydration selesai.
@@ -309,13 +315,13 @@ diperbaiki** pada 2026-09-29 (setelah commit `d2c9838`).
 2. **Tidak ada tombol mouse untuk collapse/expand sidebar di desktop.**
    `SidebarTrigger` di `app-bar.tsx` diberi `md:hidden` dan `SidebarRail`
    tidak dirender di versi sidebar ini.
-   *Perbaikan:* hapus `md:hidden` sehingga tombol selalu terlihat, dengan
+   _Perbaikan:_ hapus `md:hidden` sehingga tombol selalu terlihat, dengan
    `aria-label="toggle navigation menu"`.
 
    **Koreksi atas klaim sebelumnya:** dokumen ini sempat menyatakan
    "tidak ada cara collapse sidebar di desktop sama sekali". Itu **salah** —
    shortcut `Ctrl/Cmd+B` sudah ada dan berfungsi. Yang benar: tidak ada
-   kontrol *pointer* yang terlihat. Klaim lama juga sempat dipakai sebagai
+   kontrol _pointer_ yang terlihat. Klaim lama juga sempat dipakai sebagai
    alasan bahwa verifikasi dua state sidebar mustahil; setelah cookie
    diperbaiki, verifikasi desktop jadi mungkin dan hasilnya di bawah.
 
@@ -330,14 +336,14 @@ diperbaiki** pada 2026-09-29 (setelah commit `d2c9838`).
 
 Hasil verifikasi setelah perbaikan (10/10 check, `verify-sidebar.mjs`):
 
-| Skenario | Hasil |
-|---|---|
+| Skenario                          | Hasil                                     |
+| --------------------------------- | ----------------------------------------- |
 | Tombol toggle terlihat di desktop | ya, `aria-label="toggle navigation menu"` |
-| Klik tombol -> collapsed | `state=collapsed`, `w=0`, cookie `false` |
-| Reload setelah collapsed | tetap collapsed (cookie akhirnya dibaca) |
-| Klik tombol lagi -> expanded | `state=expanded`, `w=256` |
-| Dropdown profil setelah expand | 224px, di dalam viewport |
-| `Ctrl+B` -> reload -> tombol | collapsed bertahan, lalu expand via mouse |
+| Klik tombol -> collapsed          | `state=collapsed`, `w=0`, cookie `false`  |
+| Reload setelah collapsed          | tetap collapsed (cookie akhirnya dibaca)  |
+| Klik tombol lagi -> expanded      | `state=expanded`, `w=256`                 |
+| Dropdown profil setelah expand    | 224px, di dalam viewport                  |
+| `Ctrl+B` -> reload -> tombol      | collapsed bertahan, lalu expand via mouse |
 
 Regresi dicek ulang: `verify-ui.mjs` 13/13 pass untuk admin **dan**
 non-admin setelah kedua fix diterapkan.
@@ -352,11 +358,11 @@ Nilai final: `mx-auto w-full max-w-3xl px-4 xl:max-w-5xl 2xl:max-w-screen-xl`,
 mengikuti preseden repo (`max-w-3xl` = home/privacy/dashboard, `max-w-screen-xl`
 = tabel admin).
 
-| Viewport | Container | Identity/tab content | Form settings |
-|---|---|---|---|
-| 1024px | 768px | 736px | 624px |
-| 1440px | 1024px | 992px | **672px** (dikunci) |
-| 1920px | 1280px | 1248px | **672px** (dikunci) |
+| Viewport | Container | Identity/tab content | Form settings       |
+| -------- | --------- | -------------------- | ------------------- |
+| 1024px   | 768px     | 736px                | 624px               |
+| 1440px   | 1024px    | 992px                | **672px** (dikunci) |
+| 1920px   | 1280px    | 1248px               | **672px** (dikunci) |
 
 Container yang lebar membuat form settings ikut 880px/1136px — 2× konvensi
 form repo (`max-w-md` = 448px). Karena itu `.form` diberi `max-w-2xl` (672px)
@@ -380,18 +386,19 @@ sendiri: container tetap lebar, kolom input tetap nyaman dipindai.
 
 Checklist lama yang **100% tercentang** tidak menangkap bug ini. Bug ditemukan lewat render audit (bukan baca kode) pada viewport 390px:
 
-| Elemen | Lebar | Masalah |
-|---|---|---|
-| Sidebar trigger | 28px | OK |
+| Elemen              | Lebar     | Masalah                                                      |
+| ------------------- | --------- | ------------------------------------------------------------ |
+| Sidebar trigger     | 28px      | OK                                                           |
 | Brand "Boilerplate" | **172px** | `tracking-[.3rem]` = 4.8px letter-spacing (48px murni spasi) |
-| Theme switch | 36px | OK |
-| Language switcher | **120px** | `min-w-[120px]` hardcoded |
-| Gap 3×8px | 24px | OK |
-| **Total** | **380px** | **Ruang tersedia: 358px** (390 − px-4 16×2) |
+| Theme switch        | 36px      | OK                                                           |
+| Language switcher   | **120px** | `min-w-[120px]` hardcoded                                    |
+| Gap 3×8px           | 24px      | OK                                                           |
+| **Total**           | **380px** | **Ruang tersedia: 358px** (390 − px-4 16×2)                  |
 
 **Akar bug:** brand (letter-spacing besar) + language switcher (min-width hardcoded).  
 **Perbaikan:** semantic class `app-bar__brand` (`min-w-0 truncate`, tracking step-down `tracking-[0.15em] sm:tracking-[0.3em]`) + `language-switcher` (`min-w-0 sm:min-w-[7.5rem]`).
 
 Pelajaran: **checklist 100% ≠ zero bug** — checklist hanya mencakup yang diketahui; audit render (Playwright + screenshot + distinct-value count) menemukan yang tidak terduga.
+
 - Migrasi bersifat visual-identik: setiap `className` utility diganti
   class semantic dengan deklarasi `@apply` yang isinya sama persis.

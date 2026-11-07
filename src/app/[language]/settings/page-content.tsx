@@ -4,7 +4,6 @@ import { SettingsShell } from "@/core/shells/SettingsShell";
 import { useTranslation } from "@/services/i18n/client";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useAuth from "@/services/auth/use-auth";
-import { RoleEnum } from "@/services/api/types/role";
 
 function SettingsPage() {
   const { t } = useTranslation("settings");
@@ -21,4 +20,6 @@ function SettingsPage() {
   );
 }
 
-export default withPageRequiredAuth(SettingsPage, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(SettingsPage, {
+  permission: "read:settings",
+});

@@ -1,7 +1,6 @@
 "use client";
 
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { RoleEnum } from "@/services/api/types/role";
 import { type Module } from "@/services/api/types/module";
 import { useTranslation } from "@/services/i18n/client";
 import { useMemo } from "react";
@@ -91,4 +90,4 @@ function Modules() {
   );
 }
 
-export default withPageRequiredAuth(Modules, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Modules, { permission: "read:admin" });

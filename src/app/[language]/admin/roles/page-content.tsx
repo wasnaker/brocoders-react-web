@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { RoleEnum, type Role } from "@/services/api/types/role";
+import { type Role } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useTranslation } from "@/services/i18n/client";
 import { useGetRolesQuery } from "./queries/queries";
@@ -209,4 +209,4 @@ function Roles() {
   );
 }
 
-export default withPageRequiredAuth(Roles, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Roles, { permission: "read:role" });

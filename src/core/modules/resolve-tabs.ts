@@ -25,8 +25,8 @@ export function resolveTabs(
   const tabs: ResolvedTab[] = manifests.flatMap((manifest) => {
     const manifestTabs =
       slot === "profileTabs"
-        ? manifest.profileTabs ?? []
-        : manifest.settingsTabs ?? [];
+        ? (manifest.profileTabs ?? [])
+        : (manifest.settingsTabs ?? []);
     return manifestTabs.map((tab) => ({
       ...tab,
       moduleAlias: manifest.alias,

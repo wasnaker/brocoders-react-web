@@ -5,12 +5,12 @@ Halaman tipe "list + panel detail" (mis. Region) memakai satu pola yang dimiliki
 
 ## Aturan ownership
 
-| Bagian | Pemilik |
-| --- | --- |
+| Bagian                                             | Pemilik                  |
+| -------------------------------------------------- | ------------------------ |
 | State seleksi, visibilitas panel, sinkron hash URL | core (`useMasterDetail`) |
-| Layout list + split panel, skeleton, pagination | core (`SmallTable`) |
-| Query detail (`GET /:id`) | modul (hook API) |
-| Kolom, tab, isi panel, form create/edit | modul |
+| Layout list + split panel, skeleton, pagination    | core (`SmallTable`)      |
+| Query detail (`GET /:id`)                          | modul (hook API)         |
+| Kolom, tab, isi panel, form create/edit            | modul                    |
 
 Modul **tidak boleh** menyimpan `selectedId`/`showDetail` sendiri, menulis
 `window.history`, atau mengambil entitas detail dari baris list.
@@ -24,23 +24,23 @@ const { selectedId, showDetail, select, close, toggle, afterSave } =
   useMasterDetail();
 ```
 
-| Fungsi | Semantik |
-| --- | --- |
-| `select(id)` | klik baris → pilih + buka panel + tulis hash |
-| `close()` | tutup panel + hapus pilihan + hapus hash |
-| `toggle()` | lipat/buka panel tanpa mengubah pilihan |
+| Fungsi          | Semantik                                                                                        |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| `select(id)`    | klik baris → pilih + buka panel + tulis hash                                                    |
+| `close()`       | tutup panel + hapus pilihan + hapus hash                                                        |
+| `toggle()`      | lipat/buka panel tanpa mengubah pilihan                                                         |
 | `afterSave(id)` | **wajib dipanggil setelah create/update** → invalidasi cache, pilih id hasil simpan, buka panel |
 
 ### `SmallTable` — `@/components/small-table`
 
-| Prop | Fungsi |
-| --- | --- |
-| `selectedId` | id terpilih (dari `useMasterDetail`) |
-| `onSelectId` | `select` |
-| `showDetail` | visibilitas panel |
-| `detailItem` | **entitas hasil `GET /:id`** — sumber isi panel |
-| `detailLoading` | skeleton saat detail dimuat |
-| `customTabBody`, `toolbar`, `renderHeader` | renderer milik modul |
+| Prop                                       | Fungsi                                          |
+| ------------------------------------------ | ----------------------------------------------- |
+| `selectedId`                               | id terpilih (dari `useMasterDetail`)            |
+| `onSelectId`                               | `select`                                        |
+| `showDetail`                               | visibilitas panel                               |
+| `detailItem`                               | **entitas hasil `GET /:id`** — sumber isi panel |
+| `detailLoading`                            | skeleton saat detail dimuat                     |
+| `customTabBody`, `toolbar`, `renderHeader` | renderer milik modul                            |
 
 `detailItem` diprioritaskan di atas baris list. Karena itu panel tetap tampil
 walau item:
@@ -51,13 +51,13 @@ walau item:
 
 ## Kontrak backend (sudah berlaku, tanpa endpoint khusus)
 
-| Operasi | Kontrak |
-| --- | --- |
-| `GET /:id` | mengembalikan entitas detail |
-| `POST` | `201` + entitas yang dibuat (termasuk `id`) |
-| `PATCH /:id` | `200` + entitas terbaru |
-| `DELETE /:id` | `204` |
-| `GET` list | `{ data, hasNextPage }` |
+| Operasi       | Kontrak                                     |
+| ------------- | ------------------------------------------- |
+| `GET /:id`    | mengembalikan entitas detail                |
+| `POST`        | `201` + entitas yang dibuat (termasuk `id`) |
+| `PATCH /:id`  | `200` + entitas terbaru                     |
+| `DELETE /:id` | `204`                                       |
+| `GET` list    | `{ data, hasNextPage }`                     |
 
 Panel detail **selalu** dirender dari `GET /:id`, bukan dari objek hasil
 `POST`/`PATCH` di memori, agar perilakunya sama untuk semua modul dan tetap

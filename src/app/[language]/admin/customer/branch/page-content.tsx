@@ -1,6 +1,5 @@
 "use client";
 
-import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { BranchPage } from "@wasnaker/module-customer";
 
@@ -13,4 +12,4 @@ function Branch() {
   return <BranchPage />;
 }
 
-export default withPageRequiredAuth(Branch, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Branch, { permission: "read:branch" });

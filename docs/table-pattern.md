@@ -15,8 +15,8 @@ src/components/
 
 ## Kapan Pakai
 
-| Volume Data | Metode |
-| --- | --- |
+| Volume Data | Metode                      |
+| ----------- | --------------------------- |
 | Semua modul | Server-side (useTable hook) |
 
 Tidak ada lagi client-side pagination/filter — semua delegasi ke API.
@@ -42,8 +42,8 @@ import type { Province } from "@wasnaker/module-region";
 
 function RegionPage() {
   const {
-    data,           // T[] — items untuk halaman ini
-    total,          // number — total record di server
+    data, // T[] — items untuk halaman ini
+    total, // number — total record di server
     isLoading,
     page,
     setPage,
@@ -85,17 +85,17 @@ function RegionPage() {
 
 ## SmallTable Props (Server Mode)
 
-| Prop | Tipe | Wajib | Keterangan |
-| --- | --- | --- | --- |
-| `items` | `T[]` | ✅ | Data dari server (sudah dipaginasi) |
-| `total` | `number` | ✅ | Total record — untuk hitung totalPages |
-| `page` | `number` | ✅ | Halaman aktif (1-based) |
-| `onPageChange` | `(p) => void` | ✅ | Handler ganti halaman |
-| `searchValue` | `string` | ✅ | Search query controlled |
-| `onSearchChange` | `(q) => void` | ✅ | Handler search |
-| `sort` | `SortConfig` | — | Sort config optional |
-| `onSortChange` | `(s) => void` | — | Handler sort optional |
-| `perPage` | `number` | — | Default: dari Settings › Misc (defaultPageSize) |
+| Prop             | Tipe          | Wajib | Keterangan                                      |
+| ---------------- | ------------- | ----- | ----------------------------------------------- |
+| `items`          | `T[]`         | ✅    | Data dari server (sudah dipaginasi)             |
+| `total`          | `number`      | ✅    | Total record — untuk hitung totalPages          |
+| `page`           | `number`      | ✅    | Halaman aktif (1-based)                         |
+| `onPageChange`   | `(p) => void` | ✅    | Handler ganti halaman                           |
+| `searchValue`    | `string`      | ✅    | Search query controlled                         |
+| `onSearchChange` | `(q) => void` | ✅    | Handler search                                  |
+| `sort`           | `SortConfig`  | —     | Sort config optional                            |
+| `onSortChange`   | `(s) => void` | —     | Handler sort optional                           |
+| `perPage`        | `number`      | —     | Default: dari Settings › Misc (defaultPageSize) |
 
 > Catatan: opsi `mode="server"` dan prop `mode` sudah dihapus dari SmallTable —
 > komponen selalu berjalan server-side.
@@ -105,12 +105,12 @@ function RegionPage() {
 Beberapa nilai default tabel dikelola **frontend core**, bukan modul, jadi berlaku
 untuk semua modul sekaligus lewat `useCoreSettings()`:
 
-| Setting | Key backend | Diterapkan ke |
-| --- | --- | --- |
-| `defaultPageSize` | `misc.defaultPageSize` | `useTable` (defaultLimit saat modul tidak override) |
-| `maxApiLimit` | `misc.maxApiLimit` | Panduan cap limit API modul |
+| Setting                   | Key backend                    | Diterapkan ke                                       |
+| ------------------------- | ------------------------------ | --------------------------------------------------- |
+| `defaultPageSize`         | `misc.defaultPageSize`         | `useTable` (defaultLimit saat modul tidak override) |
+| `maxApiLimit`             | `misc.maxApiLimit`             | Panduan cap limit API modul                         |
 | `dashboardWidgetsEnabled` | `misc.dashboardWidgetsEnabled` | `DashboardGrid` (sembunyikan semua widget saat off) |
-| `staleTimeSeconds` | `misc.staleTimeSeconds` | `useTable` (staleTime query React Query) |
+| `staleTimeSeconds`        | `misc.staleTimeSeconds`        | `useTable` (staleTime query React Query)            |
 
 Modul **tidak boleh** memanggil settings API langsung — gunakan `useCoreSettings()`.
 

@@ -1,11 +1,11 @@
 # Plan: System Banner — crm-web parity, versi brocoders
 
-Status     : IMPLEMENTASI SELESAI (2026-09-30) — 33/33 skenario Playwright pass
-Dibuat     : 2026-09-29
-Repo       : /www/wwwroot/brocoders/brocoders-react-web (Next.js 16 / React 19)
-Backend    : /www/wwwroot/brocoders/brocoders-api (NestJS, port 4300)
-Deploy     : http://brocoders-react-web.lan (HTTP saja, port 4400, systemd)
-Referensi  : /www/wwwroot/crm-web/resources/js/{components/SystemBanner.tsx,hooks/useSystemBanners.ts}
+Status : IMPLEMENTASI SELESAI (2026-09-30) — 33/33 skenario Playwright pass
+Dibuat : 2026-09-29
+Repo : /www/wwwroot/brocoders/brocoders-react-web (Next.js 16 / React 19)
+Backend : /www/wwwroot/brocoders/brocoders-api (NestJS, port 4300)
+Deploy : http://brocoders-react-web.lan (HTTP saja, port 4400, systemd)
+Referensi : /www/wwwroot/crm-web/resources/js/{components/SystemBanner.tsx,hooks/useSystemBanners.ts}
 
 ---
 
@@ -18,12 +18,12 @@ React Context, TanStack Query, dan semantic CSS class.
 
 Empat keputusan yang sudah dikunci bersama user:
 
-| Keputusan | Nilai |
-|---|---|
-| Scope | Penuh (parity dengan crm-web), diadaptasi ke brocoders |
-| Kanal broadcast | Polling via TanStack Query (§3 — rekomendasi, bukan WS/SSE) |
-| Hubungan dengan sonner | Sonner tetap untuk aksi CRUD; banner untuk pesan global |
-| Lokasi render | Semua route, di `src/app/[language]/layout.tsx` |
+| Keputusan              | Nilai                                                       |
+| ---------------------- | ----------------------------------------------------------- |
+| Scope                  | Penuh (parity dengan crm-web), diadaptasi ke brocoders      |
+| Kanal broadcast        | Polling via TanStack Query (§3 — rekomendasi, bukan WS/SSE) |
+| Hubungan dengan sonner | Sonner tetap untuk aksi CRUD; banner untuk pesan global     |
+| Lokasi render          | Semua route, di `src/app/[language]/layout.tsx`             |
 
 ### 0.1 Konflik scope yang belum diputuskan
 
@@ -32,7 +32,7 @@ Dua jawaban user saling bertentangan dan **tidak diputuskan sendiri di sini**:
 - "Scope penuh" memuat `entity-created / updated / deleted`.
 - "Banner untuk global saja" berarti CRUD tetap di sonner.
 
-**Resolusi sementara yang dipakai dokumen ini:** bangun *mekanisme* lengkap
+**Resolusi sementara yang dipakai dokumen ini:** bangun _mekanisme_ lengkap
 (semua tipe, provider, emitter, dismissal) tapi **hanya wire event global**
 (build_update, broadcast, connection). Event entity tersedia sebagai API
 publik `pushEntityEvent()` tetapi **tidak** disambungkan ke template hygen
@@ -44,24 +44,24 @@ dan tambahkan pemanggilan banner di
 
 ---
 
-## 1. Apa yang di-*port*, apa yang di-*buang*
+## 1. Apa yang di-_port_, apa yang di-_buang_
 
 `crm-web` system-banner punya 165 baris komponen + 191 baris hook. Yang
 diambil adalah **konsep**, bukan kode.
 
-| Aspek | crm-web (Inertia + Vite) | brocoders (Next + shadcn) | Keputusan |
-|---|---|---|---|
-| Transport event | `window.dispatchEvent(new CustomEvent(...))` | Modul emitter + `BroadcastChannel` (tiru `auth-events.ts`) | **Ganti** |
-| State | `useState` + `useRef` di hook | `useReducer` di Provider | **Ganti** |
-| Akses | `useSystemBanners()` dipanggil di dalam `SystemBanner` | `useSystemBanner()` context, provider di layout | **Ganti** |
-| Ikon | String SVG path hardcoded (`ICON_PATHS`) | Komponen lucide-react | **Ganti** |
-| Warna | Hardcoded `emerald-50` / `amber-50` / `blue-50` | Token `--color-success` / `--warning` / `--info` / `--destructive` | **Ganti** |
-| Teks | Hardcoded Indonesia (`"Nanti"`, `"Muat Ulang"`, `aria-label="Tutup"`) | i18next, 5 locale | **Ganti** |
-| Styling | `@apply` di `resources/css/app.css` | `@layer components` di `src/app/globals.css` | **Ganti** |
-| ID banner | `banner-${Date.now()}-${random}` | Deterministik per event | **Ganti** (§5.2) |
-| dismissal | `localStorage["crm-system-banners-dismissed"]`, tanpa TTL | Store dengan TTL 30 hari + prune | **Perbaiki** |
-| Aksesibilitas | Tidak ada live region | `role="status"` / `role="alert"` + `aria-live` | **Perbaiki** |
-| Cross-tab | Tidak ada | `BroadcastChannel` | **Tambah** |
+| Aspek           | crm-web (Inertia + Vite)                                              | brocoders (Next + shadcn)                                          | Keputusan        |
+| --------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------- |
+| Transport event | `window.dispatchEvent(new CustomEvent(...))`                          | Modul emitter + `BroadcastChannel` (tiru `auth-events.ts`)         | **Ganti**        |
+| State           | `useState` + `useRef` di hook                                         | `useReducer` di Provider                                           | **Ganti**        |
+| Akses           | `useSystemBanners()` dipanggil di dalam `SystemBanner`                | `useSystemBanner()` context, provider di layout                    | **Ganti**        |
+| Ikon            | String SVG path hardcoded (`ICON_PATHS`)                              | Komponen lucide-react                                              | **Ganti**        |
+| Warna           | Hardcoded `emerald-50` / `amber-50` / `blue-50`                       | Token `--color-success` / `--warning` / `--info` / `--destructive` | **Ganti**        |
+| Teks            | Hardcoded Indonesia (`"Nanti"`, `"Muat Ulang"`, `aria-label="Tutup"`) | i18next, 5 locale                                                  | **Ganti**        |
+| Styling         | `@apply` di `resources/css/app.css`                                   | `@layer components` di `src/app/globals.css`                       | **Ganti**        |
+| ID banner       | `banner-${Date.now()}-${random}`                                      | Deterministik per event                                            | **Ganti** (§5.2) |
+| dismissal       | `localStorage["crm-system-banners-dismissed"]`, tanpa TTL             | Store dengan TTL 30 hari + prune                                   | **Perbaiki**     |
+| Aksesibilitas   | Tidak ada live region                                                 | `role="status"` / `role="alert"` + `aria-live`                     | **Perbaiki**     |
+| Cross-tab       | Tidak ada                                                             | `BroadcastChannel`                                                 | **Tambah**       |
 
 ### 1.1 Empat bug crm-web yang tidak boleh diulang
 
@@ -70,10 +70,10 @@ diambil adalah **konsep**, bukan kode.
    `add()` dipanggil lagi dengan id **baru** → banner muncul lagi. Persistensi
    di `useSystemBanners.ts:29-44` praktis mubazir. Fix: id deterministik (§5.2).
 2. **Tiga event `entity-*` tidak punya pengirim.** `EntityDetailPanel.tsx:243`
-   hanya *mendengarkan*, tidak pernah dispatch. Banner itu tidak akan pernah
+   hanya _mendengarkan_, tidak pernah dispatch. Banner itu tidak akan pernah
    muncul. Fix: sediakan API, tapi jangan klaim sudah jalan (§7.4).
-3. **Tipe dobel-duty.** Field `type` sekaligus menyatakan *severity* dan
-   *sumber*. Akibatnya `admin_broadcast` harus punya warna sendiri (ungu)
+3. **Tipe dobel-duty.** Field `type` sekaligus menyatakan _severity_ dan
+   _sumber_. Akibatnya `admin_broadcast` harus punya warna sendiri (ungu)
    padahal itu bukan severity. Fix: pisahkan `kind` dan `severity` (§2.2).
 4. **`admin_broadcast` tidak ada pengirim.** Backend punya kanal, frontend
    belum pasang echo sama sekali. Fix: polling (§3).
@@ -83,7 +83,7 @@ diambil adalah **konsep**, bukan kode.
 ## 2. Arsitektur
 
 > **CATATAN:** diagram di bawah sudah diperbaiki. Versi awal menggambar
-> `<SystemBanner />` sebagai saudara *setelah* `children`, yang kalau diikuti
+> `<SystemBanner />` sebagai saudara _setelah_ `children`, yang kalau diikuti
 > akan merender banner di paling bawah layar (setelah app shell selesai),
 > bukan tepat di bawah app bar. Posisi normatif ada di §7.1.
 
@@ -149,14 +149,14 @@ export type BannerSeverity = "info" | "success" | "warning" | "error";
 export type BannerKind = "build" | "broadcast" | "connection" | "action";
 
 export interface SystemBanner {
-  id: string;              // deterministik — §5.2
+  id: string; // deterministik — §5.2
   kind: BannerKind;
   severity: BannerSeverity;
-  title?: string;          // sudah diterjemahkan
-  message: string;         // sudah diterjemahkan
-  detail?: string;         // mis. build id, monospace
+  title?: string; // sudah diterjemahkan
+  message: string; // sudah diterjemahkan
+  detail?: string; // mis. build id, monospace
   action?: { label: string; onClick: () => void };
-  autoDismissAfter?: number;  // detik; undefined = sticky
+  autoDismissAfter?: number; // detik; undefined = sticky
   closable: boolean;
   createdAt: number;
 }
@@ -168,12 +168,12 @@ ditentukan `kind`. Tidak ada lagi warna khusus per sumber.
 
 Aturan per `kind`:
 
-| kind | severity | closable | autoDismiss | action |
-|---|---|---|---|---|
-| `build` | `info` | ya | tidak | "Muat ulang" (`location.reload()`) |
-| `broadcast` | dari server | ya | tidak | opsional dari server |
-| `connection` | `error` | tidak | tidak | "Coba lagi" (`router.refresh()`) |
-| `action` | pemanggil | ya | opsional | opsional |
+| kind         | severity    | closable | autoDismiss | action                             |
+| ------------ | ----------- | -------- | ----------- | ---------------------------------- |
+| `build`      | `info`      | ya       | tidak       | "Muat ulang" (`location.reload()`) |
+| `broadcast`  | dari server | ya       | tidak       | opsional dari server               |
+| `connection` | `error`     | tidak    | tidak       | "Coba lagi" (`router.refresh()`)   |
+| `action`     | pemanggil   | ya       | opsional    | opsional                           |
 
 ---
 
@@ -182,15 +182,15 @@ Aturan per `kind`:
 Jawaban atas pertanyaan "apa pola terbaiknya?". Rekomendasi: **polling via
 TanStack Query**.
 
-| Kriteria | Polling | SSE | WebSocket |
-|---|---|---|---|
-| Dependency baru | **0** | 0 | `@nestjs/websockets` + `socket.io` + `socket.io-client` |
-| Infra tambahan | **0** | 0 | adapter/redis untuk scale-out |
-| Kesesuaian `brocoders-api` sekarang | **sesuai** (single systemd process, port 4300) | perlu handle keep-alive + buffering nginx | perlu handler, guard, room, auth handshake |
-| Autentikasi | **gratis** — `useFetch` sudah attach `Authorization` + auto-refresh 401 | `EventSource` **tidak bisa** set header → token pindah ke query string | harus handshake JWT manual |
-| `refetchOnWindowFocus` / dedupe / `staleTime` | **gratis** dari TanStack Query | tulis sendiri | tulis sendiri |
-| Latensi | ≤ 60 dtk | < 1 dtk | < 1 dtk |
-| Skala | 1 instance | 1 instance | perlu shared adapter |
+| Kriteria                                      | Polling                                                                 | SSE                                                                    | WebSocket                                               |
+| --------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
+| Dependency baru                               | **0**                                                                   | 0                                                                      | `@nestjs/websockets` + `socket.io` + `socket.io-client` |
+| Infra tambahan                                | **0**                                                                   | 0                                                                      | adapter/redis untuk scale-out                           |
+| Kesesuaian `brocoders-api` sekarang           | **sesuai** (single systemd process, port 4300)                          | perlu handle keep-alive + buffering nginx                              | perlu handler, guard, room, auth handshake              |
+| Autentikasi                                   | **gratis** — `useFetch` sudah attach `Authorization` + auto-refresh 401 | `EventSource` **tidak bisa** set header → token pindah ke query string | harus handshake JWT manual                              |
+| `refetchOnWindowFocus` / dedupe / `staleTime` | **gratis** dari TanStack Query                                          | tulis sendiri                                                          | tulis sendiri                                           |
+| Latensi                                       | ≤ 60 dtk                                                                | < 1 dtk                                                                | < 1 dtk                                                 |
+| Skala                                         | 1 instance                                                              | 1 instance                                                             | perlu shared adapter                                    |
 
 Kanal yang ada di `crm-web` (Reverb + `laravel-echo`) **tidak ada padanannya**
 di sini: `brocoders-api` tidak punya `@nestjs/websockets`, tidak punya
@@ -234,24 +234,24 @@ mengespos dua route berbeda.
 generator. **Plan ini menghindari generator sama sekali** dengan menyimpan
 broadcast sebagai baris `setting`:
 
-| kolom | nilai |
-|---|---|
-| `key` | `system.broadcast` (unik — sudah ada `@Column({ unique: true })`) |
-| `group` | `system` |
-| `type` | `json` |
-| `value` | JSON `{ severity, title, message, actionLabel, closable }` |
-| `moduleAlias` | `null` |
+| kolom         | nilai                                                             |
+| ------------- | ----------------------------------------------------------------- |
+| `key`         | `system.broadcast` (unik — sudah ada `@Column({ unique: true })`) |
+| `group`       | `system`                                                          |
+| `type`        | `json`                                                            |
+| `value`       | JSON `{ severity, title, message, actionLabel, closable }`        |
+| `moduleAlias` | `null`                                                            |
 
 Nol migrasi, nol entitas, nol generator. `updatedAt` baris ini **berperan
 sebagai version** — dipakai §4.4.
 
 ### 4.3 Endpoint
 
-| Method | Path | Guard | Body | Response |
-|---|---|---|---|---|
-| `GET` | `/api/v1/broadcast` | `AuthGuard('jwt')` saja | — | `BroadcastPayload \| { version: null }` |
-| `POST` | `/api/v1/broadcast` | `AuthGuard('jwt') + RolesGuard(RoleEnum.admin)` | `PublishBroadcastDto` | `BroadcastPayload` |
-| `DELETE` | `/api/v1/broadcast` | idem | — | `{ version: null }` |
+| Method   | Path                | Guard                                           | Body                  | Response                                |
+| -------- | ------------------- | ----------------------------------------------- | --------------------- | --------------------------------------- |
+| `GET`    | `/api/v1/broadcast` | `AuthGuard('jwt')` saja                         | —                     | `BroadcastPayload \| { version: null }` |
+| `POST`   | `/api/v1/broadcast` | `AuthGuard('jwt') + RolesGuard(RoleEnum.admin)` | `PublishBroadcastDto` | `BroadcastPayload`                      |
+| `DELETE` | `/api/v1/broadcast` | idem                                            | —                     | `{ version: null }`                     |
 
 `BroadcastPayload`:
 
@@ -273,7 +273,7 @@ dismiss tidak pernah melihat revisi berikutnya.
 
 DTO dengan `class-validator` (pola `settings.controller.ts:29-33` +
 `utils/validation-options.ts`) — file DTO **boleh ditulis tangan**;
-CLAUDE.md melarang menulis *entity*, bukan DTO.
+CLAUDE.md melarang menulis _entity_, bukan DTO.
 
 ### 4.4 Versioning & deduplikasi
 
@@ -301,7 +301,7 @@ banner muncul lagi untuk yang belum dismiss.
 Judul/message broadcast disimpan apa adanya (hasil ketik admin), **tidak**
 melewati `nestjs-i18n`. Repo ini punya 7 locale di `src/i18n/` tapi
 `SettingsService` juga menyimpan nilai mentah, jadi ini konsisten. Widget
-`label_i18n` yang berlaku untuk *kode*, bukan *konten*.
+`label_i18n` yang berlaku untuk _kode_, bukan _konten_.
 
 ---
 
@@ -334,12 +334,12 @@ src/app/globals.css
 
 ### 5.2 ID deterministik (perbaikan bug crm-web #1)
 
-| Event | ID |
-|---|---|
-| build | `build:<buildId>` |
-| broadcast | `broadcast:<version>` |
-| connection up | `connection:up` |
-| connection down | `connection:down` |
+| Event               | ID                              |
+| ------------------- | ------------------------------- |
+| build               | `build:<buildId>`               |
+| broadcast           | `broadcast:<version>`           |
+| connection up       | `connection:up`                 |
+| connection down     | `connection:down`               |
 | entity (API publik) | `entity:<action>:<entity>:<id>` |
 
 Store dismissal:
@@ -349,7 +349,9 @@ Store dismissal:
 const STORE_KEY = "brocoders.system-banner.dismissed.v1";
 const TTL_DAYS = 30;
 
-interface Store { [id: string]: number }   // id → epoch ms saat dismiss
+interface Store {
+  [id: string]: number;
+} // id → epoch ms saat dismiss
 ```
 
 - `read()`: parse, **buang entri lebih tua dari TTL** sekalian (prune saat
@@ -365,10 +367,11 @@ pertahankan.
 
 `src/services/system-banner/banner-events.ts` mengikuti
 `src/services/auth/auth-events.ts` persis: `Set<listener>` + `BroadcastChannel`
-+ notifikasi listener lokal eksplisit (BroadcastChannel tidak mengirim ke
-context pengirim). Bedanya hanya: `auth-events.ts` guarding
-`typeof window !== "undefined"`; banner **wajib** begitu juga karena
-`layout.tsx` mengimpor provider di server render.
+
+- notifikasi listener lokal eksplisit (BroadcastChannel tidak mengirim ke
+  context pengirim). Bedanya hanya: `auth-events.ts` guarding
+  `typeof window !== "undefined"`; banner **wajib** begitu juga karena
+  `layout.tsx` mengimpor provider di server render.
 
 ### 5.4 Provider
 
@@ -422,21 +425,45 @@ Perbedaan penting dari crm-web:
 ditambahkan ke `@layer components` di `src/app/globals.css` (mulai line 223).
 
 ```css
-.system-banner { @apply w-full; }
-.system-banner__stack { @apply flex flex-col; }
+.system-banner {
+  @apply w-full;
+}
+.system-banner__stack {
+  @apply flex flex-col;
+}
 .system-banner__item {
   @apply flex items-center justify-between gap-3 border-b px-4 py-2 text-sm;
 }
-.system-banner__content { @apply flex min-w-0 flex-1 items-center gap-2; }
-.system-banner__text { @apply min-w-0 truncate; }
-.system-banner__detail { @apply font-mono text-xs opacity-70; }
-.system-banner__actions { @apply flex shrink-0 items-center gap-2; }
-.system-banner__icon { @apply h-4 w-4 shrink-0; }
-.system-banner__item--info    { @apply bg-info/10 text-foreground; }
-.system-banner__item--success { @apply bg-success/10 text-foreground; }
-.system-banner__item--warning { @apply bg-warning/10 text-foreground; }
-.system-banner__item--error   { @apply bg-destructive/10 text-foreground; }
-.system-banner__item--build   { @apply bg-accent text-accent-foreground; }
+.system-banner__content {
+  @apply flex min-w-0 flex-1 items-center gap-2;
+}
+.system-banner__text {
+  @apply min-w-0 truncate;
+}
+.system-banner__detail {
+  @apply font-mono text-xs opacity-70;
+}
+.system-banner__actions {
+  @apply flex shrink-0 items-center gap-2;
+}
+.system-banner__icon {
+  @apply h-4 w-4 shrink-0;
+}
+.system-banner__item--info {
+  @apply bg-info/10 text-foreground;
+}
+.system-banner__item--success {
+  @apply bg-success/10 text-foreground;
+}
+.system-banner__item--warning {
+  @apply bg-warning/10 text-foreground;
+}
+.system-banner__item--error {
+  @apply bg-destructive/10 text-foreground;
+}
+.system-banner__item--build {
+  @apply bg-accent text-accent-foreground;
+}
 ```
 
 Token `--color-info`, `--color-success`, `--color-warning`,
@@ -459,9 +486,11 @@ Skeleton (isi ke-5 locale dicantumkan di §10):
 
 ```json
 {
-  "build":  { "title": "...", "reload": "...", "detailLabel": "..." },
+  "build": { "title": "...", "reload": "...", "detailLabel": "..." },
   "broadcast": { "label": "..." },
-  "connection": { "lost": { "title": "...", "message": "...", "retry": "..." } },
+  "connection": {
+    "lost": { "title": "...", "message": "...", "retry": "..." }
+  },
   "actions": { "dismiss": "..." }
 }
 ```
@@ -498,7 +527,7 @@ export const dynamic = "force-dynamic";
 export function GET() {
   return NextResponse.json(
     { buildId: process.env.NEXT_PUBLIC_BUILD_VERSION ?? null },
-    { headers: { "cache-control": "no-store" } },
+    { headers: { "cache-control": "no-store" } }
   );
 }
 ```
@@ -613,8 +642,7 @@ useQuery({
 ```
 
 `onSuccess`: kalau payload punya `version` dan `version` !== versi terakhir
-yang disimpan di localStorage → `emitBanner({ id: \`broadcast:${version}\`, ... })`
-lalu simpan `version`.
+yang disimpan di localStorage → `emitBanner({ id: \`broadcast:${version}\`, ... })`lalu simpan`version`.
 
 **Query key WAJIB memuat userId.** Broadcast di design ini bersifat global,
 tapi key per-user tetap dipakai sebagai pengaman kedua terhadap state user
@@ -672,24 +700,24 @@ tidak ada manifest baru.
 
 ### 8.2 Fungsional (manual / browser)
 
-| # | Skenario | Ekspektasi |
-|---|---|---|
-| 1 | Tidak ada event apa pun | Banner tidak render, nol layout shift |
-| 2 | `NEXT_PUBLIC_BUILD_VERSION` diubah lalu rebuild + restart | Muncul banner "versi baru" di semua route termasuk `/id/sign-in` |
-| 3 | Klik "Muat ulang" | Halaman reload, banner hilang, tidak muncul lagi |
-| 4 | `NEXT_PUBLIC_BUILD_VERSION` tidak di-set | Tidak ada banner sama sekali, tidak ada error konsol |
-| 5 | Broadcast dibuat via `POST /api/v1/broadcast` | Muncul ≤ 60 detik di user login, tidak muncul di user non-login |
-| 6 | Broadcast diedit (teks sama) | Versi berubah, banner muncul lagi untuk yang belum dismiss |
-| 7 | Broadcast dihapus | `version` jadi null, banner lama yang masih tampil tidak dihapus otomatis (hanya dismiss manual) |
-| 8 | Dismiss banner broadcast | Tidak muncul lagi sampai versi berubah atau TTL 30 hari habis |
-| 9 | Dua tab terbuka, dismiss di tab A | Tab B ikut hilang (BroadcastChannel) |
-| 10 | DevTools → offline | Banner connection, `closable: false` |
-| 11 | Koneksi kembali | Banner `connection:up` success, auto-dismiss 4 detik |
-| 12 | Severity `warning` | `role="alert"`, diumumkan screen reader |
-| 13 | 5 locale | Tidak ada key mentah di UI, tidak ada missing translation |
-| 14 | Non-admin `GET /api/v1/broadcast` | 200 (bukan 403) |
-| 15 | Non-admin `POST /api/v1/broadcast` | 403 |
-| 16 | Tanpa token `GET /api/v1/broadcast` | 401 |
+| #   | Skenario                                                  | Ekspektasi                                                                                       |
+| --- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 1   | Tidak ada event apa pun                                   | Banner tidak render, nol layout shift                                                            |
+| 2   | `NEXT_PUBLIC_BUILD_VERSION` diubah lalu rebuild + restart | Muncul banner "versi baru" di semua route termasuk `/id/sign-in`                                 |
+| 3   | Klik "Muat ulang"                                         | Halaman reload, banner hilang, tidak muncul lagi                                                 |
+| 4   | `NEXT_PUBLIC_BUILD_VERSION` tidak di-set                  | Tidak ada banner sama sekali, tidak ada error konsol                                             |
+| 5   | Broadcast dibuat via `POST /api/v1/broadcast`             | Muncul ≤ 60 detik di user login, tidak muncul di user non-login                                  |
+| 6   | Broadcast diedit (teks sama)                              | Versi berubah, banner muncul lagi untuk yang belum dismiss                                       |
+| 7   | Broadcast dihapus                                         | `version` jadi null, banner lama yang masih tampil tidak dihapus otomatis (hanya dismiss manual) |
+| 8   | Dismiss banner broadcast                                  | Tidak muncul lagi sampai versi berubah atau TTL 30 hari habis                                    |
+| 9   | Dua tab terbuka, dismiss di tab A                         | Tab B ikut hilang (BroadcastChannel)                                                             |
+| 10  | DevTools → offline                                        | Banner connection, `closable: false`                                                             |
+| 11  | Koneksi kembali                                           | Banner `connection:up` success, auto-dismiss 4 detik                                             |
+| 12  | Severity `warning`                                        | `role="alert"`, diumumkan screen reader                                                          |
+| 13  | 5 locale                                                  | Tidak ada key mentah di UI, tidak ada missing translation                                        |
+| 14  | Non-admin `GET /api/v1/broadcast`                         | 200 (bukan 403)                                                                                  |
+| 15  | Non-admin `POST /api/v1/broadcast`                        | 403                                                                                              |
+| 16  | Tanpa token `GET /api/v1/broadcast`                       | 401                                                                                              |
 
 ### 8.3 Aksesibilitas
 
@@ -717,14 +745,14 @@ setelah build selesai, bukan sebelum.
 
 ## 9. Out of scope
 
-| Item | Alasan |
-|---|---|
-| WebSocket / SSE | §3 — nol benefit untuk event jarang, biaya dependency besar |
-| UI admin broadcast | Tidak ada di scope; endpoint POST tersedia untuk dipakai manual via curl |
-| Banner untuk CRUD | §7.4 — sonner masih memegang |
-| Animasi masuk/keluar | Tidak ada di crm-web juga; menambah `prefers-reduced-motion` handling |
-| Notifikasi desktop (Notification API) | Tidak ada di crm-web, tidak diminta |
-| Migrasi semantic class file lain | Terpisah, per `ui-fixes-plan.md` §"Catatan implementasi" |
+| Item                                  | Alasan                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| WebSocket / SSE                       | §3 — nol benefit untuk event jarang, biaya dependency besar              |
+| UI admin broadcast                    | Tidak ada di scope; endpoint POST tersedia untuk dipakai manual via curl |
+| Banner untuk CRUD                     | §7.4 — sonner masih memegang                                             |
+| Animasi masuk/keluar                  | Tidak ada di crm-web juga; menambah `prefers-reduced-motion` handling    |
+| Notifikasi desktop (Notification API) | Tidak ada di crm-web, tidak diminta                                      |
+| Migrasi semantic class file lain      | Terpisah, per `ui-fixes-plan.md` §"Catatan implementasi"                 |
 
 ---
 

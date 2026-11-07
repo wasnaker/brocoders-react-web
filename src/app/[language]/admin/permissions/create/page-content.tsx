@@ -13,7 +13,6 @@ import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
 import { usePostPermissionService } from "@/services/api/services/permissions";
 import { useRouter } from "next/navigation";
-import { RoleEnum } from "@/services/api/types/role";
 
 type CreateFormData = {
   name: string;
@@ -142,5 +141,5 @@ function CreatePermission() {
 }
 
 export default withPageRequiredAuth(CreatePermission, {
-  roles: [RoleEnum.ADMIN],
+  permission: "create:permission",
 });

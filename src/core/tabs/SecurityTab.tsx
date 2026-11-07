@@ -13,7 +13,6 @@ import useLeavePage from "@/services/leave-page/use-leave-page";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
 import { UserProviderEnum } from "@/services/api/types/user";
-import { RoleEnum } from "@/services/api/types/role";
 
 type EditProfileChangeEmailFormData = {
   email: string;
@@ -299,7 +298,8 @@ function FormChangePassword() {
 
 function FormChangeEmailWrapper() {
   const { user } = useAuth();
-  const isAdmin = user?.role?.id === RoleEnum.ADMIN;
+  // Admin role ID is 1 in database
+  const isAdmin = user?.role?.id === 1;
 
   return user?.provider === UserProviderEnum.EMAIL && isAdmin ? (
     <FormChangeEmail />

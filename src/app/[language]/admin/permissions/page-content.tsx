@@ -9,7 +9,6 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { RoleEnum } from "@/services/api/types/role";
 import { useTranslation } from "@/services/i18n/client";
 import {
   useGetPermissionsListQuery,
@@ -345,4 +344,6 @@ function Permissions() {
   );
 }
 
-export default withPageRequiredAuth(Permissions, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Permissions, {
+  permission: "read:permission",
+});

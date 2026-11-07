@@ -15,7 +15,7 @@ import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { useTranslation } from "@/services/i18n/client";
 import { usePostUserService } from "@/services/api/services/users";
 import { useRouter } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
+import { Role } from "@/services/api/types/role";
 import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
 
 type CreateFormData = {
@@ -108,7 +108,7 @@ function FormCreateUser() {
       lastName: "",
       password: "",
       passwordConfirmation: "",
-      roles: [{ id: RoleEnum.USER }],
+      roles: [{ id: 2 }],
       photo: undefined,
     },
   });
@@ -208,7 +208,7 @@ function FormCreateUser() {
                 label={t("admin-panel-users-create:inputs.roles.label")}
                 options={[
                   {
-                    id: RoleEnum.ADMIN,
+                    id: 1,
                     name: t(
                       "admin-panel-users-create:inputs.roles.options.admin"
                     ),
@@ -259,4 +259,4 @@ function CreateUser() {
   return <FormCreateUser />;
 }
 
-export default withPageRequiredAuth(CreateUser, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(CreateUser, { permission: "create:user" });

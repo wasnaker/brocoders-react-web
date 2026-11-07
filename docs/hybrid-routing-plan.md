@@ -83,19 +83,18 @@ The following snapshot is based on the repository's main branch at the latest co
 
 ### 2.3 Current progress assessment
 
-| Workstream | Repository status at inspected commit | Assessment |
-|---|---|---|
-| Phase 0 — discovery | Checklist marked complete | Reconcile the ADR-2 server language-bootstrap decision with the actual implementation; it is not yet evidenced in code |
-| Phase 1 — pure utilities | Utilities and tests added; checklist marked complete | Implemented baseline; tighten edge cases and integrate with navigation |
-| Phase 2 — root layout/providers | New root and admin layout files exist | In progress; root/client boundary, nested html/body, provider coverage, and document lang/dir need correction |
-| Phase 3 — deterministic language bootstrap | No server-verifiable user-language bootstrap found | Not complete |
-| Phase 4 — navigation compatibility | Custom Link still adds locale to every internal path | Not complete |
-| Phase 5 — admin route migration | Some folders renamed under [language]; one locale-free dashboard added | Partial; module routes are not all locale-free |
-| Phase 6 — SEO/integration regression | No complete evidence reviewed | Not complete |
-| Phase 7 — rollout/cleanup | No complete evidence reviewed | Not complete |
+| Workstream                                 | Repository status at inspected commit                                  | Assessment                                                                                                             |
+| ------------------------------------------ | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Phase 0 — discovery                        | Checklist marked complete                                              | Reconcile the ADR-2 server language-bootstrap decision with the actual implementation; it is not yet evidenced in code |
+| Phase 1 — pure utilities                   | Utilities and tests added; checklist marked complete                   | Implemented baseline; tighten edge cases and integrate with navigation                                                 |
+| Phase 2 — root layout/providers            | New root and admin layout files exist                                  | In progress; root/client boundary, nested html/body, provider coverage, and document lang/dir need correction          |
+| Phase 3 — deterministic language bootstrap | No server-verifiable user-language bootstrap found                     | Not complete                                                                                                           |
+| Phase 4 — navigation compatibility         | Custom Link still adds locale to every internal path                   | Not complete                                                                                                           |
+| Phase 5 — admin route migration            | Some folders renamed under [language]; one locale-free dashboard added | Partial; module routes are not all locale-free                                                                         |
+| Phase 6 — SEO/integration regression       | No complete evidence reviewed                                          | Not complete                                                                                                           |
+| Phase 7 — rollout/cleanup                  | No complete evidence reviewed                                          | Not complete                                                                                                           |
 
 **Important:** do not mark Phase 2 complete solely because the build succeeds or the two layout files exist. Its exit gate requires valid document ownership, correct providers for both route classes, correct document language/direction, direct-load and refresh coverage, and no public-route regression.
-
 
 ### 2.4 Implementation branch status — `fix/hybrid-routing-foundation`
 
@@ -112,7 +111,6 @@ The following changes have been implemented on the draft branch and are not yet 
 
 **Important backend dependency:** the frontend `User` type has an optional `language` property, but the inspected `brocoders/nestjs-boilerplate` default-branch user entity and profile-update DTO do not currently persist that property. Therefore, this frontend branch can use the validated `i18next` preference cookie and update the in-memory authenticated user, but it cannot guarantee cross-device persistence of an admin language preference as a backend profile setting. If durable `user.language` storage is a product requirement, that needs a separately reviewed backend schema/API change; this frontend PR does not silently change the backend contract.
 
-
 - The Region module was missing from the host repository even though its admin route and generated manifest expected it. The branch now includes the module manifest, API services, hooks, UI components, types, and all five configured locale dictionaries from the companion `wasnaker/bc-region` module. Its canonical menu URL is `/admin/region`.
 - The first lint run caught strict-equality violations, an unused hook import, and use of native `window.confirm` in the integrated Region module. These have been corrected; deletion now uses the application's accessible `ConfirmDialogProvider`. The E2E workflow lint step has been restored to a non-mutating `npm run lint` (it no longer runs ESLint with `--fix`).
 - The current branch head is `60204efb61dc0aa30c14394a63cf1dcbcfaf1f04`. New E2E and generator workflow runs have started for this head; their results are still pending. Earlier runs were cancelled as newer commits arrived, and an earlier run failed on the Region lint errors that are now addressed.
@@ -120,7 +118,6 @@ The following changes have been implemented on the draft branch and are not yet 
 **CI status:** an initial generator run exposed two lint errors in the branch (an unused import and an obsolete dashboard placeholder), which have been fixed. The initial Playwright run also exposed that the current `ubuntu-latest` runner image was newer than Playwright 1.60 supports; both workflows are now pinned to Ubuntu 24.04. Re-run CI on the latest branch head and require lint, build, generator, and E2E checks to pass before merge. A pending workflow is not a passing check.
 
 The branch remains a draft. No changes have been merged into `main`.
-
 
 ## 3. Goals and non-goals
 
@@ -147,12 +144,12 @@ The branch remains a draft. No changes have been merged into `main`.
 
 ### 4.1 Proposed canonical URL policy
 
-| Route class | Canonical URL | Locale source | Indexing |
-|---|---|---|---|
-| Public authentication | /[language]/sign-in, /[language]/sign-up, etc. | URL segment | Normally noindex where appropriate |
-| Public content/legal | /[language]/privacy-policy, etc. | URL segment | Indexable according to metadata |
-| Authenticated app | /admin/... | Authenticated user preference | Normally noindex |
-| Unknown/invalid locale | Explicit redirect or not-found policy | Validated supported locale only | Never emit invalid locale |
+| Route class            | Canonical URL                                  | Locale source                   | Indexing                           |
+| ---------------------- | ---------------------------------------------- | ------------------------------- | ---------------------------------- |
+| Public authentication  | /[language]/sign-in, /[language]/sign-up, etc. | URL segment                     | Normally noindex where appropriate |
+| Public content/legal   | /[language]/privacy-policy, etc.               | URL segment                     | Indexable according to metadata    |
+| Authenticated app      | /admin/...                                     | Authenticated user preference   | Normally noindex                   |
+| Unknown/invalid locale | Explicit redirect or not-found policy          | Validated supported locale only | Never emit invalid locale          |
 
 The exact admin prefix must be approved before code changes. This plan uses /admin as proposed canonical prefix because that is the initial proposal. If product intent is to retain /admin-panel, update this contract consistently before Phase 1.
 
@@ -200,6 +197,7 @@ Evaluate and document the final layout tree. A likely organization is:
 Verify Next.js root-layout rules and the ability to set html lang and dir for this chosen structure. Do not render nested html or body. If route-specific document attributes cannot be safely expressed in the proposed single-root arrangement, evaluate supported alternatives, including multiple root layouts with route-group boundaries, and account for full-page navigation between roots. Choose one architecture and test it before moving the complete route tree.
 
 Create a provider ownership table that states for every provider:
+
 - required routes;
 - whether it needs locale or authenticated user at initialization;
 - whether it must run on server, client, or both;
@@ -223,6 +221,7 @@ Evaluate these options with security and deployment constraints:
 4. **Deterministic fallback then post-hydration switch:** use only if a brief language transition is explicitly accepted. It does not fully meet the no-flash objective and must not be presented as eliminating initial mismatch risk.
 
 For the selected option, specify:
+
 - source of truth and precedence;
 - validation against the supported languages list;
 - cookie name, path, domain, SameSite, Secure, HttpOnly, expiry, and update rules where applicable;
@@ -252,6 +251,7 @@ Avoid competing sources of truth that silently overwrite each other. The i18next
 Inspect the repository for existing middleware, rewrites, redirects, deployment-level routing, and Next.js 16 conventions. The initial plan's reference to src/middleware.ts was conditional; do not create middleware by assumption.
 
 Define which layer owns:
+
 - locale validation and public-route redirects;
 - legacy admin URL redirects;
 - auth redirects;
@@ -267,6 +267,7 @@ Use the lightest correct layer. Middleware/Proxy should not duplicate business a
 Refactor src/components/link.tsx around a single tested URL policy utility rather than scattered string concatenation.
 
 The utility must:
+
 - prefix locale only for public localized internal routes;
 - leave canonical admin routes locale-free;
 - avoid prefixing a URL that already has a supported locale;
@@ -446,33 +447,33 @@ The repository has a generated module registry and a generate:module-registry sc
 
 At minimum, automate these combinations. Run key cases in Chromium and at least one additional browser if supported.
 
-| Scenario | Expected result |
-|---|---|
-| Anonymous direct visit to /id/sign-in | Indonesian public page; URL remains localized |
-| Anonymous direct visit to /en/sign-in | English public page; URL remains localized |
-| Public URL locale differs from saved user preference | Public page follows URL locale |
-| Authenticated user with user.language=id opens /admin/dashboard | Indonesian admin UI on locale-free URL |
-| Authenticated user with user.language=ko opens /admin/dashboard | Korean admin UI on locale-free URL |
-| User preference missing/invalid | Agreed validated fallback; no crash |
-| Cold load with existing authenticated session | Server and first client render use same bootstrap locale |
-| Refresh on nested admin route | Route remains accessible and language is stable |
-| Client navigation between admin modules | URL remains locale-free; language remains stable |
-| Profile language change | Backend and UI preference synchronize; current route remains valid |
-| Logout then visit admin URL | Protected content is not rendered; expected login redirect |
-| Expired/revoked session | No stale private data; expected unauthenticated state |
-| Auth API transient 5xx/network failure | No false logout or stale-user data leak; agreed loading/error behavior |
-| Two users in separate sessions with different languages | No cross-user cache or locale leakage |
-| Two tabs, language changed in one tab | Other tab follows documented synchronization behavior |
-| Old localized admin URL | Correct mapped redirect, preserving safe query/hash |
-| Invalid locale URL | Deterministic redirect or not-found; no invalid translation import |
-| Link string href and object href | Correct locale policy and preserved query/hash |
-| External/protocol-relative/mailto/tel href | Unchanged |
-| Leave-page modal during navigation | Same confirmation behavior and correct eventual destination |
-| Sidebar, breadcrumbs, active module item | Correct active state for canonical route |
-| OAuth and email callback/deep links | Callback succeeds and returns to correct route |
-| Public metadata and sitemap | Locale-specific SEO remains correct |
-| Admin route metadata/cache | No indexing or private data leakage |
-| Browser back/forward and prefetch | Correct route and language; no redirect loop |
+| Scenario                                                        | Expected result                                                        |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Anonymous direct visit to /id/sign-in                           | Indonesian public page; URL remains localized                          |
+| Anonymous direct visit to /en/sign-in                           | English public page; URL remains localized                             |
+| Public URL locale differs from saved user preference            | Public page follows URL locale                                         |
+| Authenticated user with user.language=id opens /admin/dashboard | Indonesian admin UI on locale-free URL                                 |
+| Authenticated user with user.language=ko opens /admin/dashboard | Korean admin UI on locale-free URL                                     |
+| User preference missing/invalid                                 | Agreed validated fallback; no crash                                    |
+| Cold load with existing authenticated session                   | Server and first client render use same bootstrap locale               |
+| Refresh on nested admin route                                   | Route remains accessible and language is stable                        |
+| Client navigation between admin modules                         | URL remains locale-free; language remains stable                       |
+| Profile language change                                         | Backend and UI preference synchronize; current route remains valid     |
+| Logout then visit admin URL                                     | Protected content is not rendered; expected login redirect             |
+| Expired/revoked session                                         | No stale private data; expected unauthenticated state                  |
+| Auth API transient 5xx/network failure                          | No false logout or stale-user data leak; agreed loading/error behavior |
+| Two users in separate sessions with different languages         | No cross-user cache or locale leakage                                  |
+| Two tabs, language changed in one tab                           | Other tab follows documented synchronization behavior                  |
+| Old localized admin URL                                         | Correct mapped redirect, preserving safe query/hash                    |
+| Invalid locale URL                                              | Deterministic redirect or not-found; no invalid translation import     |
+| Link string href and object href                                | Correct locale policy and preserved query/hash                         |
+| External/protocol-relative/mailto/tel href                      | Unchanged                                                              |
+| Leave-page modal during navigation                              | Same confirmation behavior and correct eventual destination            |
+| Sidebar, breadcrumbs, active module item                        | Correct active state for canonical route                               |
+| OAuth and email callback/deep links                             | Callback succeeds and returns to correct route                         |
+| Public metadata and sitemap                                     | Locale-specific SEO remains correct                                    |
+| Admin route metadata/cache                                      | No indexing or private data leakage                                    |
+| Browser back/forward and prefetch                               | Correct route and language; no redirect loop                           |
 
 Also run relevant lint, type-check, build, unit, and Playwright/e2e suites. Record exact commands and results in the implementation PR. A successful build alone is not sufficient evidence for hydration correctness.
 
@@ -505,18 +506,18 @@ Add structured, privacy-safe telemetry for route class, redirect reason, locale 
 
 ## 14. Risks and mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Root layout moved incorrectly | Entire app fails to render or provider state resets | Prototype root layout and route-group design first |
-| Server cannot resolve user language | Hydration mismatch or language flash | Implement and test server-readable bootstrap |
-| Client-only cookie initialization differs from SSR | Initial markup mismatch | Pass explicit server-derived initial state |
-| Custom Link prefixes admin URLs | Broken navigation/404 | Central URL utility and exhaustive tests |
-| Incomplete route/manifest inventory | Hidden broken module links | Automated source search and generated registry validation |
-| Auth redirect assumes /[language] | Redirect loops or wrong destinations | Centralize redirect builder and test auth states |
-| Cache shares personalized locale/data | Data leakage | Private/dynamic cache policy and multi-user tests |
-| OAuth/email callbacks retain old paths | Login/verification failures | Audit provider settings and external links |
-| Broad middleware rewrite catches assets/API | App resources break | Explicit matcher exclusions and integration tests |
-| Legacy redirects are ambiguous | SEO or navigation regressions | Exact mapping; no broad wildcard guesses |
+| Risk                                               | Impact                                              | Mitigation                                                |
+| -------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------- |
+| Root layout moved incorrectly                      | Entire app fails to render or provider state resets | Prototype root layout and route-group design first        |
+| Server cannot resolve user language                | Hydration mismatch or language flash                | Implement and test server-readable bootstrap              |
+| Client-only cookie initialization differs from SSR | Initial markup mismatch                             | Pass explicit server-derived initial state                |
+| Custom Link prefixes admin URLs                    | Broken navigation/404                               | Central URL utility and exhaustive tests                  |
+| Incomplete route/manifest inventory                | Hidden broken module links                          | Automated source search and generated registry validation |
+| Auth redirect assumes /[language]                  | Redirect loops or wrong destinations                | Centralize redirect builder and test auth states          |
+| Cache shares personalized locale/data              | Data leakage                                        | Private/dynamic cache policy and multi-user tests         |
+| OAuth/email callbacks retain old paths             | Login/verification failures                         | Audit provider settings and external links                |
+| Broad middleware rewrite catches assets/API        | App resources break                                 | Explicit matcher exclusions and integration tests         |
+| Legacy redirects are ambiguous                     | SEO or navigation regressions                       | Exact mapping; no broad wildcard guesses                  |
 
 ## 15. Open questions / decisions to record
 

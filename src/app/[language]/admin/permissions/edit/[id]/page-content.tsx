@@ -17,7 +17,6 @@ import {
   usePatchPermissionService,
 } from "@/services/api/services/permissions";
 import { useParams } from "next/navigation";
-import { RoleEnum } from "@/services/api/types/role";
 
 type EditPermissionFormData = {
   name: string;
@@ -171,5 +170,5 @@ function EditPermission() {
 }
 
 export default withPageRequiredAuth(EditPermission, {
-  roles: [RoleEnum.ADMIN],
+  permission: "update:permission",
 });

@@ -19,8 +19,8 @@ import {
   usePatchUserService,
 } from "@/services/api/services/users";
 import { useParams } from "next/navigation";
-import { Role, RoleEnum } from "@/services/api/types/role";
 import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
+import { Role } from "@/services/api/types/role";
 
 type EditUserFormData = {
   email: string;
@@ -236,7 +236,7 @@ function FormEditUser() {
                 label={t("admin-panel-users-edit:inputs.roles.label")}
                 options={[
                   {
-                    id: RoleEnum.ADMIN,
+                    id: 1,
                     name: t(
                       "admin-panel-users-edit:inputs.roles.options.admin"
                     ),
@@ -382,4 +382,4 @@ function EditUser() {
   );
 }
 
-export default withPageRequiredAuth(EditUser, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(EditUser, { permission: "update:user" });

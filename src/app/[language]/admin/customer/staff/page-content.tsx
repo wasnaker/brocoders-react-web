@@ -1,6 +1,5 @@
 "use client";
 
-import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { StaffPage } from "@wasnaker/module-customer";
 
@@ -13,4 +12,4 @@ function Staff() {
   return <StaffPage />;
 }
 
-export default withPageRequiredAuth(Staff, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Staff, { permission: "read:staff" });

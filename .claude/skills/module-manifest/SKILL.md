@@ -10,12 +10,14 @@ The contract a module author writes to plug a library into the app: profile tabs
 ## When to use — and when NOT to use
 
 **Use this skill when:**
+
 - Adding a profile tab from a library
 - Adding a settings tab from a library
 - Adding a dashboard widget from a library
 - Adding a sidebar menu entry from a library — **read the i18n note in [Sidebar menu items](#sidebar-menu-items) first**
 
 **Do NOT use this skill for:**
+
 - Adding business features (projects, tasks, invoices, payments, quotations). Those are NOT core concerns — they are separate libraries in separate repos. Core never contains business features.
 
 ## Registration steps
@@ -43,9 +45,9 @@ jadi file core yang mendaftarkan modul eksternal akan menunjuk folder yang
 **tidak ada di fresh clone** — build rusak sebelum modul sempat dipasang.
 Generator sekarang memindai disk:
 
-| Sumber | Pola |
-|---|---|
-| Core (tracked, selalu ikut) | `src/core/manifests/*.manifest.ts` |
+| Sumber                         | Pola                                     |
+| ------------------------------ | ---------------------------------------- |
+| Core (tracked, selalu ikut)    | `src/core/manifests/*.manifest.ts`       |
 | Eksternal (hasil `module:add`) | `src/modules/<alias>/module.manifest.ts` |
 
 Folder di `src/modules/` tanpa `module.manifest.ts` adalah **error**, bukan
@@ -108,7 +110,10 @@ export default defineModuleManifest({
               { value: "weekly" },
               {
                 value: "monthly",
-                label: { namespace: "module-newsletter", key: "fields.monthly" },
+                label: {
+                  namespace: "module-newsletter",
+                  key: "fields.monthly",
+                },
               },
             ],
           },
@@ -125,7 +130,10 @@ export default defineModuleManifest({
           },
           {
             key: "newsletter.doubleOptIn",
-            label: { namespace: "module-newsletter", key: "fields.doubleOptIn" },
+            label: {
+              namespace: "module-newsletter",
+              key: "fields.doubleOptIn",
+            },
             type: "boolean",
             defaultValue: true,
           },
@@ -190,15 +198,15 @@ interface MenuItem {
 
 Four rules that are not obvious from the type.
 
-**1. No `component`, no `content`.** A menu item is *navigation*, not content. It points at a route that renders your page; it does not render the page itself. So there is no `content: { kind: ... }` wrapper and no `kind` field at all — unlike `TabDef`. Writing `content:` or `component:` on a menu item is a type error.
+**1. No `component`, no `content`.** A menu item is _navigation_, not content. It points at a route that renders your page; it does not render the page itself. So there is no `content: { kind: ... }` wrapper and no `kind` field at all — unlike `TabDef`. Writing `content:` or `component:` on a menu item is a type error.
 
 **2. `icon` is a component.** Same rule as tabs: deep-import from `lucide-react`, never an emoji string.
 
 **3. `href` must NOT start with a locale.** `Link` prepends the active language itself.
 
 ```ts
-href: "/admin/newsletter"          // correct
-href: "/en/admin/newsletter"       // 404 — Link adds /en again
+href: "/admin/newsletter"; // correct
+href: "/en/admin/newsletter"; // 404 — Link adds /en again
 ```
 
 **Also: make sure the route exists.** Nothing validates it. A dead `href` renders a 404 on click and produces a `Link` prefetch console error. This already happened — `src/modules/post/module.manifest.ts` points at `/admin/post`, and that resource was never generated. Check the route before shipping.
@@ -209,7 +217,7 @@ href: "/en/admin/newsletter"       // 404 — Link adds /en again
 
 **Known bug, not a new regression, and not fixed.** A label whose namespace differs from the one the component subscribed to renders as the **raw key**.
 
-The sidebar calls `useTranslation("common")`, so it subscribes to `common` only. Nothing loads `module-*` namespaces: `i18next.init` sets `preload: runsOnServerSide ? languages : []` (`src/services/i18n/client.ts:32`) — `languages` holds language *codes*, not namespaces — and `loadNamespaces` is never called. i18next therefore returns the key string.
+The sidebar calls `useTranslation("common")`, so it subscribes to `common` only. Nothing loads `module-*` namespaces: `i18next.init` sets `preload: runsOnServerSide ? languages : []` (`src/services/i18n/client.ts:32`) — `languages` holds language _codes_, not namespaces — and `loadNamespaces` is never called. i18next therefore returns the key string.
 
 So `label: { namespace: "module-post", key: "menu" }` renders the literal text `menu`.
 
@@ -221,14 +229,14 @@ The translation is **not missing** — `src/services/i18n/locales/en/module-post
 
 ## Three most common mistakes
 
-| Mistake | Symptom |
-|---------|---------|
-| `content: FooTab` directly | Must be `content: { kind: "component", component: FooTab }` → Type error |
-| `icon: "📈"` string | Must be component + deep import → Type error |
-| `alias: "src/modules/x"` (path) | **NO error**, silently breaks — see below |
-| `content` / `component` on a menu item | Type error — `MenuItem` has neither. Menu is navigation only |
-| `href: "/en/..."` | 404 in all locales — `Link` adds the prefix |
-| Re-filtering `menu` by permission | Duplicated logic that drifts from `resolveMenu` |
+| Mistake                                | Symptom                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| `content: FooTab` directly             | Must be `content: { kind: "component", component: FooTab }` → Type error |
+| `icon: "📈"` string                    | Must be component + deep import → Type error                             |
+| `alias: "src/modules/x"` (path)        | **NO error**, silently breaks — see below                                |
+| `content` / `component` on a menu item | Type error — `MenuItem` has neither. Menu is navigation only             |
+| `href: "/en/..."`                      | 404 in all locales — `Link` adds the prefix                              |
+| Re-filtering `menu` by permission      | Duplicated logic that drifts from `resolveMenu`                          |
 
 **Why the third is most dangerous:** If `alias` holds a folder path, when the module is later extracted as a package, every manifest must be rewritten — and the breakage is not discovered until that moment. `alias` is the only stable public identity a manifest has. Today a path-shaped alias is merely untidy; the cost lands at package extraction time under worse review conditions. Use the identity: `alias: "newsletter"`.
 
@@ -267,16 +275,17 @@ Why: the barrel re-exports the entire icon set, pulling all icons into the chunk
 
 `permission` is optional on `TabDef`, `DashboardWidgetDef`, and `MenuItem`. Semantics are identical in all three — decided by `can()` (`src/core/modules/can.ts`), in order:
 
-| # | Condition | Result | Why |
-|---|-----------|--------|-----|
-| 1 | `permission` is falsy | **allow** | No permission declared = no permission required. Absent is the public default. |
-| 2 | `user` is null/undefined | **deny** | Fail-closed. A permission-gated tab must not render for unknown user — otherwise it flashes for one frame before auth resolves. |
-| 3 | `Number(user.role?.id) === 1` | **allow** | Admin bypass. `RoleEnum.ADMIN` is `1`. |
-| 4 | permissions contain `"*"` | **allow** | Wildcard role. |
-| 5 | permissions contain exact string | **allow** | Exact match on `p.name`. No prefix/pattern matching. |
-| - | otherwise | **deny** | |
+| #   | Condition                        | Result    | Why                                                                                                                             |
+| --- | -------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `permission` is falsy            | **allow** | No permission declared = no permission required. Absent is the public default.                                                  |
+| 2   | `user` is null/undefined         | **deny**  | Fail-closed. A permission-gated tab must not render for unknown user — otherwise it flashes for one frame before auth resolves. |
+| 3   | `Number(user.role?.id) === 1`    | **allow** | Admin bypass. `RoleEnum.ADMIN` is `1`.                                                                                          |
+| 4   | permissions contain `"*"`        | **allow** | Wildcard role.                                                                                                                  |
+| 5   | permissions contain exact string | **allow** | Exact match on `p.name`. No prefix/pattern matching.                                                                            |
+| -   | otherwise                        | **deny**  |                                                                                                                                 |
 
 **Consequences:**
+
 - **Omitting `permission` does not mean "deny" — it means "everyone".** On a dashboard widget this is a data-exposure decision. `QuickLinksWidget` ships with no permission; every other widget in `dashboard.manifest.ts` declares one.
 - **The gate is render-time, not fetch-time.** A denied tab is filtered before render, but a component tab's own queries are its own responsibility.
 - **Fail-closed is deliberate.** If a tab disappears during auth loading, do not "fix" it by loosening `can()` — that removes the property stopping privileged UI from flashing for anonymous visitors.

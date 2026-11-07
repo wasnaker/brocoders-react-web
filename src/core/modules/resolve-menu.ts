@@ -52,6 +52,7 @@ export function resolveMenu(
   manifests: ModuleManifest[],
   user: User | null | undefined
 ): ResolvedMenuItem[] {
+  console.log("[DEBUG] resolveMenu called, manifests count:", manifests.length);
   return manifests
     .flatMap((manifest) =>
       (manifest.menu ?? [])

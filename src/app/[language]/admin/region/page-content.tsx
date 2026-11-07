@@ -1,6 +1,5 @@
 "use client";
 
-import { RoleEnum } from "@/services/api/types/role";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { RegionPage } from "@wasnaker/module-region";
 
@@ -13,4 +12,4 @@ function Region() {
   return <RegionPage />;
 }
 
-export default withPageRequiredAuth(Region, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(Region, { permission: "read:region" });

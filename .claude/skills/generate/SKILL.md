@@ -18,23 +18,28 @@ The user provides a natural language description of what they want to build (e.g
 Analyze the user's description and design entities with their properties. Follow these rules strictly:
 
 #### Entities
+
 - **Never generate "User" or "File" entities** — they already exist. You can reference them in relationships.
 - Entity names must be PascalCase and singular (e.g., `Post`, `Category`, `BlogComment`).
 
 #### Properties
+
 - **Never add "id", "createdAt", or "updatedAt"** — these are predefined for all entities.
 - Property names must be camelCase (e.g., `firstName`, `isActive`).
 
 #### Relationships
+
 - When the backend uses `oneToMany`, **do NOT** create the corresponding `manyToOne` on the frontend — the backend generator handles it automatically.
 - For **File** relations, use only `oneToOne` (`toOne`) or `manyToMany` (`toMany`).
 
 #### Property kinds
+
 - `primitive` — basic types: `string`, `number`, `boolean`, `Date`
 - `reference` — relationship to another entity
 - `denormalized` — denormalized copy of another entity's data (stored inline instead of referenced)
 
 #### Reference types (simplified)
+
 - `toOne` — maps to backend's `oneToOne` or `manyToOne`
 - `toMany` — maps to backend's `oneToMany` or `manyToMany`
 
@@ -73,6 +78,7 @@ npm run generate:field -- --name {EntityName} --property {propertyName} --kind {
 ```
 
 **Argument rules:**
+
 - `--name` (required): Entity name, PascalCase
 - `--property` (required): Property name, camelCase
 - `--kind` (required): `primitive` | `reference` | `denormalized`
@@ -92,6 +98,7 @@ Run these sequentially, one at a time.
 User: "I need a blog with posts and categories. Posts belong to a category and can have a cover image."
 
 **Commands:**
+
 ```bash
 npm run generate:resource -- --name Category
 npm run generate:resource -- --name Post

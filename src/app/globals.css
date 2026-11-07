@@ -846,11 +846,19 @@
    lg:flex-row / lg:w-5/12 / lg:w-7/12 tidak ter-generate karena source modul
    dipasang via npm dan tidak ter-scan. */
 @media (min-width: 1024px) {
-  .small-table { flex-direction: row !important; }
-  .small-table:has(.small-table-detail) .small-table-list { width: 41.6667%; flex: 0 0 41.6667%; max-width: 41.6667%; }
-  .small-table:has(.small-table-detail) .small-table-detail { flex: 1 1 58.3333%; max-width: 58.3333%; }
+  .small-table {
+    flex-direction: row !important;
+  }
+  .small-table:has(.small-table-detail) .small-table-list {
+    width: 41.6667%;
+    flex: 0 0 41.6667%;
+    max-width: 41.6667%;
+  }
+  .small-table:has(.small-table-detail) .small-table-detail {
+    flex: 1 1 58.3333%;
+    max-width: 58.3333%;
+  }
 }
-
 
 /* Enterprise visual refinement: restrained geometry, clear hierarchy and
    consistent elevation across the application shell and data surfaces. */

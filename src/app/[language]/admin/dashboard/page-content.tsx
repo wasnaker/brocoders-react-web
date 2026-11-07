@@ -4,7 +4,6 @@ import { DashboardGrid } from "@/core/dashboard/DashboardGrid";
 import { useTranslation } from "@/services/i18n/client";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import useAuth from "@/services/auth/use-auth";
-import { RoleEnum } from "@/services/api/types/role";
 
 function DashboardPage() {
   const { t } = useTranslation("dashboard");
@@ -21,4 +20,6 @@ function DashboardPage() {
   );
 }
 
-export default withPageRequiredAuth(DashboardPage, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(DashboardPage, {
+  permission: "read:admin",
+});

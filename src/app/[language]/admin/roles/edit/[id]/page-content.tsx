@@ -10,7 +10,6 @@ import { useSnackbar } from "@/hooks/use-snackbar";
 import { usePatchRolePermissionsService } from "@/services/api/services/roles";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import type { Permission } from "@/services/api/types/permission";
-import { RoleEnum } from "@/services/api/types/role";
 import { SortEnum } from "@/services/api/types/sort-type";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { useTranslation } from "@/services/i18n/client";
@@ -88,7 +87,8 @@ function EditRoleForm() {
   // The admin role must never lose its permissions through this page: emptying
   // it locks every administrator out of the panel. The form is disabled rather
   // than trusted to round-trip whatever is currently selected.
-  const isProtected = Number(roleId) === RoleEnum.ADMIN;
+  // Role 1 is the system Admin role (hardcoded in database seeds)
+  const isProtected = Number(roleId) === 1;
 
   const { data: role, isLoading: isRoleLoading } = useGetRoleQuery(roleId);
 
@@ -295,4 +295,4 @@ function EditRole() {
   return <EditRoleForm />;
 }
 
-export default withPageRequiredAuth(EditRole, { roles: [RoleEnum.ADMIN] });
+export default withPageRequiredAuth(EditRole, { permission: "update:role" });

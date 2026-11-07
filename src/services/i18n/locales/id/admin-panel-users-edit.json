@@ -36,9 +36,9 @@
       "options": {
         "1": "Admin",
         "2": "User",
-          "3": "Admin Customer",
-          "4": "Customer Branch Admin",
-          "5": "Customer"
+        "3": "Admin Customer",
+        "4": "Customer Branch Admin",
+        "5": "Customer"
       }
     },
     "roles": {

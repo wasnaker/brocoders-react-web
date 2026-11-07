@@ -1,7 +1,7 @@
 "use client";
 
 import FormMultipleSelectInput from "@/components/form/multiple-select/form-multiple-select";
-import { Role, RoleEnum } from "@/services/api/types/role";
+import { Role } from "@/services/api/types/role";
 import { useTranslation } from "@/services/i18n/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { UserFilterType } from "./user-filter-types";
+import { useGetRolesQuery } from "../roles/queries/queries";
 
 type UserFilterFormData = UserFilterType;
 
@@ -31,6 +32,8 @@ function UserFilter() {
 
   const [open, setOpen] = useState(false);
 
+  const { data: roles, isLoading: rolesLoading } = useGetRolesQuery();
+
   useEffect(() => {
     const filter = searchParams.get("filter");
     if (filter) {
@@ -39,6 +42,20 @@ function UserFilter() {
       reset(filterParsed);
     }
   }, [searchParams, reset]);
+
+  if (rolesLoading) {
+    return (
+      <FormProvider {...methods}>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button disabled>
+              {t("admin-panel-users:filter.actions.filter")}
+            </Button>
+          </PopoverTrigger>
+        </Popover>
+      </FormProvider>
+    );
+  }
 
   return (
     <FormProvider {...methods}>
@@ -62,14 +79,7 @@ function UserFilter() {
                   name="roles"
                   testId="roles"
                   label={t("admin-panel-users:filter.inputs.role.label")}
-                  options={[
-                    {
-                      id: RoleEnum.ADMIN,
-                    },
-                    {
-                      id: RoleEnum.USER,
-                    },
-                  ]}
+                  options={roles?.map((role) => ({ id: role.id })) ?? []}
                   keyValue="id"
                   renderOption={(option) =>
                     t(
