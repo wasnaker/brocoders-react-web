@@ -38,7 +38,9 @@ export interface TabDef {
   content: TabContent;
 }
 
-export type ProfileTabDef = Omit<TabDef, "content"> & {\n  /** Restrict a module profile tab to at least one assigned role name. */\n  roleNames?: string[];
+export type ProfileTabDef = Omit<TabDef, "content"> & {
+  /** Restrict a module profile tab to at least one assigned role name. */
+  roleNames?: string[];
   /** Profile tabs are module-owned React components; settings fields are not valid here. */
   content: { kind: "component"; component: ComponentType };
 };
