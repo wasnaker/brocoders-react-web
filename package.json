@@ -58,6 +58,7 @@
     "@types/react-dom": "19.2.3",
     "@wasnaker/module-customer": "github:wasnaker/bc-customer#8565ca8275d053fe7f3a85d80340419f04b198e5",
     "@wasnaker/module-equipment": "github:wasnaker/bc-equipment#4e7541b91e75ae32c4191b686a9fde3159bca472",
+    "@wasnaker/module-impersonate": "github:wasnaker/bc-impersonate#25d7940d24fec1571e908a314cf80e1091e79c58",
     "@wasnaker/module-region": "github:wasnaker/bc-region#c3c281e349772d39e650d3b269d50f7e58257df8",
     "accept-language": "3.0.20",
     "class-variance-authority": "0.7.1",
@@ -86,8 +87,7 @@
     "tailwind-merge": "3.6.0",
     "tw-animate-css": "1.4.0",
     "typescript": "5.9.3",
-    "yup": "1.7.1",
-    "@wasnaker/module-impersonate": "github:wasnaker/bc-impersonate#cc4d4005d346eb4d69291cdad7b945fea6b8455e"
+    "yup": "1.7.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "5.0.2",
