@@ -57,3 +57,6 @@ next-env.d.ts
 
 # CodeGraph index
 .codegraph/
+
+# Claude Code runtime
+.claude/
