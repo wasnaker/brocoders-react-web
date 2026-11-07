@@ -56,7 +56,7 @@
     "@types/node": "25.5.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@wasnaker/module-customer": "github:wasnaker/bc-customer#d2ea5b8a555ea99f8281b079ca36ab2f00c821eb",
+    "@wasnaker/module-customer": "github:wasnaker/bc-customer#d01caf1ab6c3c801700672c96b22ee0bd961d2d6",
     "@wasnaker/module-equipment": "github:wasnaker/bc-equipment#4e7541b91e75ae32c4191b686a9fde3159bca472",
     "@wasnaker/module-impersonate": "github:wasnaker/bc-impersonate#25d7940d24fec1571e908a314cf80e1091e79c58",
     "@wasnaker/module-region": "github:wasnaker/bc-region#c3c281e349772d39e650d3b269d50f7e58257df8",
