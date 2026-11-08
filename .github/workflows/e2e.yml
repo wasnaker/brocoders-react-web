@@ -9,6 +9,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-24.04
     steps:
+      # Main-branch runs validate against the current backend registry and module seed order.
       - name: Check out PostgreSQL backend
         uses: actions/checkout@v6
         with:
