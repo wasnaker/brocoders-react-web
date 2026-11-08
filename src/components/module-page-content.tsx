@@ -60,7 +60,7 @@ function ModulePageContent({ path }: { path: string }) {
       currentLocation.replace(new URL(currentLocation).origin, "") ||
       `/${language}`;
     const params = new URLSearchParams({ returnTo: returnToPath });
-    router.replace(`/${language}/admin/profile`);
+    router.replace(`/${language}/admin/profile?${params.toString()}`);
   }, [isLoaded, user, allowed, router, language]);
 
   const AuthenticatedModulePage = withPageRequiredAuth(
