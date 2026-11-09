@@ -291,6 +291,12 @@ function EditRoleForm() {
                 <legend className="form-fieldset__legend">{group.name}</legend>
                 {group.permissions.map((permission) => {
                   const id = `permission-${permission.id}`;
+                  const permissionKey = permission.permissionKey ?? permission.name;
+                  const denyOverride = role?.authorizationOverrides?.find(
+                    (override) =>
+                      override.permissionKey === permissionKey &&
+                      override.effect === "deny"
+                  );
 
                   return (
                     <div
@@ -325,28 +331,14 @@ function EditRoleForm() {
                             )
                             .join(" · ") || "No grant"}
                         </p>
-                        {role?.authorizationOverrides?.some(
-                          (override) =>
-                            override.permissionKey === (permission.permissionKey ?? permission.name) &&
-                            override.effect === "deny"
-                        ) && (
+                        {denyOverride && (
                           <p className="ms-6 mt-1 text-xs font-medium text-destructive">
                             Denied by administrator
-                            {role.authorizationOverrides.find(
-                              (override) => override.permissionKey === (permission.permissionKey ?? permission.name)
-                            )?.reason
-                              ? `: ${role.authorizationOverrides.find(
-                                  (override) => override.permissionKey === (permission.permissionKey ?? permission.name)
-                                )?.reason}`
-                              : ""}
+                            {denyOverride.reason ? `: ${denyOverride.reason}` : ""}
                           </p>
                         )}
                       </div>
-                      {role?.authorizationOverrides?.some(
-                        (override) =>
-                          override.permissionKey === (permission.permissionKey ?? permission.name) &&
-                          override.effect === "deny"
-                      ) ? (
+                      {denyOverride ? (
                         <Button
                           type="button"
                           size="xs"
