@@ -42,6 +42,7 @@ import {
   type ResolvedMenuItem,
 } from "@/core/modules/resolve-menu";
 import { getManifests } from "@/core/modules/registry";
+import { useActiveModuleIds } from "@/core/modules/use-active-modules";
 import type { I18nLabel } from "@/core/modules/types";
 
 function CloseSidebarOnNavigate() {
@@ -256,11 +257,15 @@ function NavUser() {
 function AppSidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
+  const activeModules = useActiveModuleIds();
 
-  // Seluruh menu (core + modul) berasal dari manifest. Resolver memfilter
-  // role + permission secara fail-closed lalu mengurutkan
-  // position → moduleAlias → slug.
-  const moduleMenu = resolveMenu(getManifests(), user);
+  // Core manifests are always available. Package manifests marked as
+  // runtimeManaged contribute only while their backend module is active.
+  const manifests = getManifests().filter(
+    (manifest) =>
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+  );
+  const moduleMenu = resolveMenu(manifests, user);
 
   // Subscribe juga ke namespace label modul — kalau hanya "common",
   // label lintas-namespace ("module-region:menu") dimuat fire-and-forget
