@@ -52,6 +52,31 @@ test.describe("Cross-module extension slots", () => {
       "equipment.customer-branch.catalog-action"
     );
   });
+  test("Equipment resolves Customer Branch through the backend service contract", async ({
+    page,
+  }) => {
+    const token = await login(page);
+    const headers = { Authorization: `Bearer ${token}` };
+    const branchesResponse = await page.request.get(
+      `${API}/v1/customer/branches?limit=1`,
+      { headers }
+    );
+    expect(branchesResponse.ok()).toBeTruthy();
+    const branchPayload = await branchesResponse.json();
+    const branch = branchPayload.data?.[0];
+    expect(branch?.id).toBeTruthy();
+
+    const contextResponse = await page.request.get(
+      `${API}/v1/equipment/customer-branches/${branch.id}`,
+      { headers }
+    );
+    expect(contextResponse.ok()).toBeTruthy();
+    await expect(contextResponse.json()).resolves.toMatchObject({
+      id: String(branch.id),
+      customerId: String(branch.customerId),
+    });
+  });
+
   test("deactivating Equipment removes its menu and detail action, then restores them", async ({
     page,
   }) => {
