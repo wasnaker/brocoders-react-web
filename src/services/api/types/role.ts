@@ -19,7 +19,7 @@ export type RoleAuthorizationOverride = {
 };
 
 export type Role = {
-  id: number | string;
+  id: number;
   name?: string;
   description?: string | null;
   moduleId?: string | null;
