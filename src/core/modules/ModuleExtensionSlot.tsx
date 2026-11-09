@@ -1,9 +1,6 @@
 import type { User } from "@/services/api/types/user";
 import { getExtensions } from "./registry";
-import type {
-  ModuleExtensionProps,
-  ModuleExtensionSlotName,
-} from "./types";
+import type { ModuleExtensionProps, ModuleExtensionSlotName } from "./types";
 
 export interface ModuleExtensionSlotProps {
   slot: ModuleExtensionSlotName;

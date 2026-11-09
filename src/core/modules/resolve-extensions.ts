@@ -24,8 +24,7 @@ export function resolveExtensions(
     .flatMap((manifest) =>
       (manifest.extensions ?? [])
         .filter(
-          (extension) =>
-            extension.slot === slot && extension.target === target
+          (extension) => extension.slot === slot && extension.target === target
         )
         .map((extension) => ({
           ...extension,

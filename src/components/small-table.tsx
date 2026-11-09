@@ -366,7 +366,11 @@ export function SmallTable<T>({
                     slot="table.columns"
                     target={extensionTarget}
                     user={user}
-                    context={{ ...extensionContext, phase: "header", columns: visibleCols }}
+                    context={{
+                      ...extensionContext,
+                      phase: "header",
+                      columns: visibleCols,
+                    }}
                   />
                 )}
               </TableRow>
@@ -440,7 +444,12 @@ export function SmallTable<T>({
                           slot="table.columns"
                           target={extensionTarget}
                           user={user}
-                          context={{ ...extensionContext, phase: "cell", item, selectedId }}
+                          context={{
+                            ...extensionContext,
+                            phase: "cell",
+                            item,
+                            selectedId,
+                          }}
                         />
                       )}
                     </TableRow>
@@ -566,7 +575,11 @@ export function SmallTable<T>({
                     slot="detail.panels"
                     target={extensionTarget}
                     user={user}
-                    context={{ ...extensionContext, item: selected, activeTab: activeTabDef?.slug }}
+                    context={{
+                      ...extensionContext,
+                      item: selected,
+                      activeTab: activeTabDef?.slug,
+                    }}
                   />
                 )}
               </div>
