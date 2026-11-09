@@ -109,6 +109,8 @@ export interface ModuleExtensionDef {
 
 export interface ModuleManifest {
   alias: string;
+  /** Frontend module dependencies required by its pages or extension targets. */
+  requiresModules?: string[];
   pages?: ModulePageDef[];
   profileTabs?: ProfileTabDef[];
   settingsTabs?: TabDef[];
