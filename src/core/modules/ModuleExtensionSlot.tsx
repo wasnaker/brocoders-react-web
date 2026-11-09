@@ -1,5 +1,8 @@
+"use client";
+
 import type { User } from "@/services/api/types/user";
-import { getExtensions } from "./registry";
+import { getExtensions, getManifests } from "./registry";
+import { useActiveModuleIds } from "./use-active-modules";
 import type { ModuleExtensionProps, ModuleExtensionSlotName } from "./types";
 
 export interface ModuleExtensionSlotProps {
@@ -22,7 +25,12 @@ export function ModuleExtensionSlot({
   user,
   context,
 }: ModuleExtensionSlotProps) {
-  const extensions = getExtensions(slot, target, user);
+  const activeModules = useActiveModuleIds();
+  const manifests = getManifests().filter(
+    (manifest) =>
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+  );
+  const extensions = getExtensions(slot, target, user, manifests);
 
   return (
     <>
