@@ -43,7 +43,7 @@ extensions: [
 ],
 ```
 
-Resolver host hanya mengambil pasangan `slot` dan `target` yang cocok persis, memeriksa permission, lalu mengurutkan kontribusi secara deterministik. Host tetap harus memasang `ModuleExtensionSlot` pada lokasi UI yang didukung. Saat ini adapter halaman module otomatis memasang `component.before` dan `component.after`; slot table/form/detail lainnya menunggu pemasangan pada komponen host terkait.
+Resolver host hanya mengambil pasangan `slot` dan `target` yang cocok persis, memeriksa permission, lalu mengurutkan kontribusi secara deterministik. Host tetap harus memasang `ModuleExtensionSlot` pada lokasi UI yang didukung. Host memasang `component.before`, `page.actions`, dan `component.after` pada adapter halaman; `SmallTable` memasang slot table/detail; `FormDialogLayout` memasang slot form. Untuk SmallTable dan FormDialogLayout, module harus mengisi prop `extensionTarget` yang sama dengan target pada manifest.
 
 
 
