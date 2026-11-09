@@ -77,6 +77,11 @@ function ModulePageContent({ path }: { path: string }) {
         target={path}
         user={user}
       />
+      <ModuleExtensionSlot
+        slot="page.actions"
+        target={path}
+        user={user}
+      />
       <AuthenticatedModulePage path={path} />
       <ModuleExtensionSlot
         slot="component.after"
