@@ -66,7 +66,7 @@ function Roles() {
           <div>
             <div className="font-medium">{row.original.moduleId ?? "core"}</div>
             <div className="text-xs text-muted-foreground">
-              {row.original.moduleRoleKey ?? "—"}
+              {row.original.moduleRoleKey ?? "—"} · {row.original.scope ?? "global"}
             </div>
           </div>
         ),
