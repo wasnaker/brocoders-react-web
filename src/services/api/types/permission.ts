@@ -1,5 +1,5 @@
 export type Permission = {
-  id: number | string;
+  id: number;
   name: string;
   permissionKey?: string;
   description?: string;
