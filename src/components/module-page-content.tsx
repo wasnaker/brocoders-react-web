@@ -6,7 +6,8 @@ import type { ComponentType } from "react";
 import useAuth from "@/services/auth/use-auth";
 import useLanguage from "@/services/i18n/use-language";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
-import { getModulePage } from "@/core/modules/registry";
+import { getManifests, getModulePage } from "@/core/modules/registry";
+import { useActiveModuleIds } from "@/core/modules/use-active-modules";
 import { can } from "@/core/modules/can";
 import { ModuleExtensionSlot } from "@/core/modules/ModuleExtensionSlot";
 
@@ -35,8 +36,13 @@ function ModulePageContent({ path }: { path: string }) {
   const router = useRouter();
   const language = useLanguage();
   const { user, isLoaded } = useAuth();
+  const activeModules = useActiveModuleIds();
+  const manifests = getManifests().filter(
+    (manifest) =>
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+  );
 
-  const page = getModulePage(path);
+  const page = getModulePage(path, manifests);
   const permission = page?.permission;
   const allowed = !isLoaded || !user || can(permission, user);
 
