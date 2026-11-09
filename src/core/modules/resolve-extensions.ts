@@ -18,7 +18,7 @@ export function resolveExtensions(
   manifests: readonly ModuleManifest[],
   slot: ModuleExtensionSlotName,
   target: string,
-  user: User | null | undefined
+  user: User | null | undefined,
 ): ResolvedModuleExtension[] {
   return manifests
     .flatMap((manifest) =>
