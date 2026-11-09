@@ -5,6 +5,8 @@ import XIcon from "lucide-react/dist/esm/icons/x";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import useAuth from "@/services/auth/use-auth";
+import { ModuleExtensionSlot } from "@/core/modules/ModuleExtensionSlot";
 import {
   Dialog,
   DialogClose,
@@ -26,6 +28,9 @@ interface FormDialogLayoutProps {
   className?: string;
   bodyClassName?: string;
   closeLabel?: string;
+  /** Stable module form target for module extension slots. */
+  extensionTarget?: string;
+  extensionContext?: Record<string, unknown>;
 }
 
 /**
@@ -43,7 +48,10 @@ export function FormDialogLayout({
   className,
   bodyClassName,
   closeLabel = "Close",
+  extensionTarget,
+  extensionContext,
 }: FormDialogLayoutProps) {
+  const { user } = useAuth();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -78,7 +86,23 @@ export function FormDialogLayout({
               bodyClassName
             )}
           >
+            {extensionTarget && (
+              <ModuleExtensionSlot
+                slot="form.sections"
+                target={extensionTarget}
+                user={user}
+                context={extensionContext}
+              />
+            )}
             {children}
+            {extensionTarget && (
+              <ModuleExtensionSlot
+                slot="form.fields"
+                target={extensionTarget}
+                user={user}
+                context={extensionContext}
+              />
+            )}
           </div>
 
           <DialogFooter className="shrink-0 flex-col-reverse border-t border-border bg-card px-6 py-4 sm:flex-row">
