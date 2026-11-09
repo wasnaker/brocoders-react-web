@@ -67,3 +67,43 @@ export function usePatchRolePermissionsService() {
     [fetch]
   );
 }
+
+export type RolePermissionDenyRequest = {
+  id: Role["id"];
+  permissionId: Permission["id"];
+  data?: { reason?: string };
+};
+
+export function usePatchRolePermissionDenyService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (data: RolePermissionDenyRequest, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/roles/${data.id}/permissions/${data.permissionId}/deny`, {
+        method: "PATCH",
+        body: JSON.stringify(data.data ?? {}),
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<void>);
+    },
+    [fetch]
+  );
+}
+
+export type RolePermissionDenyDeleteRequest = {
+  id: Role["id"];
+  permissionId: Permission["id"];
+};
+
+export function useDeleteRolePermissionDenyService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (data: RolePermissionDenyDeleteRequest, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/roles/${data.id}/permissions/${data.permissionId}/deny`, {
+        method: "DELETE",
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<void>);
+    },
+    [fetch]
+  );
+}
