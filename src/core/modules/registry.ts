@@ -1,5 +1,7 @@
 import { moduleRegistry } from "@/generated/module-registry";
-import type { ModuleManifest, ModulePageDef, TabDef } from "./types";
+import type { ModuleManifest, ModulePageDef, TabDef, ModuleExtensionSlotName } from "./types";
+import { resolveExtensions } from "./resolve-extensions";
+import type { ResolvedModuleExtension } from "./resolve-extensions";
 import { resolveDashboardWidgets } from "./resolve-widgets";
 import type { ResolvedDashboardWidget } from "./resolve-widgets";
 import type { User } from "@/services/api/types/user";
@@ -21,6 +23,14 @@ export function getModulePage(
     if (page) return { ...page, moduleAlias: manifest.alias };
   }
   return null;
+}
+
+export function getExtensions(
+  slot: ModuleExtensionSlotName,
+  target: string,
+  user?: User | null
+): ResolvedModuleExtension[] {
+  return resolveExtensions(getManifests(), slot, target, user ?? null);
 }
 
 export function getDashboardWidgets(
