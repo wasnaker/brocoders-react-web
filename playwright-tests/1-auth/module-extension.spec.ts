@@ -22,7 +22,7 @@ async function login(page: Page) {
 }
 
 test.describe("Cross-module extension slots", () => {
-  test("Equipment contributes sidebar navigation and a Customer Branch action without changing Customer", async ({
+  test("Equipment contributes sidebar navigation and a Customer Branch action without changing Customer source", async ({
     page,
   }) => {
     await login(page);
