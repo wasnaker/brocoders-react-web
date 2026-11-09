@@ -75,4 +75,4 @@ The renderer:
 
 ## Current scope
 
-This change supplies the manifest contract, permission-aware resolver, registry lookup, and reusable renderer. Existing menus, routes, tabs, and dashboard widgets remain unchanged. The host still needs to place `ModuleExtensionSlot` at each desired UI location; modules do not patch host pages.
+This change supplies the manifest contract, permission-aware resolver, registry lookup, and reusable renderer. The shared module-page adapter automatically mounts `component.before` and `component.after` for each exact canonical module page path. Other slots (`page.actions`, table, form, and detail slots) are available through the same renderer but must be mounted by the corresponding shared host component before they become visible. Existing menus, routes, tabs, and dashboard widgets remain unchanged. Modules do not patch host pages.
