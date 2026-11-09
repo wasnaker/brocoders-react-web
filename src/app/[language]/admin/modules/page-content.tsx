@@ -103,7 +103,8 @@ function Modules() {
               <p className="text-sm text-muted-foreground">
                 Kelola status runtime modul yang sudah tersedia pada deployment.
                 Install/uninstall di sini mengelola registrasi lifecycle, bukan
-                memasang atau menghapus paket npm. Data bisnis tetap dipertahankan.
+                memasang atau menghapus paket npm. Data bisnis tetap
+                dipertahankan.
               </p>
             </div>
             <Button
