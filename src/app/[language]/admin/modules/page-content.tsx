@@ -123,6 +123,19 @@ function ModuleAuthorizationCard({ moduleId }: { moduleId: string }) {
             </ul>
           </div>
           <div>
+            <h6 className="mb-2 text-sm font-semibold">Roles</h6>
+            <p className="text-xs text-muted-foreground">Missing</p>
+            <ul className="mb-3 list-disc ps-5 text-xs">
+              {(preview.roles?.missing ?? []).map((item) => (
+                <li key={item.key}>{item.key} · {item.name}</li>
+              ))}
+            </ul>
+            <p className="text-xs text-muted-foreground">Obsolete</p>
+            <ul className="mb-3 list-disc ps-5 text-xs">
+              {(preview.roles?.obsolete ?? []).map((item) => (
+                <li key={item.moduleRoleKey}>{item.moduleRoleKey}</li>
+              ))}
+            </ul>
             <h6 className="mb-2 text-sm font-semibold">Role grants</h6>
             <p className="text-xs text-muted-foreground">Missing</p>
             <ul className="mb-3 list-disc ps-5 text-xs">
