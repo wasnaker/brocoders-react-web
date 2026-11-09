@@ -188,10 +188,15 @@ export const useAuthorizationModuleSyncMutation = () => {
   return useMutation({
     mutationFn: async (moduleId: string) => {
       const { status, data } = await sync(moduleId);
-      if (status === HTTP_CODES_ENUM.OK) return data;
-      throw new Error(`Sinkronisasi authorization ${moduleId} gagal.`);
+      if (status !== HTTP_CODES_ENUM.OK) {
+        throw new Error(`Sinkronisasi authorization ${moduleId} gagal.`);
+      }
+      if (data.status === "failed") {
+        throw new Error(data.error ?? `Sinkronisasi authorization ${moduleId} gagal.`);
+      }
+      return data;
     },
-    onSuccess: async (_data, moduleId) => {
+    onSettled: async (_data, _error, moduleId) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["module-authorization", "diff", moduleId] }),
         queryClient.invalidateQueries({ queryKey: ["module-authorization", "state", moduleId] }),
@@ -207,10 +212,18 @@ export const useAuthorizationSyncAllMutation = () => {
   return useMutation({
     mutationFn: async () => {
       const { status, data } = await sync();
-      if (status === HTTP_CODES_ENUM.OK) return data;
-      throw new Error("Sinkronisasi seluruh authorization gagal.");
+      if (status !== HTTP_CODES_ENUM.OK) {
+        throw new Error("Sinkronisasi seluruh authorization gagal.");
+      }
+      const failed = data.filter((item) => item.status === "failed");
+      if (failed.length) {
+        throw new Error(
+          `${failed.length} module gagal disinkronkan: ${failed.map((item) => item.moduleId).join(", ")}`,
+        );
+      }
+      return data;
     },
-    onSuccess: async () => {
+    onSettled: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["module-authorization"] }),
       ]);
