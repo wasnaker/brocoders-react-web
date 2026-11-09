@@ -73,6 +73,40 @@ export interface ModulePageDef {
 
 import type { DashboardWidgetDef } from "@/core/dashboard/areas";
 
+/** Named host extension points. Targets are stable host identifiers, not URLs. */
+export type ModuleExtensionSlotName =
+  | "page.actions"
+  | "table.actions"
+  | "table.columns"
+  | "table.filters"
+  | "form.fields"
+  | "form.sections"
+  | "detail.actions"
+  | "detail.panels"
+  | "component.before"
+  | "component.after";
+
+/** Props passed to a module-owned extension component by the host slot renderer. */
+export interface ModuleExtensionProps {
+  moduleAlias: string;
+  slot: ModuleExtensionSlotName;
+  target: string;
+  context?: Record<string, unknown>;
+}
+
+/** A component contribution to a named host slot and target. */
+export interface ModuleExtensionDef {
+  /** Stable unique ID within the module, e.g. "customer.branch.export". */
+  id: string;
+  slot: ModuleExtensionSlotName;
+  /** Stable host target, e.g. "customer.branch.list". */
+  target: string;
+  component: ComponentType<ModuleExtensionProps>;
+  position: number;
+  /** Permission is checked by the host before rendering. */
+  permission?: string;
+}
+
 export interface ModuleManifest {
   alias: string;
   pages?: ModulePageDef[];
@@ -80,6 +114,7 @@ export interface ModuleManifest {
   settingsTabs?: TabDef[];
   dashboardWidgets?: DashboardWidgetDef[];
   menu?: MenuItem[];
+  extensions?: ModuleExtensionDef[];
 }
 
 export function defineModuleManifest(m: ModuleManifest): ModuleManifest {
