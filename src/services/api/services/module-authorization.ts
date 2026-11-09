@@ -5,6 +5,7 @@ import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
 import type {
   AuthorizationAuditRecord,
   AuthorizationManifestDiff,
+  AuthorizationModuleState,
   AuthorizationSyncResult,
   AuthorizationValidationResponse,
 } from "../types/module-authorization";
@@ -43,7 +44,7 @@ export function useGetAuthorizationStateService() {
       fetch(`${API_URL}/v1/module-authorization/modules/${encodeURIComponent(moduleId)}/state`, {
         method: "GET",
         ...requestConfig,
-      }).then(wrapperFetchJsonResponse<AuthorizationSyncResult | null>),
+      }).then(wrapperFetchJsonResponse<AuthorizationModuleState | null>),
     [fetch]
   );
 }
