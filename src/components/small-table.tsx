@@ -509,6 +509,14 @@ export function SmallTable<T>({
                     {toolbar(selected)}
                   </div>
                 )}
+                {extensionTarget && (
+                  <ModuleExtensionSlot
+                    slot="detail.actions"
+                    target={extensionTarget}
+                    user={user}
+                    context={{ ...extensionContext, item: selected }}
+                  />
+                )}
               </div>
 
               {/* Tab nav */}
@@ -552,6 +560,14 @@ export function SmallTable<T>({
                   <p className="text-sm text-muted-foreground">
                     {tabEmptyText}
                   </p>
+                )}
+                {extensionTarget && (
+                  <ModuleExtensionSlot
+                    slot="detail.panels"
+                    target={extensionTarget}
+                    user={user}
+                    context={{ ...extensionContext, item: selected, activeTab: activeTabDef?.slug }}
+                  />
                 )}
               </div>
             </div>
