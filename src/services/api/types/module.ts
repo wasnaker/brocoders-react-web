@@ -38,3 +38,8 @@ export type ModuleLifecycleRecord = {
   deactivatedAt?: string | null;
   uninstalledAt?: string | null;
 };
+
+
+export type ActiveModuleRecord = {
+  moduleId: string;
+};
