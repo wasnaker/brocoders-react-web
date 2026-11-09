@@ -1,6 +1,7 @@
 import {
   useGetModuleService,
   useGetModulesService,
+  useGetActiveModulesService,
   useGetModuleLifecycleService,
   useModuleLifecycleActionService,
   type ModuleLifecycleActionRequest,
@@ -90,5 +91,20 @@ export const useModuleLifecycleMutation = () => {
         queryKey: ["modules", "lifecycle"],
       });
     },
+  });
+};
+
+
+export const useGetActiveModulesQuery = () => {
+  const fetch = useGetActiveModulesService();
+
+  return useQuery({
+    queryKey: ["modules", "active"],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(undefined, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error("Gagal memuat daftar modul aktif.");
+    },
+    gcTime: 0,
   });
 };
