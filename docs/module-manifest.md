@@ -24,6 +24,29 @@ Dokumen ini adalah kontrak implementasi module untuk host Brocoders React Web. S
 
 Jangan mendaftarkan tab Profile sebagai `pages` atau `menu`. Profile tab adalah kontribusi ke halaman Profile Core, bukan halaman admin mandiri.
 
+## Extension slots
+
+Module dapat menyumbangkan komponen ke titik ekstensi yang disediakan host melalui `extensions` di manifest. Kontrak, slot yang tersedia, aturan permission, dan contoh lengkap ada di [Frontend module extension slots](./module-extension-slots.md).
+
+Contoh singkat:
+
+```tsx
+extensions: [
+  {
+    id: "branch.export",
+    slot: "page.actions",
+    target: "customer.branch.detail",
+    component: BranchExportAction,
+    position: 30,
+    permission: "read:customer-branch",
+  },
+],
+```
+
+Resolver host hanya mengambil pasangan `slot` dan `target` yang cocok persis, memeriksa permission, lalu mengurutkan kontribusi secara deterministik. Host tetap harus memasang `ModuleExtensionSlot` pada lokasi UI yang didukung. Saat ini adapter halaman module otomatis memasang `component.before` dan `component.after`; slot table/form/detail lainnya menunggu pemasangan pada komponen host terkait.
+
+
+
 ## Profile tabs
 
 ### Tanggung jawab Core
