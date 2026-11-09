@@ -5,6 +5,7 @@ import { useTranslation } from "@/services/i18n/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getManifests } from "@/core/modules/registry";
+import { useActiveModuleIds } from "@/core/modules/use-active-modules";
 import { resolveTabs } from "@/core/modules/resolve-tabs";
 import type { I18nLabel } from "@/core/modules/types";
 import type { User } from "@/services/api/types/user";
@@ -17,7 +18,12 @@ function resolveLabel(label: I18nLabel, t: (key: string) => string): string {
 
 export function ProfileShell({ user }: { user: User | null | undefined }) {
   const { t } = useTranslation("profile");
-  const tabs = resolveTabs(getManifests(), "profileTabs", user);
+  const activeModules = useActiveModuleIds();
+  const manifests = getManifests().filter(
+    (manifest) =>
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+  );
+  const tabs = resolveTabs(manifests, "profileTabs", user);
   const [active, setActive] = useState<string | undefined>(
     tabs.length ? tabs[0].slug : undefined
   );
