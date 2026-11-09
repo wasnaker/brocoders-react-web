@@ -7,7 +7,20 @@ import type { ResolvedDashboardWidget } from "./resolve-widgets";
 import type { User } from "@/services/api/types/user";
 
 export function getManifests(): ModuleManifest[] {
-  return moduleRegistry;
+  const manifests = moduleRegistry;
+  const installedAliases = new Set(manifests.map((manifest) => manifest.alias));
+
+  for (const manifest of manifests) {
+    for (const dependency of manifest.requiresModules ?? []) {
+      if (!installedAliases.has(dependency)) {
+        throw new Error(
+          `Module "${manifest.alias}" requires frontend module "${dependency}", but it is not installed.`,
+        );
+      }
+    }
+  }
+
+  return manifests;
 }
 
 export function getTabs(slot: "profileTabs" | "settingsTabs"): TabDef[] {
