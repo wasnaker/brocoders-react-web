@@ -73,6 +73,17 @@ The renderer:
 - The host must render only slots it explicitly supports; a module cannot create arbitrary DOM placement by registering a new slot name.
 - The resolver uses exact target matching. There is no wildcard target that could accidentally leak an action into unrelated pages.
 
+## Customer Branch integration pilot
+
+The Customer module now exercises the shared slots on its real Branch page:
+
+- Target `customer.branch.list`: adds the Branch active-state table column with `read:branch`, and a customer identifier panel in the selected detail view with `read:branch`.
+- Target `customer.branch.form`: adds the database-generated Branch code as a read-only form field in edit mode with `update:branch`.
+- `BranchPage` passes `extensionTarget` and a minimal customer context to `SmallTable`.
+- `BranchFormDialog` passes `extensionTarget` and a minimal edit context to `FormDialogLayout`.
+
+This pilot covers permission filtering plus the table, form, and detail rendering paths without moving Customer business logic into the host. The contributed table column returns `TableHead` and `TableCell` according to the documented phase contract.
+
 ## Current scope
 
 This change supplies the manifest contract, permission-aware resolver, registry lookup, and reusable renderer. The shared host currently mounts these slots:
