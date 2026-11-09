@@ -111,6 +111,8 @@ export interface ModuleManifest {
   alias: string;
   /** Frontend module dependencies required by its pages or extension targets. */
   requiresModules?: string[];
+  /** Package modules with this flag contribute only while backend lifecycle is active. */
+  runtimeManaged?: boolean;
   pages?: ModulePageDef[];
   profileTabs?: ProfileTabDef[];
   settingsTabs?: TabDef[];
