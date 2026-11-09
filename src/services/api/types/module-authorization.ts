@@ -52,6 +52,15 @@ export type AuthorizationManifestDiff = {
   };
 };
 
+export type AuthorizationModuleState = {
+  moduleId: string;
+  manifestVersion: string;
+  manifestHash: string;
+  syncStatus: 'pending' | 'success' | 'failed';
+  lastSyncedAt?: string | null;
+  lastError?: string | null;
+};
+
 export type AuthorizationSyncResult = {
   moduleId: string;
   status: "success" | "failed";
