@@ -255,7 +255,7 @@ function EditRoleForm() {
                 })}
               </h1>
               <p className="mt-1 text-xs text-muted-foreground">
-                Owner: {role?.moduleId ?? "core"} · Key: {role?.moduleRoleKey ?? "—"} · Status: {role?.isActive === false ? "Inactive" : "Active"}
+                Owner: {role?.moduleId ?? "core"} · Key: {role?.moduleRoleKey ?? "—"} · Scope: {role?.scope ?? "global"} · Status: {role?.isActive === false ? "Inactive" : "Active"}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Checklist mengubah manual grants saja. Default grants berasal dari manifest module dan tidak diubah dari halaman ini.
