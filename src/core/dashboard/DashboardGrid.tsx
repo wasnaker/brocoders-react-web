@@ -16,7 +16,8 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import { useTranslation } from "@/services/i18n/client";
-import { getDashboardWidgets } from "@/core/modules/registry";
+import { getDashboardWidgets, getManifests } from "@/core/modules/registry";
+import { useActiveModuleIds } from "@/core/modules/use-active-modules";
 import { useCoreSettings } from "@/core/settings/use-core-settings";
 import {
   resolveAreas,
@@ -120,8 +121,20 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
   const [activeWidgetId, setActiveWidgetId] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const { settings: coreSettings } = useCoreSettings();
+  const activeModules = useActiveModuleIds();
+  const manifests = useMemo(
+    () =>
+      getManifests().filter(
+        (manifest) =>
+          !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+      ),
+    [activeModules.data],
+  );
 
-  const allWidgets = useMemo(() => getDashboardWidgets(user), [user]);
+  const allWidgets = useMemo(
+    () => getDashboardWidgets(user, manifests),
+    [user, manifests],
+  );
   // Toggle global Settings › Misc › dashboardWidgetsEnabled: saat off,
   // semua widget modul disembunyikan dari dashboard.
   const widgets = useMemo(
