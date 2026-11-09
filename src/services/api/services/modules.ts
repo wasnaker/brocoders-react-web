@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useFetch from "../use-fetch";
 import { API_URL } from "../config";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { Module, ModuleLifecycleRecord } from "../types/module";
+import { ActiveModuleRecord, Module, ModuleLifecycleRecord } from "../types/module";
 import { RequestConfigType } from "./types/request-config";
 
 /**
@@ -90,6 +90,21 @@ export function useModuleLifecycleActionService() {
         method: "POST",
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<ModuleLifecycleRecord>);
+    },
+    [fetch]
+  );
+}
+
+
+export function useGetActiveModulesService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (_data: void, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/modules/active`, {
+        method: "GET",
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<ActiveModuleRecord[]>);
     },
     [fetch]
   );
