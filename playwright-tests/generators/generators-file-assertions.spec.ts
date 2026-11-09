@@ -106,9 +106,11 @@ test.describe("Generators — file-level assertions", () => {
   }
 
   // Navigation is contributed by package manifests, not hard-coded in the host sidebar.
-test.describe("manifest-driven sidebar navigation", () => {
+  test.describe("manifest-driven sidebar navigation", () => {
     test("resolves package manifest menu contributions through the shared registry", () => {
-      const appSidebar = readFile(resolve(SRC, "components", "app-sidebar.tsx"));
+      const appSidebar = readFile(
+        resolve(SRC, "components", "app-sidebar.tsx")
+      );
       const registryGenerator = readFile(
         resolve(REPO_ROOT, "scripts", "generate-module-registry.mjs")
       );
