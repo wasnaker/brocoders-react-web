@@ -8,6 +8,7 @@ import useLanguage from "@/services/i18n/use-language";
 import withPageRequiredAuth from "@/services/auth/with-page-required-auth";
 import { getModulePage } from "@/core/modules/registry";
 import { can } from "@/core/modules/can";
+import { ModuleExtensionSlot } from "@/core/modules/ModuleExtensionSlot";
 
 type ModulePageProps = {
   path?: string;
@@ -67,7 +68,23 @@ function ModulePageContent({ path }: { path: string }) {
     ModulePage
   ) as ComponentType<ModulePageProps>;
 
-  return allowed ? <AuthenticatedModulePage path={path} /> : null;
+  if (!allowed) return null;
+
+  return (
+    <>
+      <ModuleExtensionSlot
+        slot="component.before"
+        target={path}
+        user={user}
+      />
+      <AuthenticatedModulePage path={path} />
+      <ModuleExtensionSlot
+        slot="component.after"
+        target={path}
+        user={user}
+      />
+    </>
+  );
 }
 
 export default ModulePageContent;
