@@ -23,15 +23,19 @@ export function getManifests(): ModuleManifest[] {
   return manifests;
 }
 
-export function getTabs(slot: "profileTabs" | "settingsTabs"): TabDef[] {
-  return getManifests().flatMap((m) => m[slot] ?? []);
+export function getTabs(
+  slot: "profileTabs" | "settingsTabs",
+  manifests: ModuleManifest[] = getManifests(),
+): TabDef[] {
+  return manifests.flatMap((m) => m[slot] ?? []);
 }
 
 /** Resolve an exact canonical URL to its owning module page. */
 export function getModulePage(
-  path: string
+  path: string,
+  manifests: ModuleManifest[] = getManifests(),
 ): (ModulePageDef & { moduleAlias: string }) | null {
-  for (const manifest of getManifests()) {
+  for (const manifest of manifests) {
     const page = manifest.pages?.find((candidate) => candidate.path === path);
     if (page) return { ...page, moduleAlias: manifest.alias };
   }
@@ -41,13 +45,15 @@ export function getModulePage(
 export function getExtensions(
   slot: ModuleExtensionSlotName,
   target: string,
-  user?: User | null
+  user?: User | null,
+  manifests: ModuleManifest[] = getManifests(),
 ): ResolvedModuleExtension[] {
-  return resolveExtensions(getManifests(), slot, target, user ?? null);
+  return resolveExtensions(manifests, slot, target, user ?? null);
 }
 
 export function getDashboardWidgets(
-  user?: User | null
+  user?: User | null,
+  manifests: ModuleManifest[] = getManifests(),
 ): ResolvedDashboardWidget[] {
-  return resolveDashboardWidgets(getManifests(), user ?? null);
+  return resolveDashboardWidgets(manifests, user ?? null);
 }
