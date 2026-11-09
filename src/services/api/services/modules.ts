@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import useFetch from "../use-fetch";
 import { API_URL } from "../config";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { ActiveModuleRecord, Module, ModuleLifecycleRecord } from "../types/module";
+import {
+  ActiveModuleRecord,
+  Module,
+  ModuleLifecycleRecord,
+} from "../types/module";
 import { RequestConfigType } from "./types/request-config";
 
 /**
@@ -57,7 +61,6 @@ export function useGetModuleService() {
   );
 }
 
-
 export type ModuleLifecycleRequest = void;
 export type ModuleLifecycleResponse = ModuleLifecycleRecord[];
 
@@ -75,7 +78,11 @@ export function useGetModuleLifecycleService() {
   );
 }
 
-export type ModuleLifecycleAction = "install" | "activate" | "deactivate" | "uninstall";
+export type ModuleLifecycleAction =
+  | "install"
+  | "activate"
+  | "deactivate"
+  | "uninstall";
 export type ModuleLifecycleActionRequest = {
   id: string;
   action: ModuleLifecycleAction;
@@ -94,7 +101,6 @@ export function useModuleLifecycleActionService() {
     [fetch]
   );
 }
-
 
 export function useGetActiveModulesService() {
   const fetch = useFetch();

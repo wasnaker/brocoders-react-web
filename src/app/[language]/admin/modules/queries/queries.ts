@@ -61,7 +61,6 @@ export const useGetModuleQuery = (id: Module["id"]) => {
   return query;
 };
 
-
 export const useGetModuleLifecycleQuery = () => {
   const fetch = useGetModuleLifecycleService();
 
@@ -93,7 +92,6 @@ export const useModuleLifecycleMutation = () => {
     },
   });
 };
-
 
 export const useGetActiveModulesQuery = () => {
   const fetch = useGetActiveModulesService();

@@ -14,7 +14,6 @@ export type Module = {
   description?: string;
 };
 
-
 export type ModuleLifecycleStatus =
   | "installing"
   | "installed"
@@ -38,7 +37,6 @@ export type ModuleLifecycleRecord = {
   deactivatedAt?: string | null;
   uninstalledAt?: string | null;
 };
-
 
 export type ActiveModuleRecord = {
   moduleId: string;

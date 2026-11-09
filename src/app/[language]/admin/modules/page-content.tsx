@@ -57,7 +57,9 @@ function Modules() {
                   <TableHead style={{ width: 200 }}>
                     {t("admin-panel-modules:table.column3")}
                   </TableHead>
-                  <TableHead>{t("admin-panel-modules:table.column4")}</TableHead>
+                  <TableHead>
+                    {t("admin-panel-modules:table.column4")}
+                  </TableHead>
                 </TableRow>
               )}
               itemContent={(_index, module) => (
@@ -87,7 +89,9 @@ function Modules() {
         <section className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h4 className="text-base font-semibold">Lifecycle modul backend</h4>
+              <h4 className="text-base font-semibold">
+                Lifecycle modul backend
+              </h4>
               <p className="text-sm text-muted-foreground">
                 Install, aktifkan, nonaktifkan, atau uninstall modul. Data modul
                 tetap dipertahankan saat uninstall.
@@ -137,7 +141,10 @@ function Modules() {
                       "uninstalling",
                     ].includes(record.status);
                     return (
-                      <tr key={record.moduleId} className="border-b last:border-0">
+                      <tr
+                        key={record.moduleId}
+                        className="border-b last:border-0"
+                      >
                         <td className="px-4 py-3">
                           <div className="font-medium">{record.moduleId}</div>
                           <div className="text-xs text-muted-foreground">
@@ -166,7 +173,9 @@ function Modules() {
                                 onClick={() =>
                                   runLifecycleAction(record.moduleId, "install")
                                 }
-                                disabled={transitioning || lifecycleMutation.isPending}
+                                disabled={
+                                  transitioning || lifecycleMutation.isPending
+                                }
                               >
                                 Install
                               </Button>
@@ -177,10 +186,14 @@ function Modules() {
                                     type="button"
                                     size="sm"
                                     onClick={() =>
-                                      runLifecycleAction(record.moduleId, "activate")
+                                      runLifecycleAction(
+                                        record.moduleId,
+                                        "activate"
+                                      )
                                     }
                                     disabled={
-                                      transitioning || lifecycleMutation.isPending
+                                      transitioning ||
+                                      lifecycleMutation.isPending
                                     }
                                   >
                                     Aktifkan
@@ -192,10 +205,14 @@ function Modules() {
                                     size="sm"
                                     variant="outline"
                                     onClick={() =>
-                                      runLifecycleAction(record.moduleId, "deactivate")
+                                      runLifecycleAction(
+                                        record.moduleId,
+                                        "deactivate"
+                                      )
                                     }
                                     disabled={
-                                      transitioning || lifecycleMutation.isPending
+                                      transitioning ||
+                                      lifecycleMutation.isPending
                                     }
                                   >
                                     Nonaktifkan
@@ -206,7 +223,10 @@ function Modules() {
                                   size="sm"
                                   variant="destructive"
                                   onClick={() =>
-                                    runLifecycleAction(record.moduleId, "uninstall")
+                                    runLifecycleAction(
+                                      record.moduleId,
+                                      "uninstall"
+                                    )
                                   }
                                   disabled={
                                     transitioning || lifecycleMutation.isPending
