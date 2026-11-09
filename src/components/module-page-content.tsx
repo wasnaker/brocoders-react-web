@@ -40,22 +40,8 @@ function ModulePageContent({ path }: { path: string }) {
   const permission = page?.permission;
   const allowed = !isLoaded || !user || can(permission, user);
 
-  console.log(
-    `[ModulePageContent] Path: ${path}, Permission: ${permission}, User: ${user?.email}, Allowed: ${allowed}`
-  );
-
   useEffect(() => {
-    if (!isLoaded || !user || allowed) {
-      if (!allowed)
-        console.log(
-          "[ModulePageContent] Access denied, skipping redirect because: isLoaded/user check passed but allowed is false, triggered useEffect"
-        );
-      return;
-    }
-
-    console.log(
-      "[ModulePageContent] Redirecting to profile due to lack of permission"
-    );
+    if (!isLoaded || !user || allowed) return;
     const currentLocation = window.location.toString();
     const returnToPath =
       currentLocation.replace(new URL(currentLocation).origin, "") ||
