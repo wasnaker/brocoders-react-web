@@ -177,6 +177,10 @@ function EditRoleForm() {
         denied ? "Administrator deny override dihapus." : "Administrator deny override diterapkan.",
         { variant: "success" }
       );
+    } else {
+      enqueueSnackbar("Perubahan deny override gagal disimpan.", {
+        variant: "error",
+      });
     }
   };
 
