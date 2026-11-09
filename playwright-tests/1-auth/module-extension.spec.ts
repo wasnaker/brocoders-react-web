@@ -28,6 +28,9 @@ test.describe("Cross-module extension slots", () => {
     await login(page);
     await page.goto(`${SITE}/id/admin/customer/branch`);
 
+    const equipmentMenu = page.getByRole("link", { name: "Equipment", exact: true }).first();
+    await expect(equipmentMenu).toHaveAttribute("href", "/admin/equipment");
+
     const firstBranch = page.locator(".small-table-list-row").first();
     await expect(firstBranch).toBeVisible({ timeout: 15000 });
     await firstBranch.click();
