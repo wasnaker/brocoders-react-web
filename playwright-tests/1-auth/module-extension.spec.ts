@@ -40,5 +40,9 @@ test.describe("Cross-module extension slots", () => {
       "href",
       "/admin/equipment/items"
     );
+    await expect(equipmentAction).toHaveAttribute(
+      "data-module-extension",
+      "equipment.customer-branch.catalog-action"
+    );
   });
 });
