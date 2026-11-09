@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import useFetch from "../use-fetch";
 import { API_URL } from "../config";
 import wrapperFetchJsonResponse from "../wrapper-fetch-json-response";
-import { Module } from "../types/module";
+import { Module, ModuleLifecycleRecord } from "../types/module";
 import { RequestConfigType } from "./types/request-config";
 
 /**
@@ -52,6 +52,44 @@ export function useGetModuleService() {
         method: "GET",
         ...requestConfig,
       }).then(wrapperFetchJsonResponse<ModuleResponse>);
+    },
+    [fetch]
+  );
+}
+
+
+export type ModuleLifecycleRequest = void;
+export type ModuleLifecycleResponse = ModuleLifecycleRecord[];
+
+export function useGetModuleLifecycleService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (_data: ModuleLifecycleRequest, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/modules/lifecycle`, {
+        method: "GET",
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<ModuleLifecycleResponse>);
+    },
+    [fetch]
+  );
+}
+
+export type ModuleLifecycleAction = "install" | "activate" | "deactivate" | "uninstall";
+export type ModuleLifecycleActionRequest = {
+  id: string;
+  action: ModuleLifecycleAction;
+};
+
+export function useModuleLifecycleActionService() {
+  const fetch = useFetch();
+
+  return useCallback(
+    (data: ModuleLifecycleActionRequest, requestConfig?: RequestConfigType) => {
+      return fetch(`${API_URL}/v1/modules/${data.id}/${data.action}`, {
+        method: "POST",
+        ...requestConfig,
+      }).then(wrapperFetchJsonResponse<ModuleLifecycleRecord>);
     },
     [fetch]
   );
