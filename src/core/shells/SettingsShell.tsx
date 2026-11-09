@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "@/services/i18n/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { getManifests } from "@/core/modules/registry";
+import { useActiveModuleIds } from "@/core/modules/use-active-modules";
 import { resolveTabs } from "@/core/modules/resolve-tabs";
 import { SettingsFieldsTab } from "./SettingsFieldsTab";
 import type { I18nLabel } from "@/core/modules/types";
@@ -29,7 +30,12 @@ function TabRenderer({ tab }: { tab: ResolvedTab }) {
 
 export function SettingsShell({ user }: { user: User | null | undefined }) {
   const { t } = useTranslation("settings");
-  const tabs = resolveTabs(getManifests(), "settingsTabs", user);
+  const activeModules = useActiveModuleIds();
+  const manifests = getManifests().filter(
+    (manifest) =>
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+  );
+  const tabs = resolveTabs(manifests, "settingsTabs", user);
   const [active, setActive] = useState<string | undefined>(
     tabs.length ? tabs[0].slug : undefined
   );
