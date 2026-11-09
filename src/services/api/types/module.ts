@@ -13,3 +13,28 @@ export type Module = {
   alias: string;
   description?: string;
 };
+
+
+export type ModuleLifecycleStatus =
+  | "installing"
+  | "installed"
+  | "activating"
+  | "active"
+  | "deactivating"
+  | "inactive"
+  | "uninstalling"
+  | "uninstalled"
+  | "failed";
+
+export type ModuleLifecycleRecord = {
+  moduleId: string;
+  packageName: string;
+  version: string;
+  status: ModuleLifecycleStatus;
+  dataRetention: "retained" | "purge-requested";
+  lastError?: string | null;
+  installedAt?: string | null;
+  activatedAt?: string | null;
+  deactivatedAt?: string | null;
+  uninstalledAt?: string | null;
+};
