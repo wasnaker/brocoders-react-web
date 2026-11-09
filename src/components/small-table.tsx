@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import useAuth from "@/services/auth/use-auth";
+import { ModuleExtensionSlot } from "@/core/modules/ModuleExtensionSlot";
 
 /**
  * SmallTable — list + panel detail bertab (padanan nextjs-spine SmallTable,
@@ -125,6 +127,10 @@ export interface SmallTableProps<T> {
   renderHeader?: (item: T) => React.ReactNode;
   /** Escape hatch: render arbitrary content above the table (e.g., "Tambah" button). */
   listHeader?: React.ReactNode;
+  /** Stable module/page target for shared table extension slots. */
+  extensionTarget?: string;
+  /** Additional serializable context exposed to table extensions. */
+  extensionContext?: Record<string, unknown>;
 }
 
 export function SmallTable<T>({
@@ -164,8 +170,12 @@ export function SmallTable<T>({
   nextPageLabel = "Next",
   renderHeader,
   listHeader,
+  extensionTarget,
+  extensionContext,
   searchable = Boolean(onSearchChange),
 }: SmallTableProps<T>) {
+  const { user } = useAuth();
+
   // Tabs sorted by position
   const sortedTabs = useMemo(
     () => [...tabs].sort((a, b) => (a.position ?? 999) - (b.position ?? 999)),
@@ -273,6 +283,22 @@ export function SmallTable<T>({
           {listHeader && (
             <div className="flex items-center gap-2">{listHeader}</div>
           )}
+          {extensionTarget && (
+            <ModuleExtensionSlot
+              slot="table.filters"
+              target={extensionTarget}
+              user={user}
+              context={{ ...extensionContext, searchValue, onSearchChange }}
+            />
+          )}
+          {extensionTarget && (
+            <ModuleExtensionSlot
+              slot="table.actions"
+              target={extensionTarget}
+              user={user}
+              context={{ ...extensionContext, items, total, selectedId }}
+            />
+          )}
         </div>
 
         {/* Table */}
@@ -334,6 +360,14 @@ export function SmallTable<T>({
                       )}
                     </TableHead>
                   ))
+                )}
+                {extensionTarget && (
+                  <ModuleExtensionSlot
+                    slot="table.columns"
+                    target={extensionTarget}
+                    user={user}
+                    context={{ ...extensionContext, phase: "header", columns: visibleCols }}
+                  />
                 )}
               </TableRow>
             </TableHeader>
@@ -401,6 +435,14 @@ export function SmallTable<T>({
                           </TableCell>
                         );
                       })}
+                      {extensionTarget && (
+                        <ModuleExtensionSlot
+                          slot="table.columns"
+                          target={extensionTarget}
+                          user={user}
+                          context={{ ...extensionContext, phase: "cell", item, selectedId }}
+                        />
+                      )}
                     </TableRow>
                   );
                 })
