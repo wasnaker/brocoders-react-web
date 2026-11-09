@@ -1,6 +1,6 @@
 ---
 name: module-manifest
-description: Add a library to brocoders without editing core files — contributes profile tabs, settings tabs, dashboard widgets, or sidebar menu items. Use when creating a new module folder, adding a settings tab, adding a profile tab, adding a dashboard widget, or adding a sidebar menu entry in this Next.js boilerplate.
+description: Add an independently packaged Brocoders module through its manifest — contributes pages, menus, tabs, dashboard widgets, and frontend extension slots without copying module source into Core. Use when creating a new module folder, adding a settings tab, adding a profile tab, adding a dashboard widget, or adding a sidebar menu entry in this Next.js boilerplate.
 ---
 
 # Module Manifest
@@ -22,38 +22,19 @@ The contract a module author writes to plug a library into the app: profile tabs
 
 ## Registration steps
 
-Modul **tidak** ditulis langsung ke `src/modules/`. Folder itu ada di
-`.gitignore` — isinya disalin dari repo modul sendiri supaya repo core bisa
-dipakai aplikasi dengan modul berbeda.
+Module source stays in its own repository and is installed as an npm/Git package dependency. Do not copy module source into `src/modules`.
 
-1. Tulis modul di repo-nya: `<repo-modul>/<alias>/web/src/modules/<alias>/`
-   (`module.manifest.ts` + tab/widget yang diperlukan), dan
-   `<repo-modul>/<alias>/web/src/services/i18n/locales/<lang>/module-<alias>.json`
-   untuk 5 locale.
-2. Pasang ke core:
+1. Implement the module under its own repository's `web/src/modules/<alias>/` directory.
+2. Export the manifest from the package's `./manifest` export and include module code/locales in the package `files` list.
+3. Install the package in the host using:
    ```bash
-   npm run module:add -- <alias>
+   npm run module:add -- <alias> --ref <commit-sha>
    ```
-   Script itu menyalin folder modul + i18n ke `src/modules/<alias>/`, lalu
-   menjalankan generator. Tidak ada file core yang perlu diedit.
-3. Lihat status: `npm run module:list` · copot: `npm run module:rm -- <alias>`
-4. Restart dev server (`npm run dev`) agar modul termuat.
+   The script updates package dependencies and lockfile. Commit both `package.json` and `package-lock.json`.
+4. Run `npm run module:list` to inspect installed module packages. Remove with `npm run module:rm -- <alias>`.
+5. The predev/prebuild generator discovers `@wasnaker/module-*` dependencies and generates static registries. Never hand-edit generated registry files.
 
-**Kenapa tidak ada file index?** Dulu ada `src/modules/core/manifests/index.ts`
-yang di-grep generator. File itu dihapus. Alasannya: `src/modules/` di-ignore,
-jadi file core yang mendaftarkan modul eksternal akan menunjuk folder yang
-**tidak ada di fresh clone** — build rusak sebelum modul sempat dipasang.
-Generator sekarang memindai disk:
-
-| Sumber                         | Pola                                     |
-| ------------------------------ | ---------------------------------------- |
-| Core (tracked, selalu ikut)    | `src/core/manifests/*.manifest.ts`       |
-| Eksternal (hasil `module:add`) | `src/modules/<alias>/module.manifest.ts` |
-
-Folder di `src/modules/` tanpa `module.manifest.ts` adalah **error**, bukan
-"modul yang belum jadi" — generator berhenti dengan pesan yang menyebut
-`npm run module:add`. `src/generated/module-registry.ts` tetap di-`.gitignore`
-(build artifact); `predev` dan `prebuild` menjalankannya otomatis.
+Do not add a host-side conditional for a particular module. If a contribution cannot be expressed by the manifest contract, first consider whether a generic host extension slot is missing; add that slot once in Core rather than adding a module-specific branch.
 
 ## Manifest template
 
@@ -179,6 +160,19 @@ export default defineModuleManifest({
 **Slot names that matter:** `profileTabs`, `settingsTabs`, `dashboardWidgets`, `menu`. **Not `widgets`** — that key does not exist on `ModuleManifest`.
 
 **Verified by `npx tsc --noEmit` against `types.ts` and `areas.ts`.**
+
+## Frontend extension slots
+
+Use `extensions` when a module needs to contribute a component to a host-owned extension point (page actions, table actions/columns/filters, form fields/sections, detail actions/panels, or before/after a named component).
+
+Each contribution declares a stable module-local `id`, a supported `slot`, an exact stable `target`, a React `component`, numeric `position`, and optional permission. The resolver checks permission and sorts deterministically. Targets are not URLs and do not support wildcards.
+
+Read `docs/module-extension-slots.md` before adding an extension. Only `component.before` and `component.after` are currently mounted automatically around every canonical module page. Other slot types are contracts awaiting mounting in their corresponding shared host components. Never claim a table/form/detail slot is visible until its host component renders `ModuleExtensionSlot`.
+
+Security rules:
+- UI permission filtering does not replace backend endpoint authorization.
+- Pass only small view DTOs and callbacks through slot context; never pass repositories, managers, secrets, or service instances.
+- Module components obtain protected data through their module API client.
 
 ## Sidebar menu items
 
