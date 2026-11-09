@@ -28,6 +28,14 @@ function Modules() {
     moduleId: string,
     action: ModuleLifecycleAction
   ) => {
+    if (
+      action === "uninstall" &&
+      !window.confirm(
+        "Uninstall modul ini? Registrasi dan assignment modul akan dibersihkan, tetapi data bisnis tetap dipertahankan."
+      )
+    ) {
+      return;
+    }
     lifecycleMutation.mutate({ id: moduleId, action });
   };
 
