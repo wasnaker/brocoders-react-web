@@ -10,6 +10,8 @@ export type RoleAuthorizationGrant = {
   grantType: "module_default" | "admin_manual" | "legacy";
   sourceModuleId: string | null;
   sourceKey: string | null;
+  sourceModuleActive?: boolean;
+  permissionModuleActive?: boolean;
 };
 
 export type RoleAuthorizationOverride = {
