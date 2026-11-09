@@ -75,4 +75,12 @@ The renderer:
 
 ## Current scope
 
-This change supplies the manifest contract, permission-aware resolver, registry lookup, and reusable renderer. The shared module-page adapter automatically mounts `component.before` and `component.after` for each exact canonical module page path. Other slots (`page.actions`, table, form, and detail slots) are available through the same renderer but must be mounted by the corresponding shared host component before they become visible. Existing menus, routes, tabs, and dashboard widgets remain unchanged. Modules do not patch host pages.
+This change supplies the manifest contract, permission-aware resolver, registry lookup, and reusable renderer. The shared host currently mounts these slots:
+
+- `ModulePageContent`: `component.before`, `page.actions`, and `component.after`, with the canonical page path as target.
+- `SmallTable`: `table.filters`, `table.actions`, `table.columns` (header and row phases), `detail.actions`, and `detail.panels` when `extensionTarget` is supplied.
+- `FormDialogLayout`: `form.sections` and `form.fields` when `extensionTarget` is supplied.
+
+For `SmallTable` and `FormDialogLayout`, the module must pass a stable `extensionTarget` matching its manifest. For table columns, the contributed component receives `context.phase` as `header` or `cell`; return a `<TableHead>` for the header phase and a `<TableCell>` for the cell phase. For detail slots, `context.item` is the selected detail record. For form slots, `extensionContext` can carry the module's form methods and view data; keep it limited to the minimum required values.
+
+Existing menus, routes, tabs, and dashboard widgets remain unchanged. Modules do not patch host pages.
