@@ -345,7 +345,7 @@ function EditRoleForm() {
                       {denyOverride ? (
                         <Button
                           type="button"
-                          size="xs"
+                          size="sm"
                           variant="outline"
                           disabled={isProtected}
                           onClick={() => toggleDeny(permission, true)}
@@ -355,7 +355,7 @@ function EditRoleForm() {
                       ) : (
                         <Button
                           type="button"
-                          size="xs"
+                          size="sm"
                           variant="ghost"
                           disabled={isProtected}
                           onClick={() => toggleDeny(permission, false)}
