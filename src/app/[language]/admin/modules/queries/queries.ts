@@ -7,7 +7,22 @@ import {
   type ModuleLifecycleActionRequest,
 } from "@/services/api/services/modules";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
+import {
+  useGetAuthorizationAuditService,
+  useGetAuthorizationDiffService,
+  useGetAuthorizationStateService,
+  useGetAuthorizationValidationService,
+  usePostAuthorizationModuleSyncService,
+  usePostAuthorizationSyncAllService,
+} from "@/services/api/services/module-authorization";
 import { Module } from "@/services/api/types/module";
+import type {
+  AuthorizationAuditRecord,
+  AuthorizationManifestDiff,
+  AuthorizationModuleState,
+  AuthorizationSyncResult,
+  AuthorizationValidationResponse,
+} from "@/services/api/types/module-authorization";
 import { createQueryKeys } from "@/services/react-query/query-key-factory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -109,5 +124,96 @@ export const useGetActiveModulesQuery = () => {
       throw new Error("Gagal memuat daftar modul aktif.");
     },
     gcTime: 0,
+  });
+};
+
+
+export const useGetAuthorizationValidationQuery = (moduleId?: string) => {
+  const fetch = useGetAuthorizationValidationService();
+  return useQuery<AuthorizationValidationResponse>({
+    queryKey: ["module-authorization", "validate", moduleId ?? "all"],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(moduleId, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error("Gagal memvalidasi manifest authorization.");
+    },
+    gcTime: 0,
+  });
+};
+
+export const useGetAuthorizationDiffQuery = (moduleId: string) => {
+  const fetch = useGetAuthorizationDiffService();
+  return useQuery<AuthorizationManifestDiff>({
+    queryKey: ["module-authorization", "diff", moduleId],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(moduleId, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error(`Gagal memuat diff authorization ${moduleId}.`);
+    },
+    enabled: Boolean(moduleId),
+    gcTime: 0,
+  });
+};
+
+export const useGetAuthorizationStateQuery = (moduleId: string) => {
+  const fetch = useGetAuthorizationStateService();
+  return useQuery<AuthorizationModuleState | null>({
+    queryKey: ["module-authorization", "state", moduleId],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(moduleId, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error(`Gagal memuat status authorization ${moduleId}.`);
+    },
+    enabled: Boolean(moduleId),
+    gcTime: 0,
+  });
+};
+
+export const useGetAuthorizationAuditQuery = (moduleId?: string) => {
+  const fetch = useGetAuthorizationAuditService();
+  return useQuery<AuthorizationAuditRecord[]>({
+    queryKey: ["module-authorization", "audit", moduleId ?? "all"],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(moduleId, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error("Gagal memuat audit authorization.");
+    },
+    gcTime: 0,
+  });
+};
+
+export const useAuthorizationModuleSyncMutation = () => {
+  const sync = usePostAuthorizationModuleSyncService();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (moduleId: string) => {
+      const { status, data } = await sync(moduleId);
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error(`Sinkronisasi authorization ${moduleId} gagal.`);
+    },
+    onSuccess: async (_data, moduleId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["module-authorization", "diff", moduleId] }),
+        queryClient.invalidateQueries({ queryKey: ["module-authorization", "state", moduleId] }),
+        queryClient.invalidateQueries({ queryKey: ["module-authorization", "audit"] }),
+      ]);
+    },
+  });
+};
+
+export const useAuthorizationSyncAllMutation = () => {
+  const sync = usePostAuthorizationSyncAllService();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { status, data } = await sync();
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error("Sinkronisasi seluruh authorization gagal.");
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["module-authorization"] }),
+      ]);
+    },
   });
 };
