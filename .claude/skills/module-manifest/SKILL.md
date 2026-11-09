@@ -167,7 +167,7 @@ Use `extensions` when a module needs to contribute a component to a host-owned e
 
 Each contribution declares a stable module-local `id`, a supported `slot`, an exact stable `target`, a React `component`, numeric `position`, and optional permission. The resolver checks permission and sorts deterministically. Targets are not URLs and do not support wildcards.
 
-Read `docs/module-extension-slots.md` before adding an extension. Only `component.before` and `component.after` are currently mounted automatically around every canonical module page. Other slot types are contracts awaiting mounting in their corresponding shared host components. Never claim a table/form/detail slot is visible until its host component renders `ModuleExtensionSlot`.
+Read `docs/module-extension-slots.md` before adding an extension. The host mounts `component.before`, `page.actions`, and `component.after` around every canonical module page. `SmallTable` mounts table actions, filters, columns, detail actions, and detail panels when the module passes `extensionTarget`. `FormDialogLayout` mounts form sections and fields when the module passes `extensionTarget`. Read `docs/module-extension-slots.md` for exact target and context contracts.
 
 Security rules:
 - UI permission filtering does not replace backend endpoint authorization.
