@@ -12,6 +12,8 @@ type PropsType = {
 
 type OptionsType = {
   permission?: string;
+  /** Optional database role IDs retained for legacy protected pages. */
+  roles?: readonly (number | string)[];
 };
 
 function withPageRequiredAuth(
@@ -23,7 +25,18 @@ function withPageRequiredAuth(
     const router = useRouter();
     const language = useLanguage();
 
-    const hasAccess = !options?.permission || can(options.permission, user);
+    const assignedRoles = user?.roles?.length
+      ? user.roles
+      : user?.role
+        ? [user.role]
+        : [];
+    const hasRequiredRole =
+      !options?.roles?.length ||
+      assignedRoles.some((role) =>
+        options.roles?.some((requiredRole) => Number(requiredRole) === Number(role.id))
+      );
+    const hasAccess =
+      (!options?.permission || can(options.permission, user)) && hasRequiredRole;
 
     useEffect(() => {
       if (!isLoaded || (user && hasAccess)) return;
