@@ -1,11 +1,14 @@
 import {
   useGetModuleService,
   useGetModulesService,
+  useGetModuleLifecycleService,
+  useModuleLifecycleActionService,
+  type ModuleLifecycleActionRequest,
 } from "@/services/api/services/modules";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import { Module } from "@/services/api/types/module";
 import { createQueryKeys } from "@/services/react-query/query-key-factory";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const modulesQueryKeys = createQueryKeys(["modules"], {
   list: () => ({
@@ -55,4 +58,37 @@ export const useGetModuleQuery = (id: Module["id"]) => {
   });
 
   return query;
+};
+
+
+export const useGetModuleLifecycleQuery = () => {
+  const fetch = useGetModuleLifecycleService();
+
+  return useQuery({
+    queryKey: ["modules", "lifecycle"],
+    queryFn: async ({ signal }) => {
+      const { status, data } = await fetch(undefined, { signal });
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error("Gagal memuat status lifecycle modul.");
+    },
+    gcTime: 0,
+  });
+};
+
+export const useModuleLifecycleMutation = () => {
+  const mutate = useModuleLifecycleActionService();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: ModuleLifecycleActionRequest) => {
+      const { status, data } = await mutate(input);
+      if (status === HTTP_CODES_ENUM.OK) return data;
+      throw new Error(`Operasi ${input.action} modul gagal.`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["modules", "lifecycle"],
+      });
+    },
+  });
 };
