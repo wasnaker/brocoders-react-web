@@ -7,7 +7,11 @@ import { FormProvider, useForm, useFormState, useWatch } from "react-hook-form";
 import useConfirmDialog from "@/components/confirm-dialog/use-confirm-dialog";
 import Link from "@/components/link";
 import { useSnackbar } from "@/hooks/use-snackbar";
-import { usePatchRolePermissionsService } from "@/services/api/services/roles";
+import {
+  usePatchRolePermissionsService,
+  usePatchRolePermissionDenyService,
+  useDeleteRolePermissionDenyService,
+} from "@/services/api/services/roles";
 import HTTP_CODES_ENUM from "@/services/api/types/http-codes";
 import type { Permission } from "@/services/api/types/permission";
 import { SortEnum } from "@/services/api/types/sort-type";
@@ -83,6 +87,8 @@ function EditRoleForm() {
   const { confirmDialog } = useConfirmDialog();
   const { enqueueSnackbar } = useSnackbar();
   const fetchPatchRolePermissions = usePatchRolePermissionsService();
+  const fetchDenyPermission = usePatchRolePermissionDenyService();
+  const fetchClearPermissionDeny = useDeleteRolePermissionDenyService();
 
   // The admin role must never lose its permissions through this page: emptying
   // it locks every administrator out of the panel. The form is disabled rather
@@ -115,7 +121,11 @@ function EditRoleForm() {
   );
 
   const initialPermissionIds = useMemo(
-    () => (role?.permissions ?? []).map((permission) => String(permission.id)),
+    () =>
+      role?.authorizationManualPermissionIds?.map(String) ??
+      (role?.authorizationGrants
+        ? []
+        : (role?.permissions ?? []).map((permission) => String(permission.id))),
     [role]
   );
 
@@ -148,6 +158,27 @@ function EditRoleForm() {
       ),
     [permissions, t]
   );
+
+  const toggleDeny = async (permission: Permission, denied: boolean) => {
+    const response = denied
+      ? await fetchClearPermissionDeny({ id: roleId, permissionId: permission.id })
+      : await fetchDenyPermission({
+          id: roleId,
+          permissionId: permission.id,
+          data: {},
+        });
+
+    if (response.status === HTTP_CODES_ENUM.NO_CONTENT) {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: rolesQueryKeys.detail(roleId).key }),
+        queryClient.invalidateQueries({ queryKey: rolesQueryKeys.list().key }),
+      ]);
+      enqueueSnackbar(
+        denied ? "Administrator deny override dihapus." : "Administrator deny override diterapkan.",
+        { variant: "success" }
+      );
+    }
+  };
 
   const togglePermission = (permission: Permission) => {
     const id = String(permission.id);
@@ -219,6 +250,12 @@ function EditRoleForm() {
                   roleName: role?.name ?? "",
                 })}
               </h1>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Owner: {role?.moduleId ?? "core"} · Key: {role?.moduleRoleKey ?? "—"} · Status: {role?.isActive === false ? "Inactive" : "Active"}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Checklist mengubah manual grants saja. Default grants berasal dari manifest module dan tidak diubah dari halaman ini.
+              </p>
             </div>
 
             {isProtected && (
@@ -256,18 +293,80 @@ function EditRoleForm() {
                   const id = `permission-${permission.id}`;
 
                   return (
-                    <div key={id} className="flex items-center gap-2">
-                      <Checkbox
-                        id={id}
-                        checked={
-                          selectedPermissionIds?.includes(
-                            String(permission.id)
-                          ) ?? false
-                        }
-                        disabled={isProtected}
-                        onCheckedChange={() => togglePermission(permission)}
-                      />
-                      <Label htmlFor={id}>{permission.name}</Label>
+                    <div
+                      key={id}
+                      className="flex flex-wrap items-start justify-between gap-3 border-b border-border/60 py-2 last:border-0"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id={id}
+                            checked={
+                              selectedPermissionIds?.includes(String(permission.id)) ?? false
+                            }
+                            disabled={isProtected}
+                            onCheckedChange={() => togglePermission(permission)}
+                          />
+                          <Label htmlFor={id}>{permission.name}</Label>
+                        </div>
+                        <p className="ms-6 mt-1 text-xs text-muted-foreground">
+                          Owner: {permission.moduleId ?? "core"}
+                          {" · "}
+                          {(
+                            role?.authorizationGrants ?? []
+                          )
+                            .filter((grant) => grant.permissionKey === (permission.permissionKey ?? permission.name))
+                            .map((grant) =>
+                              grant.grantType === "module_default"
+                                ? `Default · ${grant.sourceModuleId ?? "Core"}`
+                                : grant.grantType === "admin_manual"
+                                  ? "Manual administrator grant"
+                                  : "Legacy grant"
+                            )
+                            .join(" · ") || "No grant"}
+                        </p>
+                        {role?.authorizationOverrides?.some(
+                          (override) =>
+                            override.permissionKey === (permission.permissionKey ?? permission.name) &&
+                            override.effect === "deny"
+                        ) && (
+                          <p className="ms-6 mt-1 text-xs font-medium text-destructive">
+                            Denied by administrator
+                            {role.authorizationOverrides.find(
+                              (override) => override.permissionKey === (permission.permissionKey ?? permission.name)
+                            )?.reason
+                              ? `: ${role.authorizationOverrides.find(
+                                  (override) => override.permissionKey === (permission.permissionKey ?? permission.name)
+                                )?.reason}`
+                              : ""}
+                          </p>
+                        )}
+                      </div>
+                      {role?.authorizationOverrides?.some(
+                        (override) =>
+                          override.permissionKey === (permission.permissionKey ?? permission.name) &&
+                          override.effect === "deny"
+                      ) ? (
+                        <Button
+                          type="button"
+                          size="xs"
+                          variant="outline"
+                          disabled={isProtected}
+                          onClick={() => toggleDeny(permission, true)}
+                        >
+                          Izinkan
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          size="xs"
+                          variant="ghost"
+                          disabled={isProtected}
+                          onClick={() => toggleDeny(permission, false)}
+                        >
+                          Tolak
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
