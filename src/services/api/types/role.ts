@@ -24,6 +24,7 @@ export type Role = {
   description?: string | null;
   moduleId?: string | null;
   moduleRoleKey?: string | null;
+  scope?: string | null;
   isActive?: boolean;
   permissions?: Permission[];
   /** IDs used by the manual-grant editor only; excludes module defaults. */
