@@ -1,0 +1,36 @@
+name: Format module extension sources
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  format:
+    if: contains(github.event.head_commit.message, '[format-module-extension]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Sync latest main before formatting
+        run: git pull --rebase origin main
+      - name: Format module extension sources
+        run: npx prettier --write "src/components/small-table.tsx" "src/components/module-page-content.tsx" "src/core/modules/ModuleExtensionSlot.tsx" "src/core/modules/resolve-extensions.ts" "src/core/modules/types.ts" "playwright-tests/1-auth/module-extension.spec.ts"
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/small-table.tsx src/components/module-page-content.tsx src/core/modules/ModuleExtensionSlot.tsx src/core/modules/resolve-extensions.ts src/core/modules/types.ts playwright-tests/1-auth/module-extension.spec.ts
+          git commit -m "style(web): format module extension sources"
+          git push
