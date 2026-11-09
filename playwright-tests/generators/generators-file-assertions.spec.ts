@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
-import { entityPaths, entityRouteSegment, matrix } from "./fixtures/matrix";
+import { entityPaths, matrix } from "./fixtures/matrix";
 import type { GeneratedEntity, GeneratedProperty } from "./fixtures/matrix";
 
 const REPO_ROOT = resolve(__dirname, "..", "..");
