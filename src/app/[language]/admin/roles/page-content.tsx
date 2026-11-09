@@ -59,6 +59,29 @@ function Roles() {
         ),
       },
       {
+        id: "owner",
+        accessorFn: (role) => role.moduleId ?? "core",
+        header: "Owner",
+        cell: ({ row }) => (
+          <div>
+            <div className="font-medium">{row.original.moduleId ?? "core"}</div>
+            <div className="text-xs text-muted-foreground">
+              {row.original.moduleRoleKey ?? "—"}
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "status",
+        accessorFn: (role) => role.isActive === false ? "inactive" : "active",
+        header: "Status",
+        cell: ({ row }) => (
+          <span className="text-xs text-muted-foreground">
+            {row.original.isActive === false ? "Inactive" : "Active"}
+          </span>
+        ),
+      },
+      {
         id: "permissionsCount",
         accessorFn: (role) => role.permissions?.length ?? 0,
         header: t("admin-panel-roles:table.column2"),
