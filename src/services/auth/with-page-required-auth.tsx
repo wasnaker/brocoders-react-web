@@ -33,10 +33,13 @@ function withPageRequiredAuth(
     const hasRequiredRole =
       !options?.roles?.length ||
       assignedRoles.some((role) =>
-        options.roles?.some((requiredRole) => Number(requiredRole) === Number(role.id))
+        options.roles?.some(
+          (requiredRole) => Number(requiredRole) === Number(role.id)
+        )
       );
     const hasAccess =
-      (!options?.permission || can(options.permission, user)) && hasRequiredRole;
+      (!options?.permission || can(options.permission, user)) &&
+      hasRequiredRole;
 
     useEffect(() => {
       if (!isLoaded || (user && hasAccess)) return;
