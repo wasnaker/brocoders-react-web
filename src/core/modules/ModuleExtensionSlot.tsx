@@ -10,7 +10,6 @@ export interface ModuleExtensionSlotProps {
   target: string;
   user?: User | null;
   context?: Record<string, unknown>;
-  className?: string;
 }
 
 /**
@@ -25,12 +24,11 @@ export function ModuleExtensionSlot({
   target,
   user,
   context,
-  className,
 }: ModuleExtensionSlotProps) {
   const extensions = getExtensions(slot, target, user);
 
   return (
-    <div className={className}>
+    <>
       {extensions.map((extension) => {
         const ExtensionComponent = extension.component;
         const props: ModuleExtensionProps = {
@@ -46,6 +44,6 @@ export function ModuleExtensionSlot({
           />
         );
       })}
-    </div>
+    </>
   );
 }
