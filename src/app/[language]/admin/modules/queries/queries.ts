@@ -86,9 +86,14 @@ export const useModuleLifecycleMutation = () => {
       throw new Error(`Operasi ${input.action} modul gagal.`);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["modules", "lifecycle"],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["modules", "lifecycle"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["modules", "active"],
+        }),
+      ]);
     },
   });
 };
