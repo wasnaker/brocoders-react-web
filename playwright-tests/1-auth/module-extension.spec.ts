@@ -90,5 +90,4 @@ test.describe("Cross-module extension slots", () => {
       page.getByRole("link", { name: "Equipment", exact: true }).first()
     ).toHaveAttribute("href", "/admin/equipment");
   });
-
 });

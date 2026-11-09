@@ -263,7 +263,7 @@ function AppSidebar() {
   // runtimeManaged contribute only while their backend module is active.
   const manifests = getManifests().filter(
     (manifest) =>
-      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias)
   );
   const moduleMenu = resolveMenu(manifests, user);
 

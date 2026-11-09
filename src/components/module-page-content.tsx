@@ -39,7 +39,7 @@ function ModulePageContent({ path }: { path: string }) {
   const activeModules = useActiveModuleIds();
   const manifests = getManifests().filter(
     (manifest) =>
-      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias)
   );
 
   const page = getModulePage(path, manifests);

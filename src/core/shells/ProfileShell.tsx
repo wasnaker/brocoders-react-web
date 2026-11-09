@@ -21,7 +21,7 @@ export function ProfileShell({ user }: { user: User | null | undefined }) {
   const activeModules = useActiveModuleIds();
   const manifests = getManifests().filter(
     (manifest) =>
-      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+      !manifest.runtimeManaged || activeModules.data?.has(manifest.alias)
   );
   const tabs = resolveTabs(manifests, "profileTabs", user);
   const [active, setActive] = useState<string | undefined>(

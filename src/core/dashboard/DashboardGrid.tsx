@@ -126,14 +126,14 @@ export function DashboardGrid({ user }: { user: User | null | undefined }) {
     () =>
       getManifests().filter(
         (manifest) =>
-          !manifest.runtimeManaged || activeModules.data?.has(manifest.alias),
+          !manifest.runtimeManaged || activeModules.data?.has(manifest.alias)
       ),
-    [activeModules.data],
+    [activeModules.data]
   );
 
   const allWidgets = useMemo(
     () => getDashboardWidgets(user, manifests),
-    [user, manifests],
+    [user, manifests]
   );
   // Toggle global Settings › Misc › dashboardWidgetsEnabled: saat off,
   // semua widget modul disembunyikan dari dashboard.
