@@ -101,8 +101,9 @@ function Modules() {
                 Lifecycle modul backend
               </h4>
               <p className="text-sm text-muted-foreground">
-                Install, aktifkan, nonaktifkan, atau uninstall modul. Data modul
-                tetap dipertahankan saat uninstall.
+                Kelola status runtime modul yang sudah tersedia pada deployment.
+                Install/uninstall di sini mengelola registrasi lifecycle, bukan
+                memasang atau menghapus paket npm. Data bisnis tetap dipertahankan.
               </p>
             </div>
             <Button
