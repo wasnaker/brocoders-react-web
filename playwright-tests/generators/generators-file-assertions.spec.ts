@@ -105,16 +105,18 @@ test.describe("Generators — file-level assertions", () => {
     });
   }
 
-  test.describe("sidebar nav wiring", () => {
-    const appSidebar = resolve(SRC, "components", "app-sidebar.tsx");
+  test.describe("manifest-driven sidebar navigation", () => {
+    test("resolves package manifest menu contributions through the shared registry", () => {
+      const appSidebar = readFile(resolve(SRC, "components", "app-sidebar.tsx"));
+      const registryGenerator = readFile(
+        resolve(REPO_ROOT, "scripts", "generate-module-registry.mjs")
+      );
 
-    for (const entity of matrix.entities) {
-      const route = entityRouteSegment(entity.name);
-      test(`adds /admin/${route} nav link`, () => {
-        const content = readFile(appSidebar);
-        expect(content).toContain(`/admin/${route}`);
-      });
-    }
+      expect(appSidebar).toContain("getManifests()");
+      expect(appSidebar).toContain("resolveMenu(manifests, user)");
+      expect(registryGenerator).toContain("@wasnaker/module-");
+      expect(registryGenerator).toContain("module.manifest.ts");
+    });
   });
 
   test.describe("i18n JSON integrity", () => {
